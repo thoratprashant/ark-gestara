@@ -1,11 +1,138 @@
-<div class="d-flex flex-column min-vh-100">
-  <header class="bg-white border-bottom">
-    <nav class="container-fluid py-3" aria-label="Patient navigation">
-      <a class="navbar-brand fw-semibold text-decoration-none" routerLink="/patient/dashboard">
-        Gestara
+<div class="patient-layout d-flex flex-column min-vh-100">
+  <header class="patient-header">
+    <a class="logo-panel" routerLink="/patient/dashboard" aria-label="Gestara patient dashboard">
+      <span class="logo-composite" aria-hidden="true">
+        <span class="logo-mark">
+          <img src="assets/header/gestara-logo-source.png" alt="" />
+        </span>
+        <span class="logo-wordmark">
+          <img src="assets/header/gestara-logo-source.png" alt="" />
+        </span>
+      </span>
+    </a>
+
+    <div class="header-main">
+      <nav class="primary-nav" aria-label="Patient navigation">
+        <a
+          class="nav-link"
+          routerLink="/patient/dashboard"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+        >
+          <img src="assets/header/home.svg" alt="" />
+          <span>Dashboard</span>
+        </a>
+
+        <a class="nav-link" routerLink="/patient/previous-visits" routerLinkActive="active">
+          <img src="assets/header/calendar.svg" alt="" />
+          <span>Previous Visits</span>
+        </a>
+
+        <a class="nav-link" routerLink="/patient/future-visits" routerLinkActive="active">
+          <img src="assets/header/calendar.svg" alt="" />
+          <span>Future Visits</span>
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="quick-stats" type="button" aria-label="Open quick stats">
+          <span class="quick-stats-label">Quick Stats</span>
+          <img src="assets/header/info.svg" alt="" />
+        </button>
+
+        <button
+          class="mobile-menu-toggle"
+          type="button"
+          aria-label="Open patient navigation"
+          aria-controls="patient-mobile-sidebar"
+          [attr.aria-expanded]="sidebarOpen()"
+          (click)="toggleSidebar()"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  @if (sidebarOpen()) {
+    <button
+      class="sidebar-backdrop"
+      type="button"
+      aria-label="Close patient navigation"
+      (click)="closeSidebar()"
+    ></button>
+  }
+
+  <aside
+    id="patient-mobile-sidebar"
+    class="mobile-sidebar"
+    [class.open]="sidebarOpen()"
+    [attr.aria-hidden]="!sidebarOpen()"
+    [attr.inert]="sidebarOpen() ? null : ''"
+  >
+    <div class="mobile-sidebar-header">
+      <a
+        class="sidebar-brand"
+        routerLink="/patient/dashboard"
+        aria-label="Gestara patient dashboard"
+        (click)="closeSidebar()"
+      >
+        <span class="logo-composite" aria-hidden="true">
+          <span class="logo-mark">
+            <img src="assets/header/gestara-logo-source.png" alt="" />
+          </span>
+          <span class="logo-wordmark">
+            <img src="assets/header/gestara-logo-source.png" alt="" />
+          </span>
+        </span>
+      </a>
+
+      <button
+        class="sidebar-close"
+        type="button"
+        aria-label="Close navigation"
+        (click)="closeSidebar()"
+      >
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+
+    <nav class="mobile-nav" aria-label="Mobile patient navigation">
+      <a
+        class="nav-link"
+        routerLink="/patient/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeSidebar()"
+      >
+        <img src="assets/header/home.svg" alt="" />
+        <span>Dashboard</span>
+      </a>
+
+      <a
+        class="nav-link"
+        routerLink="/patient/previous-visits"
+        routerLinkActive="active"
+        (click)="closeSidebar()"
+      >
+        <img src="assets/header/calendar.svg" alt="" />
+        <span>Previous Visits</span>
+      </a>
+
+      <a
+        class="nav-link"
+        routerLink="/patient/future-visits"
+        routerLinkActive="active"
+        (click)="closeSidebar()"
+      >
+        <img src="assets/header/calendar.svg" alt="" />
+        <span>Future Visits</span>
       </a>
     </nav>
-  </header>
+  </aside>
 
   <main class="container-fluid flex-grow-1 py-4">
     <router-outlet />
