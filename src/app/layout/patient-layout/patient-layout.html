@@ -1,14 +1,7 @@
 <div class="patient-layout d-flex flex-column min-vh-100">
   <header class="patient-header">
     <a class="logo-panel" routerLink="/patient/dashboard" aria-label="Gestara patient dashboard">
-      <span class="logo-composite" aria-hidden="true">
-        <span class="logo-mark">
-          <img src="assets/header/gestara-logo-source.png" alt="" />
-        </span>
-        <span class="logo-wordmark">
-          <img src="assets/header/gestara-logo-source.png" alt="" />
-        </span>
-      </span>
+      <img class="gestara-logo" src="assets/logo.svg" alt="" />
     </a>
 
     <div class="header-main">
@@ -48,10 +41,35 @@
       </nav>
 
       <div class="header-actions">
-        <button class="quick-stats" type="button" aria-label="Open quick stats">
-          <span class="quick-stats-label">Quick Stats</span>
-          <img src="assets/header/info.svg" alt="" />
-        </button>
+        <div class="quick-stats-wrap">
+          <button
+            class="quick-stats"
+            type="button"
+            aria-label="Show quick stats"
+            aria-describedby="quick-stats-popover"
+          >
+            <span class="quick-stats-label">Quick Stats</span>
+            <img src="assets/header/info.svg" alt="" />
+          </button>
+
+          <div id="quick-stats-popover" class="quick-stats-popover" role="status">
+            <p class="quick-stats-popover__title">Quick Stats</p>
+            <dl class="quick-stats-popover__list">
+              <div>
+                <dt>Prenatal Visits</dt>
+                <dd>10</dd>
+              </div>
+              <div>
+                <dt>Upcoming</dt>
+                <dd>8</dd>
+              </div>
+              <div>
+                <dt>Labs Pending</dt>
+                <dd class="quick-stats-popover__alert">2</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
 
         <button
           class="mobile-menu-toggle"
@@ -92,14 +110,7 @@
         aria-label="Gestara patient dashboard"
         (click)="closeSidebar()"
       >
-        <span class="logo-composite" aria-hidden="true">
-          <span class="logo-mark">
-            <img src="assets/header/gestara-logo-source.png" alt="" />
-          </span>
-          <span class="logo-wordmark">
-            <img src="assets/header/gestara-logo-source.png" alt="" />
-          </span>
-        </span>
+        <img class="gestara-logo" src="assets/logo.svg" alt="" />
       </a>
 
       <button

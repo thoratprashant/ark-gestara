@@ -16,56 +16,18 @@
 .logo-panel {
   display: flex;
   flex: 0 0 220px;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   height: 78px;
-  padding: 20px 16px 16px;
+  padding: 7px 15px;
   overflow: hidden;
   border-right: 0.833px solid #e5e0dc;
 }
 
-.logo-composite {
-  display: flex;
-  flex: 0 0 auto;
-  align-items: center;
-  width: 165.886px;
-  height: 40.114px;
-}
-
-.logo-mark,
-.logo-wordmark {
-  position: relative;
+.gestara-logo {
   display: block;
-  flex: 0 0 auto;
-  overflow: hidden;
-}
-
-.logo-mark {
-  width: 40.985px;
-  height: 39.892px;
-}
-
-.logo-mark img {
-  position: absolute;
-  top: -18.08%;
-  left: -141.07%;
-  width: 376.53%;
-  max-width: none;
-  height: 305.21%;
-}
-
-.logo-wordmark {
-  width: 124.902px;
-  height: 40.114px;
-}
-
-.logo-wordmark img {
-  position: absolute;
-  top: -186.2%;
-  left: -48.02%;
-  width: 196.25%;
-  max-width: none;
-  height: 482.09%;
+  width: 190px;
+  height: 64px;
 }
 
 .header-main {
@@ -114,6 +76,8 @@
   flex: 0 0 20px;
   width: 20px;
   height: 20px;
+  filter: brightness(0) saturate(100%) invert(52%) sepia(13%) saturate(542%) hue-rotate(167deg)
+    brightness(91%) contrast(87%);
 }
 
 .nav-link:hover,
@@ -179,6 +143,84 @@
   border-radius: 16px;
 }
 
+.quick-stats-wrap {
+  position: relative;
+}
+
+.quick-stats-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 1070;
+  width: 196px;
+  padding: 12px 14px;
+  color: #73808c;
+  background-color: #fff;
+  border: 1px solid #0d9488;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgb(20 31 38 / 10%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-4px);
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease,
+    visibility 160ms ease;
+}
+
+.quick-stats-wrap:hover .quick-stats-popover,
+.quick-stats-wrap:focus-within .quick-stats-popover {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.quick-stats-popover__title {
+  margin: 0 0 8px;
+  color: #0d9488;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 15px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.quick-stats-popover__list {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+}
+
+.quick-stats-popover__list > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 16px;
+}
+
+.quick-stats-popover__list dt,
+.quick-stats-popover__list dd {
+  margin: 0;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.quick-stats-popover__list dt {
+  font-weight: 500;
+}
+
+.quick-stats-popover__list dd {
+  color: #0d9488;
+  font-weight: 700;
+}
+
+.quick-stats-popover__list .quick-stats-popover__alert {
+  color: #fb7185;
+}
+
 .quick-stats-label {
   font-size: clamp(9px, 0.6944vw, 10px);
   font-weight: 700;
@@ -232,9 +274,9 @@
     padding: 12px;
   }
 
-  .logo-composite {
-    transform: scale(0.76);
-    transform-origin: left center;
+  .logo-panel .gestara-logo {
+    width: 128px;
+    height: auto;
   }
 
   .header-main {
@@ -314,6 +356,11 @@
     overflow: hidden;
   }
 
+  .sidebar-brand .gestara-logo {
+    width: 142px;
+    height: auto;
+  }
+
   .sidebar-close {
     position: relative;
     width: 40px;
@@ -364,7 +411,7 @@
     flex-basis: 124px;
   }
 
-  .logo-composite {
-    transform: scale(0.62);
+  .logo-panel .gestara-logo {
+    width: 100px;
   }
 }
