@@ -1,4 +1,217 @@
-<section aria-labelledby="patient-dashboard-title">
-  <h1 id="patient-dashboard-title" class="h3 mb-3">Patient Dashboard</h1>
-  <p class="text-secondary mb-0">Welcome to Gestara.</p>
-</section>
+<div class="patient-dashboard" [class.patient-dashboard--summary-sticky]="summarySticky()">
+  <section #patientSummary class="patient-summary" [class.patient-summary--collapsed]="!summaryExpanded()"
+    [class.patient-summary--sticky]="summarySticky()" [style.left.px]="summarySticky() ? stickyLeft() : null"
+    [style.width.px]="summarySticky() ? stickyWidth() : null" aria-labelledby="patient-name">
+    <header class="patient-summary__header">
+      <div class="patient-identity">
+        <h1 id="patient-name">Sarah Johnson</h1>
+        <p>
+          <span>Age 32</span>
+          <span aria-hidden="true">/</span>
+          <strong>G3 - P1011</strong>
+        </p>
+      </div>
+
+      <div class="patient-summary__controls">
+        @if (!summaryExpanded()) {
+        <div class="summary-facts" aria-label="Patient summary">
+          <article class="summary-fact">
+            <img class="summary-fact__icon" src="assets/calender-green.svg" alt="" aria-hidden="true" />
+            <span>
+              <small>Current Gestational Age</small>
+              <strong>28w 4d</strong>
+            </span>
+          </article>
+          <article class="summary-fact">
+            <img class="summary-fact__icon" src="assets/calender-green.svg" alt="" aria-hidden="true" />
+            <span>
+              <small>Estimated Due Date</small>
+              <strong>June 15, 2026</strong>
+            </span>
+          </article>
+          <article class="summary-fact">
+            <img class="summary-fact__icon" src="assets/calender-green.svg" alt="" aria-hidden="true" />
+            <span>
+              <small>Recommended Delivery Window</small>
+              <strong>Week 36–39</strong>
+            </span>
+          </article>
+          <article class="summary-fact summary-fact--risk">
+            <img class="summary-fact__icon" src="assets/warn-red.svg" alt="" aria-hidden="true" />
+            <span>
+              <small>Pre-eclampsia Risk</small>
+              <strong>High Risk</strong>
+            </span>
+          </article>
+        </div>
+        } @else {
+        <article class="summary-fact summary-fact--risk patient-summary__risk">
+          <img class="summary-fact__icon" src="assets/warn-red.svg" alt="" aria-hidden="true" />
+          <span>
+            <small>Pre-eclampsia Risk</small>
+            <strong>High Risk</strong>
+          </span>
+        </article>
+        }
+
+        <button class="summary-toggle" type="button" [attr.aria-expanded]="summaryExpanded()"
+          aria-controls="patient-summary-details" (click)="toggleSummary()">
+          <span class="visually-hidden">
+            {{ summaryExpanded() ? 'Collapse' : 'Expand' }} patient summary
+          </span>
+          <span class="summary-toggle__icon" [class.summary-toggle__icon--expanded]="summaryExpanded()"
+            aria-hidden="true"></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="patient-summary__details-motion" [class.patient-summary__details-motion--open]="summaryExpanded()"
+      [attr.aria-hidden]="!summaryExpanded()">
+      <div class="patient-summary__details-motion-inner" [attr.inert]="summaryExpanded() ? null : ''">
+        <div id="patient-summary-details" class="patient-summary__details">
+          <figure class="patient-summary__screening">
+            <img class="img-fluid d-block mx-auto" src="assets/social-round.png"
+              alt="Social determinants of health screening diagram" />
+            <figcaption>Social Determinants of Health Screening</figcaption>
+          </figure>
+
+          <div class="patient-metrics">
+            <article class="patient-metric">
+              <h2>
+                <img src="assets/calender-orange.svg" alt="" aria-hidden="true" />
+                Current Gestational Age
+              </h2>
+              <strong>28w 4d</strong>
+            </article>
+            <article class="patient-metric">
+              <h2>
+                <img src="assets/calender-green.svg" alt="" aria-hidden="true" />
+                Estimated Due Date
+              </h2>
+              <strong>Jun 15, 2026</strong>
+              <small>*Based upon LMP consistent with 12 week ultrasound</small>
+            </article>
+            <article class="patient-metric">
+              <h2>
+                <img src="assets/pregnancy-green.svg" alt="" aria-hidden="true" />
+                Pregnancy Details
+              </h2>
+              <strong>G3 P1011</strong>
+              <small>*Hover for the details</small>
+            </article>
+            <article class="patient-metric">
+              <h2>
+                <img src="assets/calender-orange.svg" alt="" aria-hidden="true" />
+                Recommended Delivery Window
+              </h2>
+              <strong>Week 36–39</strong>
+              <small>*GDM and gestational hypertension - recommend delivery at term</small>
+            </article>
+            <article class="patient-metric">
+              <h2>
+                <img src="assets/calender-orange.svg" alt="" aria-hidden="true" />
+                Next Visit (MFM Consultation)
+              </h2>
+              <strong>Apr 11, 2026</strong>
+            </article>
+            <article class="patient-metric">
+              <h2>
+                <img src="assets/time-red.svg" alt="" aria-hidden="true" />
+                Last Visit (Prenatal)
+              </h2>
+              <strong>Mar 14, 2026</strong>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="vital-signs" aria-labelledby="vital-signs-title">
+    <h2 id="vital-signs-title">Current Vital Signs</h2>
+
+    <div class="vital-signs__scroller" tabindex="0">
+      <div class="vital-signs__list">
+        <article class="vital-card vital-card--alert">
+          <div class="vital-card__top">
+            <span class="vital-card__icon" aria-hidden="true">
+              <img src="assets/chart-red.svg" alt="" />
+            </span>
+            <i aria-hidden="true"></i>
+          </div>
+          <h3>Blood Pressure</h3>
+          <p><strong>148/92</strong> <span>mmHg</span></p>
+        </article>
+
+        <article class="vital-card">
+          <div class="vital-card__top">
+            <span class="vital-card__icon" aria-hidden="true">
+              <img src="assets/heart-green.svg" alt="" />
+            </span>
+            <i aria-hidden="true"></i>
+          </div>
+          <h3>Fetal Heart Rate</h3>
+          <p><strong>142</strong> <span>bpm</span></p>
+        </article>
+
+        <article class="vital-card">
+          <div class="vital-card__top">
+            <span class="vital-card__icon" aria-hidden="true">
+              <img src="assets/measurment-green.svg" alt="" />
+            </span>
+            <i aria-hidden="true"></i>
+          </div>
+          <h3>Fundal Height</h3>
+          <p><strong>28</strong> <span>cm</span></p>
+        </article>
+
+        <article class="vital-card">
+          <div class="vital-card__top">
+            <span class="vital-card__icon" aria-hidden="true">
+              <img src="assets/circle-point-green.svg" alt="" />
+            </span>
+            <i aria-hidden="true"></i>
+          </div>
+          <h3>Cervical Exam</h3>
+          <p><strong>Closed, thick, -3 station</strong></p>
+        </article>
+
+        <article class="vital-card">
+          <div class="vital-card__top">
+            <span class="vital-card__icon" aria-hidden="true">
+              <img src="assets/bmi-green.svg" alt="" />
+            </span>
+            <i aria-hidden="true"></i>
+          </div>
+          <h3>BMI</h3>
+          <p><strong>26.3</strong></p>
+          <small>Pre-pregnancy BMI - 22.4</small>
+        </article>
+
+        <article class="vital-card">
+          <div class="vital-card__top">
+            <span class="vital-card__icon" aria-hidden="true">
+              <img src="assets/bmi-green.svg" alt="" />
+            </span>
+            <i aria-hidden="true"></i>
+          </div>
+          <h3>Current Weight</h3>
+          <p><strong>165</strong> <span>lbs</span></p>
+        </article>
+
+        <article class="vital-card">
+          <div class="vital-card__top">
+            <span class="vital-card__icon" aria-hidden="true">
+              <img src="assets/up-green.svg" alt="" />
+            </span>
+            <i aria-hidden="true"></i>
+          </div>
+          <h3>Weight Gain</h3>
+          <p><strong>+22</strong> <span>lbs</span></p>
+        </article>
+      </div>
+    </div>
+  </section>
+ 
+ 
+</div>
