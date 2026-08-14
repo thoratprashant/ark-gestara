@@ -212,6 +212,368 @@
       </div>
     </div>
   </section>
- 
- 
+
+  <section class="clinical-section visit-summary" aria-labelledby="visit-summary-title">
+    <header class="clinical-section__header">
+      <div class="clinical-section__title">
+        <span class="clinical-section__title-icon clinical-section__title-icon--teal">
+          <img src="assets/visit-progress/visit-00.svg" alt="" aria-hidden="true" />
+        </span>
+        <h2 id="visit-summary-title">Visit Summary</h2>
+      </div>
+      <button
+        class="clinical-section__toggle"
+        type="button"
+        aria-controls="visit-summary-content"
+        [attr.aria-expanded]="visitSummaryExpanded()"
+        (click)="toggleVisitSummary()"
+      >
+        <span class="visually-hidden">
+          {{ visitSummaryExpanded() ? 'Collapse' : 'Expand' }} Visit Summary
+        </span>
+        <img
+          class="clinical-section__chevron"
+          [class.clinical-section__chevron--collapsed]="!visitSummaryExpanded()"
+          src="assets/visit-progress/visit-02.svg"
+          alt=""
+          aria-hidden="true"
+        />
+      </button>
+    </header>
+
+    <div
+      id="visit-summary-content"
+      class="clinical-section__content-motion"
+      [class.clinical-section__content-motion--open]="visitSummaryExpanded()"
+      [attr.aria-hidden]="!visitSummaryExpanded()"
+    >
+      <div
+        class="clinical-section__content-motion-inner"
+        [attr.inert]="visitSummaryExpanded() ? null : ''"
+      >
+        <div class="clinical-section__body visit-summary__grid">
+      <section class="visit-summary__column" aria-labelledby="results-title">
+        <div class="visit-summary__column-heading">
+          <h3 id="results-title">Results Since Last Visit</h3>
+          <p>Since March 14, 2026</p>
+        </div>
+
+        <div class="result-list">
+          <article class="result-card">
+            <header>
+              <h4>CBC</h4>
+              <time datetime="2026-03-20">3/20/26</time>
+            </header>
+            <ul>
+              <li>WBC: 9.2 K/uL</li>
+              <li>Hgb: 11.2 g/dL (↑ improved)</li>
+              <li>Hct: 34%</li>
+              <li>Platelets: 245 K/uL</li>
+            </ul>
+            <button class="reviewed-button" type="button">
+              <img src="assets/visit-progress/visit-13.svg" alt="" aria-hidden="true" />
+              Mark Reviewed
+            </button>
+          </article>
+
+          <article class="result-card">
+            <header>
+              <h4>Home BP Log</h4>
+              <time datetime="2026-03-14">3/14–3/27</time>
+            </header>
+            <ul>
+              <li>Range: 128–148/82–92 mmHg (33% elevated)</li>
+              <li>Compliance: 14/14 days</li>
+            </ul>
+            <button class="reviewed-button" type="button">
+              <img src="assets/visit-progress/visit-13.svg" alt="" aria-hidden="true" />
+              Mark Reviewed
+            </button>
+          </article>
+
+          <article class="result-card">
+            <header>
+              <h4>Blood Glucose Log</h4>
+              <time datetime="2026-03-14">3/14–3/27</time>
+            </header>
+            <ul>
+              <li>Fasting: 82–98 mg/dL (50% elevated)</li>
+              <li>Post-prandial: 118–135 mg/dL (0% elevated)</li>
+              <li>Compliance: 56/56 checks</li>
+            </ul>
+            <button class="reviewed-button" type="button">
+              <img src="assets/visit-progress/visit-13.svg" alt="" aria-hidden="true" />
+              Mark Reviewed
+            </button>
+          </article>
+        </div>
+      </section>
+
+      <section class="visit-summary__column" aria-labelledby="orders-title">
+        <div class="visit-summary__column-heading visit-summary__column-heading--with-icon">
+          <h3 id="orders-title">
+            <img src="assets/visit-progress/visit-05.svg" alt="" aria-hidden="true" />
+            Orders Placed This Visit
+          </h3>
+          <p>March 28, 2026</p>
+        </div>
+
+        <div class="order-list">
+          <article class="order-card order-card--laboratory">
+            <div class="order-card__header">
+              <h4>
+                <img src="assets/visit-progress/visit-06.svg" alt="" aria-hidden="true" />
+                Laboratory
+              </h4>
+              <button class="order-card__remove" type="button" aria-label="Remove Laboratory order group">
+                <img src="assets/visit-progress/visit-03.svg" alt="" aria-hidden="true" />
+              </button>
+            </div>
+            <ul>
+              <li>
+                <span>CBC (STAT)</span>
+                <button class="order-card__remove" type="button" aria-label="Remove CBC order">
+                  <img src="assets/visit-progress/visit-03.svg" alt="" aria-hidden="true" />
+                </button>
+              </li>
+              <li>
+                <span>CMP (STAT)</span>
+                <button class="order-card__remove" type="button" aria-label="Remove CMP order">
+                  <img src="assets/visit-progress/visit-03.svg" alt="" aria-hidden="true" />
+                </button>
+              </li>
+              <li>
+                <span>LFTs (STAT)</span>
+                <button class="order-card__remove" type="button" aria-label="Remove LFTs order">
+                  <img src="assets/visit-progress/visit-03.svg" alt="" aria-hidden="true" />
+                </button>
+              </li>
+              <li>
+                <span>Uric acid (STAT)</span>
+                <button class="order-card__remove" type="button" aria-label="Remove uric acid order">
+                  <img src="assets/visit-progress/visit-03.svg" alt="" aria-hidden="true" />
+                </button>
+              </li>
+              <li>
+                <span>Urinalysis w/ protein/Cr ratio (STAT)</span>
+                <button class="order-card__remove" type="button" aria-label="Remove urinalysis order">
+                  <img src="assets/visit-progress/visit-03.svg" alt="" aria-hidden="true" />
+                </button>
+              </li>
+            </ul>
+          </article>
+
+          <article class="order-card order-card--imaging">
+            <div class="order-card__header">
+              <h4>
+                <img src="assets/visit-progress/visit-12.svg" alt="" aria-hidden="true" />
+                Imaging
+              </h4>
+              <button class="order-card__remove" type="button" aria-label="Remove Imaging order group">
+                <img src="assets/visit-progress/visit-01.svg" alt="" aria-hidden="true" />
+              </button>
+            </div>
+            <ul>
+              <li>
+                <span>Growth ultrasound (scheduled 32w)</span>
+                <button class="order-card__remove" type="button" aria-label="Remove growth ultrasound order">
+                  <img src="assets/visit-progress/visit-01.svg" alt="" aria-hidden="true" />
+                </button>
+              </li>
+            </ul>
+          </article>
+
+          <article class="order-card order-card--testing">
+            <div class="order-card__header">
+              <h4>
+                <img src="assets/visit-progress/visit-16.svg" alt="" aria-hidden="true" />
+                Testing
+              </h4>
+              <button class="order-card__remove" type="button" aria-label="Remove Testing order group">
+                <img src="assets/visit-progress/visit-11.svg" alt="" aria-hidden="true" />
+              </button>
+            </div>
+            <ul>
+              <li>
+                <span>Biweekly NST (starts 32w)</span>
+                <button class="order-card__remove" type="button" aria-label="Remove biweekly NST order">
+                  <img src="assets/visit-progress/visit-11.svg" alt="" aria-hidden="true" />
+                </button>
+              </li>
+            </ul>
+          </article>
+
+          <article class="order-card order-card--medications">
+            <div class="order-card__header">
+              <h4>
+                <img src="assets/visit-progress/visit-07.svg" alt="" aria-hidden="true" />
+                Medications/Vaccines
+              </h4>
+              <button class="order-card__remove" type="button" aria-label="Remove Medications and Vaccines order group">
+                <img src="assets/visit-progress/visit-08.svg" alt="" aria-hidden="true" />
+              </button>
+            </div>
+            <ul>
+              <li>
+                <span>Tdap vaccine (administered today)</span>
+                <button class="order-card__remove" type="button" aria-label="Remove Tdap vaccine order">
+                  <img src="assets/visit-progress/visit-08.svg" alt="" aria-hidden="true" />
+                </button>
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="clinical-section progress-note" aria-labelledby="progress-note-title">
+    <header class="clinical-section__header progress-note__header">
+      <div class="clinical-section__title">
+        <span class="clinical-section__title-icon clinical-section__title-icon--red">
+          <img src="assets/visit-progress/progress-00.svg" alt="" aria-hidden="true" />
+        </span>
+        <h2 id="progress-note-title">Progress Note</h2>
+      </div>
+      <div class="progress-note__header-actions">
+        <button class="review-systems-button" type="button">Review of Systems</button>
+        <button
+          class="clinical-section__toggle"
+          type="button"
+          aria-controls="progress-note-content"
+          [attr.aria-expanded]="progressNoteExpanded()"
+          (click)="toggleProgressNote()"
+        >
+          <span class="visually-hidden">
+            {{ progressNoteExpanded() ? 'Collapse' : 'Expand' }} Progress Note
+          </span>
+          <img
+            class="clinical-section__chevron"
+            [class.clinical-section__chevron--collapsed]="!progressNoteExpanded()"
+            src="assets/visit-progress/progress-01.svg"
+            alt=""
+            aria-hidden="true"
+          />
+        </button>
+      </div>
+    </header>
+
+    <div
+      id="progress-note-content"
+      class="clinical-section__content-motion"
+      [class.clinical-section__content-motion--open]="progressNoteExpanded()"
+      [attr.aria-hidden]="!progressNoteExpanded()"
+    >
+      <div
+        class="clinical-section__content-motion-inner"
+        [attr.inert]="progressNoteExpanded() ? null : ''"
+      >
+        <div class="clinical-section__body progress-note__body">
+      <div class="progress-note__toolbar">
+        <p>
+          <img src="assets/visit-progress/progress-02.svg" alt="" aria-hidden="true" />
+          <time datetime="2026-03-28">March 28, 2026</time>
+        </p>
+        <div>
+          <button type="button">
+            <img src="assets/visit-progress/progress-03.svg" alt="" aria-hidden="true" />
+            Edit
+          </button>
+          <button type="button">
+            <img src="assets/visit-progress/progress-04.svg" alt="" aria-hidden="true" />
+            Copy
+          </button>
+        </div>
+      </div>
+
+      <p class="progress-note__patient">
+        <strong>Patient:</strong> Sarah Johnson, 32 year old female, G3P1011, 28w 4d
+      </p>
+
+      <section class="note-block">
+        <h3>Subjective:</h3>
+        <p>
+          Patient presents for routine prenatal visit. Reports overall feeling well with good fetal movement.
+          Compliant with home blood glucose monitoring and blood pressure checks. Denies headache, visual
+          changes, epigastric pain, contractions, vaginal bleeding, or leakage of fluid. Following diabetic diet
+          plan with good adherence.
+        </p>
+      </section>
+
+      <section class="note-block">
+        <h3>Objective:</h3>
+        <p><strong>Vital Signs:</strong> BP 148/92 mmHg (elevated), Weight 165 lbs (+22 lbs total gain), BMI 26.3</p>
+        <p>
+          <strong>Fetal Assessment:</strong> FHR 142 bpm, regular rhythm. Fundal height 28 cm (appropriate for
+          gestational age).
+        </p>
+        <p><strong>Cervical Exam:</strong> Closed, thick, -3 station</p>
+      </section>
+
+      <section class="note-block assessment-plan">
+        <h3>Assessment and Plan:</h3>
+        <article>
+          <h4>1. Diet Controlled Gestational Diabetes Mellitus (O24.410)</h4>
+          <ul>
+            <li>Home blood glucose logs reviewed – fasting 82–95 mg/dL, postprandial 110–130 mg/dL (well-controlled)</li>
+            <li>Growth ultrasound scheduled for 32 weeks to assess for macrosomia</li>
+            <li>Diet-controlled, good compliance with nutrition plan</li>
+            <li>Continue current diabetic diet, check blood glucose QID</li>
+            <li>Patient counseled on signs of hypo/hyperglycemia</li>
+          </ul>
+        </article>
+        <article>
+          <h4>2. Gestational Hypertension (O13.9)</h4>
+          <ul>
+            <li>BP elevated today at 148/92 mmHg, home BP logs 135–142/85–90 mmHg (compliant with monitoring)</li>
+            <li>Labs ordered today: CBC, CMP, LFTs, uric acid to rule out progression</li>
+          </ul>
+        </article>
+        <article>
+          <h4>3. Iron Deficiency Anemia (O99.019)</h4>
+          <ul>
+            <li>Most recent Hgb 11.2 g/dL at 25 weeks, improved from 9.8 g/dL at initial visit</li>
+            <li>Continue ferrous sulfate 325mg daily with vitamin C</li>
+            <li>Repeat CBC scheduled for 32 weeks</li>
+            <li>Patient tolerating iron supplementation well</li>
+          </ul>
+        </article>
+        <article>
+          <h4>4. Intrauterine Pregnancy at 28w 4d (Z34.03)</h4>
+          <ul>
+            <li>Tdap vaccine administered today, right deltoid – patient tolerated well</li>
+            <li>Reviewed anatomy ultrasound from 20 weeks – normal fetal anatomy, no anomalies detected</li>
+            <li>GBS screening scheduled for 35–37 weeks</li>
+            <li>Discussed labor precautions, when to call, signs of preterm labor</li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="note-block note-list-block">
+        <h3>Labs/Studies Reviewed:</h3>
+        <ul>
+          <li>3-hour glucose tolerance test (1/29/26): Confirmed GDM diagnosis</li>
+          <li>CBC (1/8/26): Hgb 11.2 g/dL, Hct 34% – improved with iron supplementation</li>
+          <li>Anatomy ultrasound (11/20/25): Normal fetal anatomy, EFW 350g, 20th percentile</li>
+          <li>Baseline metabolic panel (12/5/25): Within normal limits</li>
+        </ul>
+      </section>
+
+      <section class="note-block note-list-block">
+        <h3>Orders Placed:</h3>
+        <ul>
+          <li>CBC, CMP, LFTs, uric acid – STAT</li>
+          <li>Urinalysis with reflex protein/creatinine ratio – STAT</li>
+          <li>Growth ultrasound scheduled for 32 weeks</li>
+          <li>Biweekly NST starting at 32 weeks</li>
+          <li>Tdap vaccine administered</li>
+        </ul>
+      </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </div>

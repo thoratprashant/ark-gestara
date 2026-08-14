@@ -20,6 +20,16 @@ export class PatientDashboard {
   readonly summarySticky = signal(false);
   readonly stickyLeft = signal(0);
   readonly stickyWidth = signal(0);
+  readonly visitSummaryExpanded = signal(true);
+  readonly progressNoteExpanded = signal(true);
+
+  toggleVisitSummary(): void {
+    this.visitSummaryExpanded.update((expanded) => !expanded);
+  }
+
+  toggleProgressNote(): void {
+    this.progressNoteExpanded.update((expanded) => !expanded);
+  }
 
   toggleSummary(): void {
     if (this.summarySticky()) {
