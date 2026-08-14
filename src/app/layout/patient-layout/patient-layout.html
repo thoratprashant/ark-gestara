@@ -18,17 +18,30 @@
           routerLink="/patient/dashboard"
           routerLinkActive="active"
           [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
         >
           <img src="assets/header/home.svg" alt="" />
           <span>Dashboard</span>
         </a>
 
-        <a class="nav-link" routerLink="/patient/previous-visits" routerLinkActive="active">
+        <a
+          class="nav-link"
+          routerLink="/patient/previous-visits"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+        >
           <img src="assets/header/calendar.svg" alt="" />
           <span>Previous Visits</span>
         </a>
 
-        <a class="nav-link" routerLink="/patient/future-visits" routerLinkActive="active">
+        <a
+          class="nav-link"
+          routerLink="/patient/future-visits"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+        >
           <img src="assets/header/calendar.svg" alt="" />
           <span>Future Visits</span>
         </a>
@@ -106,6 +119,7 @@
         routerLink="/patient/dashboard"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
+        ariaCurrentWhenActive="page"
         (click)="closeSidebar()"
       >
         <img src="assets/header/home.svg" alt="" />
@@ -116,6 +130,8 @@
         class="nav-link"
         routerLink="/patient/previous-visits"
         routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        ariaCurrentWhenActive="page"
         (click)="closeSidebar()"
       >
         <img src="assets/header/calendar.svg" alt="" />
@@ -126,6 +142,8 @@
         class="nav-link"
         routerLink="/patient/future-visits"
         routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        ariaCurrentWhenActive="page"
         (click)="closeSidebar()"
       >
         <img src="assets/header/calendar.svg" alt="" />

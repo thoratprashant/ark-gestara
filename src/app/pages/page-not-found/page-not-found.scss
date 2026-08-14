@@ -1,0 +1,16 @@
+.page-not-found {
+  display: flex;
+  min-height: calc(100vh - 8rem);
+  padding: 3rem 1rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.page-not-found__code {
+  color: #0d9488;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 700;
+  line-height: 1;
+}

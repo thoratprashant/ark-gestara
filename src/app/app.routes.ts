@@ -12,6 +12,7 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'patient/dashboard',
+    loadComponent: () =>
+      import('./pages/page-not-found/page-not-found').then((m) => m.PageNotFound),
   },
 ];
