@@ -213,6 +213,141 @@
     </div>
   </section>
 
+  <section class="problem-timeline" aria-labelledby="problem-timeline-title">
+    <header class="problem-timeline__header">
+      <h2 id="problem-timeline-title">Problem List &amp; Timeline</h2>
+
+      <div class="problem-timeline__tools">
+        <div class="problem-timeline__legend" aria-label="Timeline status legend">
+          @for (legendItem of timelineLegend; track legendItem.status) {
+            <span class="problem-timeline__legend-item">
+              <i [attr.data-status]="legendItem.status" aria-hidden="true"></i>
+              {{ legendItem.label }}
+            </span>
+          }
+        </div>
+
+        <button
+          class="problem-timeline__undo"
+          type="button"
+          [disabled]="!canUndoTimeline()"
+          (click)="undoTimelineChange()"
+        >
+          <img src="assets/timeline-undo.svg" alt="" aria-hidden="true" />
+          Undo
+        </button>
+      </div>
+    </header>
+
+    <div class="problem-timeline__scroller" tabindex="0">
+      <div class="problem-timeline__canvas">
+        <span
+          class="problem-timeline__current-line problem-timeline__current-line--full"
+          [style.left]="timelineLinePosition()"
+          [attr.aria-label]="'Current pregnancy week: ' + pregnancyTimeline().currentWeek"
+        ></span>
+
+        <div class="problem-timeline__axis-row">
+          <div class="problem-timeline__label problem-timeline__label--heading">Problem / Task</div>
+          <div class="problem-timeline__axis">
+            @for (week of weekTicks; track week) {
+              <span class="problem-timeline__tick" [style.left.%]="weekTickPercent(week)">{{ week }}w</span>
+            }
+          </div>
+        </div>
+
+        @for (group of pregnancyTimeline().groups; track group.id) {
+          <article class="problem-timeline__group">
+            <div class="problem-timeline__group-header">
+              <button
+                class="problem-timeline__group-toggle"
+                type="button"
+                [attr.aria-expanded]="expandedTimelineGroupId() === group.id"
+                [attr.aria-controls]="'timeline-group-' + group.id"
+                (click)="toggleTimelineGroup(group.id)"
+              >
+                <img
+                  class="problem-timeline__group-icon"
+                  [src]="expandedTimelineGroupId() === group.id ? 'assets/timeline-routine.svg' : 'assets/timeline-gdm.svg'"
+                  alt=""
+                  aria-hidden="true"
+                />
+                <strong>{{ group.label }}</strong>
+              </button>
+
+              <button
+                class="problem-timeline__group-add"
+                type="button"
+                matTooltip="Add timeline item"
+                [attr.aria-label]="'Add timeline item to ' + group.label"
+              >
+                +
+              </button>
+            </div>
+
+            <div
+              class="problem-timeline__group-motion"
+              [class.problem-timeline__group-motion--open]="expandedTimelineGroupId() === group.id"
+              [attr.aria-hidden]="expandedTimelineGroupId() !== group.id"
+            >
+              <div
+                [id]="'timeline-group-' + group.id"
+                class="problem-timeline__group-motion-inner"
+                [attr.inert]="expandedTimelineGroupId() === group.id ? null : ''"
+              >
+                @for (row of group.rows; track row.id) {
+                  <div class="problem-timeline__row">
+                    <div class="problem-timeline__label">{{ row.label }}</div>
+
+                    <div class="problem-timeline__track">
+                      @for (week of weekTicks; track week) {
+                        <span
+                          class="problem-timeline__grid-line"
+                          [style.left.%]="weekPercent(week)"
+                          aria-hidden="true"
+                        ></span>
+                      }
+
+                      @for (chip of row.chips; track chip.id) {
+                        <div
+                          class="problem-timeline__chip"
+                          [attr.data-status]="chip.status"
+                          [class.problem-timeline__chip--crossing]="chipCrossesCurrentWeek(chip)"
+                          [style.left.%]="weekPercent(chip.startWeek)"
+                          [style.width.%]="weekPercent(chip.endWeek - chip.startWeek)"
+                          [matTooltip]="timelineChipTooltip(chip)"
+                          matTooltipPosition="above"
+                          role="button"
+                          tabindex="0"
+                          [attr.aria-label]="timelineChipTooltip(chip) + '. Use left and right arrow keys to move.'"
+                          (pointerdown)="startChipInteraction($event, group.id, row.id, chip, 'move')"
+                          (keydown)="moveChipWithKeyboard($event, group.id, row.id, chip)"
+                        >
+                          <span
+                            class="problem-timeline__resize-handle problem-timeline__resize-handle--start"
+                            aria-hidden="true"
+                            (pointerdown)="startChipInteraction($event, group.id, row.id, chip, 'resize-start')"
+                          ></span>
+                          <span class="problem-timeline__chip-label">{{ chip.label }}</span>
+                          <span
+                            class="problem-timeline__resize-handle problem-timeline__resize-handle--end"
+                            aria-hidden="true"
+                            (pointerdown)="startChipInteraction($event, group.id, row.id, chip, 'resize-end')"
+                          ></span>
+                        </div>
+                      }
+
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
   <section class="clinical-section visit-summary" aria-labelledby="visit-summary-title">
     <header class="clinical-section__header">
       <div class="clinical-section__title">
