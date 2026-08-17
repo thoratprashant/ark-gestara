@@ -127,12 +127,14 @@
     </div>
   </section>
 
-  <section class="vital-signs" aria-labelledby="vital-signs-title">
+  <section #vitalSigns class="vital-signs" aria-labelledby="vital-signs-title">
     <h2 id="vital-signs-title">Current Vital Signs</h2>
 
     <div class="vital-signs__scroller" tabindex="0">
       <div class="vital-signs__list">
-        <article class="vital-card vital-card--alert">
+        <article class="vital-card vital-card--alert" tabindex="0"
+          (mouseenter)="showVitalTooltip('blood-pressure', $event)" (mouseleave)="hideVitalTooltip()"
+          (focusin)="showVitalTooltip('blood-pressure', $event)" (focusout)="hideVitalTooltip()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/chart-red.svg" alt="" />
@@ -143,7 +145,9 @@
           <p><strong>148/92</strong> <span>mmHg</span></p>
         </article>
 
-        <article class="vital-card">
+        <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('heart-rate', $event)"
+          (mouseleave)="hideVitalTooltip()" (focusin)="showVitalTooltip('heart-rate', $event)"
+          (focusout)="hideVitalTooltip()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/heart-green.svg" alt="" />
@@ -154,7 +158,9 @@
           <p><strong>142</strong> <span>bpm</span></p>
         </article>
 
-        <article class="vital-card">
+        <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('fundal-height', $event)"
+          (mouseleave)="hideVitalTooltip()" (focusin)="showVitalTooltip('fundal-height', $event)"
+          (focusout)="hideVitalTooltip()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/measurment-green.svg" alt="" />
@@ -165,7 +171,9 @@
           <p><strong>28</strong> <span>cm</span></p>
         </article>
 
-        <article class="vital-card">
+        <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('cervical-exam', $event)"
+          (mouseleave)="hideVitalTooltip()" (focusin)="showVitalTooltip('cervical-exam', $event)"
+          (focusout)="hideVitalTooltip()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/circle-point-green.svg" alt="" />
@@ -176,7 +184,9 @@
           <p><strong>Closed, thick, -3 station</strong></p>
         </article>
 
-        <article class="vital-card">
+        <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('bmi', $event)"
+          (mouseleave)="hideVitalTooltip()" (focusin)="showVitalTooltip('bmi', $event)"
+          (focusout)="hideVitalTooltip()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/bmi-green.svg" alt="" />
@@ -188,7 +198,9 @@
           <small>Pre-pregnancy BMI - 22.4</small>
         </article>
 
-        <article class="vital-card">
+        <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('current-weight', $event)"
+          (mouseleave)="hideVitalTooltip()" (focusin)="showVitalTooltip('current-weight', $event)"
+          (focusout)="hideVitalTooltip()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/bmi-green.svg" alt="" />
@@ -199,7 +211,9 @@
           <p><strong>165</strong> <span>lbs</span></p>
         </article>
 
-        <article class="vital-card">
+        <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('weight-gain', $event)"
+          (mouseleave)="hideVitalTooltip()" (focusin)="showVitalTooltip('weight-gain', $event)"
+          (focusout)="hideVitalTooltip()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/up-green.svg" alt="" />
@@ -211,6 +225,79 @@
         </article>
       </div>
     </div>
+
+    @for (tooltip of activeVitalTooltipItems(); track tooltip.id) {
+      <aside id="vital-card-tooltip" class="vital-tooltip" role="tooltip"
+        [style.left.px]="vitalTooltipPosition().left" [style.top.px]="vitalTooltipPosition().top"
+        [style.width.px]="vitalTooltipPosition().width">
+        <h3>{{ tooltip.title }}</h3>
+
+        @if (tooltip.subtitle) {
+          <p class="vital-tooltip__subtitle">{{ tooltip.subtitle }}</p>
+        }
+
+        @if (tooltip.history) {
+          <ol class="vital-tooltip__history">
+            @for (item of tooltip.history; track item.week; let historyIndex = $index) {
+              <li [style.animation-delay.ms]="historyIndex * 65">
+                <strong>{{ item.week }}</strong>
+                <span>{{ item.detail }}</span>
+              </li>
+            }
+          </ol>
+        }
+
+        @for (chart of tooltip.charts ?? []; track $index) {
+          <div class="vital-tooltip__chart-block">
+            @if (chart.label) {
+              <h4>{{ chart.label }}</h4>
+            }
+
+            <svg class="vital-tooltip__chart" viewBox="0 0 420 160" role="img"
+              [attr.aria-label]="chart.label || tooltip.title">
+              @for (tick of chart.yTicks; track tick) {
+                <line class="vital-tooltip__grid-line" x1="42" x2="402"
+                  [attr.y1]="vitalChartY(tick, chart)" [attr.y2]="vitalChartY(tick, chart)"></line>
+                <text class="vital-tooltip__axis-label" x="36" text-anchor="end"
+                  [attr.y]="vitalChartY(tick, chart) + 4">{{ tick }}</text>
+              }
+
+              @for (label of chart.xLabels; track label; let labelIndex = $index) {
+                <line class="vital-tooltip__grid-line" y1="10" y2="140"
+                  [attr.x1]="vitalChartX(labelIndex, chart.xLabels.length)"
+                  [attr.x2]="vitalChartX(labelIndex, chart.xLabels.length)"></line>
+                <text class="vital-tooltip__axis-label" y="154" text-anchor="middle"
+                  [attr.x]="vitalChartX(labelIndex, chart.xLabels.length)">{{ label }}</text>
+              }
+
+              @for (threshold of chart.thresholds ?? []; track threshold.value) {
+                <line class="vital-tooltip__threshold" x1="42" x2="402"
+                  [attr.y1]="vitalChartY(threshold.value, chart)"
+                  [attr.y2]="vitalChartY(threshold.value, chart)" [attr.stroke]="threshold.color"></line>
+                @if (threshold.label) {
+                  <text class="vital-tooltip__threshold-label" x="407"
+                    [attr.y]="vitalChartY(threshold.value, chart) + 3" [attr.fill]="threshold.color">
+                    {{ threshold.label }}
+                  </text>
+                }
+              }
+
+              @for (series of chart.series; track $index) {
+                <path class="vital-tooltip__series" pathLength="100" fill="none"
+                  [attr.d]="vitalChartPath(chart, series)" [attr.stroke]="series.color"></path>
+
+                @for (value of series.values; track $index; let pointIndex = $index) {
+                  <circle class="vital-tooltip__point" r="4.5"
+                    [attr.cx]="vitalChartX(pointIndex, series.values.length)"
+                    [attr.cy]="vitalChartY(value, chart)" [attr.fill]="series.pointColor || series.color"
+                    [style.animation-delay.ms]="250 + pointIndex * 85"></circle>
+                }
+              }
+            </svg>
+          </div>
+        }
+      </aside>
+    }
   </section>
 
   <section class="problem-timeline" aria-labelledby="problem-timeline-title">

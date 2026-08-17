@@ -1,5 +1,47 @@
-import { Component, ElementRef, HostListener, ViewChild, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, computed, signal } from '@angular/core';
 import { scaleLinear } from 'd3-scale';
+
+interface VitalChartSeries {
+  color: string;
+  pointColor?: string;
+  values: number[];
+}
+
+interface VitalChartThreshold {
+  color: string;
+  label: string;
+  value: number;
+}
+
+interface VitalChart {
+  label?: string;
+  max: number;
+  min: number;
+  series: VitalChartSeries[];
+  thresholds?: VitalChartThreshold[];
+  xLabels: string[];
+  yTicks: number[];
+}
+
+interface VitalHistoryItem {
+  detail: string;
+  week: string;
+}
+
+interface VitalTooltip {
+  charts?: VitalChart[];
+  history?: VitalHistoryItem[];
+  id: string;
+  subtitle?: string;
+  title: string;
+  width: number;
+}
+
+interface VitalTooltipPosition {
+  left: number;
+  top: number;
+  width: number;
+}
 
 type TimelineStatus = 'completed' | 'not-reviewed' | 'ordered' | 'late' | 'abnormal' | 'future';
 type ChipInteractionMode = 'move' | 'resize-start' | 'resize-end';
@@ -41,6 +83,135 @@ interface ActiveChipInteraction {
   startWeek: number;
   endWeek: number;
 }
+
+const VITAL_TOOLTIPS: VitalTooltip[] = [
+  {
+    id: 'blood-pressure',
+    title: 'Blood Pressure Trend',
+    width: 600,
+    charts: [
+      {
+        label: 'Systolic Blood Pressure (Abnormal: ≥140 mmHg)',
+        min: 100,
+        max: 160,
+        yTicks: [100, 115, 130, 145, 160],
+        xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
+        thresholds: [{ value: 140, label: 'Abnormal', color: '#ef4444' }],
+        series: [{ values: [118, 122, 128, 138, 142, 145, 148], color: '#8b35ff' }],
+      },
+      {
+        label: 'Diastolic Blood Pressure (Abnormal: ≥90 mmHg)',
+        min: 60,
+        max: 100,
+        yTicks: [60, 70, 80, 90, 100],
+        xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
+        thresholds: [{ value: 90, label: 'Abnormal', color: '#ef4444' }],
+        series: [{ values: [76, 78, 82, 86, 88, 90, 92], color: '#ec3b96' }],
+      },
+    ],
+  },
+  {
+    id: 'heart-rate',
+    title: 'Fetal Heart Rate Trend',
+    subtitle: 'Normal Range: 110-160 bpm',
+    width: 500,
+    charts: [
+      {
+        min: 100,
+        max: 170,
+        yTicks: [100, 120, 140, 170],
+        xLabels: ['12w', '16w', '20w', '24w', '26w', '28w'],
+        thresholds: [
+          { value: 110, label: '', color: '#10b981' },
+          { value: 160, label: '', color: '#10b981' },
+        ],
+        series: [{ values: [166, 159, 153, 149, 146, 142], color: '#3b82f6' }],
+      },
+    ],
+  },
+  {
+    id: 'fundal-height',
+    title: 'Fundal Height Trend',
+    subtitle: 'Expected: Fundal height (cm) ≈ Gestational age (weeks)',
+    width: 500,
+    charts: [
+      {
+        min: 10,
+        max: 35,
+        yTicks: [10, 17, 24, 35],
+        xLabels: ['16w', '20w', '24w', '26w', '28w'],
+        series: [{ values: [16, 20, 24, 26, 28], color: '#f59e0b' }],
+      },
+    ],
+  },
+  {
+    id: 'cervical-exam',
+    title: 'Cervical Exam History',
+    width: 400,
+    history: [
+      { week: '36w', detail: 'Closed, thick, -3 station' },
+      { week: '37w', detail: 'Closed, thick, -3 station' },
+      { week: '38w', detail: '1cm, 50% effaced, -2 station' },
+      { week: '39w', detail: '2cm, 70% effaced, -1 station' },
+      { week: '40w', detail: '3cm, 80% effaced, 0 station' },
+    ],
+  },
+  {
+    id: 'bmi',
+    title: 'BMI Trend',
+    subtitle: 'Tracking BMI progression throughout pregnancy',
+    width: 500,
+    charts: [
+      {
+        min: 20,
+        max: 30,
+        yTicks: [20, 23, 26, 30],
+        xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
+        series: [{ values: [23.2, 23.5, 24.1, 24.8, 25.6, 26.3, 26.8], color: '#6366f1' }],
+      },
+    ],
+  },
+  {
+    id: 'current-weight',
+    title: 'Weight Trend',
+    subtitle: 'Maternal weight progression throughout pregnancy',
+    width: 500,
+    charts: [
+      {
+        min: 140,
+        max: 170,
+        yTicks: [140, 148, 156, 170],
+        xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
+        series: [{ values: [143, 145, 148, 153, 158, 162, 165], color: '#10b981' }],
+      },
+    ],
+  },
+  {
+    id: 'weight-gain',
+    title: 'Weight Gain Trend',
+    subtitle: 'Recommended gain for Normal weight: 25-35 lbs (Pre-pregnancy BMI: 23.2)',
+    width: 500,
+    charts: [
+      {
+        min: 0,
+        max: 40,
+        yTicks: [0, 10, 20, 30, 40],
+        xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
+        thresholds: [
+          { value: 25, label: 'Min', color: '#10b981' },
+          { value: 35, label: 'Max', color: '#10b981' },
+        ],
+        series: [
+          {
+            values: [0, 2, 5, 10, 15, 19, 22],
+            color: '#2563eb',
+            pointColor: '#f59e0b',
+          },
+        ],
+      },
+    ],
+  },
+];
 
 const INITIAL_TIMELINE: PregnancyTimeline = {
   currentWeek: 28,
@@ -190,6 +361,9 @@ export class PatientDashboard {
   @ViewChild('patientSummary')
   private patientSummary?: ElementRef<HTMLElement>;
 
+  @ViewChild('vitalSigns')
+  private vitalSigns?: ElementRef<HTMLElement>;
+
   private summaryManuallyCollapsed = false;
 
   readonly summaryExpanded = signal(true);
@@ -198,6 +372,12 @@ export class PatientDashboard {
   readonly stickyWidth = signal(0);
   readonly visitSummaryExpanded = signal(true);
   readonly progressNoteExpanded = signal(true);
+  readonly activeVitalTooltip = signal<VitalTooltip | null>(null);
+  readonly activeVitalTooltipItems = computed(() => {
+    const tooltip = this.activeVitalTooltip();
+    return tooltip ? [tooltip] : [];
+  });
+  readonly vitalTooltipPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 500 });
   readonly pregnancyTimeline = signal(this.cloneTimeline(INITIAL_TIMELINE));
   readonly expandedTimelineGroupId = signal<string | null>('routine-prenatal-care');
   readonly weekTicks = Array.from({ length: 11 }, (_, index) => index * 4);
@@ -219,6 +399,53 @@ export class PatientDashboard {
 
   toggleProgressNote(): void {
     this.progressNoteExpanded.update((expanded) => !expanded);
+  }
+
+  showVitalTooltip(tooltipId: string, event: Event): void {
+    const tooltip = VITAL_TOOLTIPS.find((item) => item.id === tooltipId);
+    const section = this.vitalSigns?.nativeElement;
+    const card = event.currentTarget as HTMLElement | null;
+
+    if (!tooltip || !section || !card) {
+      return;
+    }
+
+    const sectionBounds = section.getBoundingClientRect();
+    const cardBounds = card.getBoundingClientRect();
+    const availableWidth = Math.max(sectionBounds.width - 24, 280);
+    const width = Math.min(tooltip.width, availableWidth);
+    const maximumLeft = Math.max(12, sectionBounds.width - width - 12);
+    const left = this.clamp(cardBounds.left - sectionBounds.left, 12, maximumLeft);
+
+    this.vitalTooltipPosition.set({
+      left,
+      top: cardBounds.bottom - sectionBounds.top + 6,
+      width,
+    });
+    this.activeVitalTooltip.set(tooltip);
+  }
+
+  hideVitalTooltip(): void {
+    this.activeVitalTooltip.set(null);
+  }
+
+  vitalChartX(index: number, pointCount: number): number {
+    return scaleLinear()
+      .domain([0, Math.max(pointCount - 1, 1)])
+      .range([42, 402])(index);
+  }
+
+  vitalChartY(value: number, chart: VitalChart): number {
+    return scaleLinear().domain([chart.min, chart.max]).range([140, 10]).clamp(true)(value);
+  }
+
+  vitalChartPath(chart: VitalChart, series: VitalChartSeries): string {
+    return series.values
+      .map((value, index) => {
+        const command = index === 0 ? 'M' : 'L';
+        return `${command}${this.vitalChartX(index, series.values.length)},${this.vitalChartY(value, chart)}`;
+      })
+      .join(' ');
   }
 
   toggleTimelineGroup(groupId: string): void {

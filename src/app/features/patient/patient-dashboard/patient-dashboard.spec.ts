@@ -1,3 +1,4 @@
+import { ElementRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
@@ -113,5 +114,38 @@ describe('PatientDashboard timeline', () => {
 
     const resizedChip = dashboard.pregnancyTimeline().groups[0].rows[0].chips[1];
     expect(resizedChip.endWeek).toBe(31);
+  });
+
+  it('opens the matching vital tooltip and generates its animated SVG path', () => {
+    const dashboard = new PatientDashboard();
+    const section = document.createElement('section');
+    const card = document.createElement('article');
+    vi.spyOn(section, 'getBoundingClientRect').mockReturnValue({
+      left: 0,
+      top: 100,
+      width: 1000,
+    } as DOMRect);
+    vi.spyOn(card, 'getBoundingClientRect').mockReturnValue({
+      left: 120,
+      bottom: 260,
+    } as DOMRect);
+    (
+      dashboard as unknown as {
+        vitalSigns: ElementRef<HTMLElement>;
+      }
+    ).vitalSigns = new ElementRef(section);
+
+    dashboard.showVitalTooltip('heart-rate', {
+      currentTarget: card,
+    } as unknown as Event);
+
+    const tooltip = dashboard.activeVitalTooltip();
+    const chart = tooltip?.charts?.[0];
+    expect(tooltip?.title).toBe('Fetal Heart Rate Trend');
+    expect(dashboard.vitalTooltipPosition()).toEqual({ left: 120, top: 166, width: 500 });
+    expect(chart && dashboard.vitalChartPath(chart, chart.series[0])).toMatch(/^M42,/);
+
+    dashboard.hideVitalTooltip();
+    expect(dashboard.activeVitalTooltip()).toBeNull();
   });
 });
