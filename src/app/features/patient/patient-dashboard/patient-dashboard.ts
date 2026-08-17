@@ -16,6 +16,8 @@ export class PatientDashboard {
   @ViewChild('patientSummary')
   private patientSummary?: ElementRef<HTMLElement>;
 
+  private summaryManuallyCollapsed = false;
+
   readonly summaryExpanded = signal(true);
   readonly summarySticky = signal(false);
   readonly stickyLeft = signal(0);
@@ -33,6 +35,8 @@ export class PatientDashboard {
 
   toggleSummary(): void {
     if (this.summarySticky()) {
+      this.summaryManuallyCollapsed = false;
+
       if (window.scrollY <= 1) {
         this.summarySticky.set(false);
         this.summaryExpanded.set(true);
@@ -46,7 +50,10 @@ export class PatientDashboard {
       return;
     }
 
-    this.summaryExpanded.update((expanded) => !expanded);
+    this.summaryExpanded.update((expanded) => {
+      this.summaryManuallyCollapsed = expanded;
+      return !expanded;
+    });
   }
 
   @HostListener('window:scroll')
@@ -79,7 +86,10 @@ export class PatientDashboard {
       window.scrollY <= 1
     ) {
       this.summarySticky.set(false);
-      this.summaryExpanded.set(true);
+
+      if (!this.summaryManuallyCollapsed) {
+        this.summaryExpanded.set(true);
+      }
     }
   }
 
