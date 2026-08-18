@@ -23,6 +23,7 @@ interface VitalChartThreshold {
 }
 
 interface VitalChart {
+  compact?: boolean;
   label?: string;
   max: number;
   min: number;
@@ -50,6 +51,11 @@ interface VitalTooltipPosition {
   left: number;
   top: number;
   width: number;
+}
+
+interface VitalChartHover {
+  chartIndex: number;
+  pointIndex: number;
 }
 
 interface VitalCountValues {
@@ -110,6 +116,7 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
     width: 600,
     charts: [
       {
+        compact: true,
         label: 'Systolic Blood Pressure (Abnormal: ≥140 mmHg)',
         min: 100,
         max: 160,
@@ -119,6 +126,7 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
         series: [{ values: [118, 122, 128, 138, 142, 145, 148], color: '#8b35ff' }],
       },
       {
+        compact: true,
         label: 'Diastolic Blood Pressure (Abnormal: ≥90 mmHg)',
         min: 60,
         max: 100,
@@ -405,6 +413,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     return tooltip ? [tooltip] : [];
   });
   readonly vitalTooltipPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 500 });
+  readonly vitalChartHover = signal<VitalChartHover | null>(null);
   readonly vitalCounts = signal<VitalCountValues>({
     bmi: 0,
     currentWeight: 0,
@@ -453,6 +462,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   showVitalTooltip(tooltipId: string, event: Event): void {
     this.cancelVitalTooltipHide();
+    this.vitalChartHover.set(null);
 
     const tooltip = VITAL_TOOLTIPS.find((item) => item.id === tooltipId);
     const section = this.vitalSigns?.nativeElement;
@@ -479,12 +489,14 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   hideVitalTooltip(): void {
     this.cancelVitalTooltipHide();
+    this.vitalChartHover.set(null);
     this.activeVitalTooltip.set(null);
   }
 
   scheduleVitalTooltipHide(): void {
     this.cancelVitalTooltipHide();
     this.vitalTooltipHideTimer = window.setTimeout(() => {
+      this.vitalChartHover.set(null);
       this.activeVitalTooltip.set(null);
       this.vitalTooltipHideTimer = null;
     }, 180);
@@ -501,7 +513,51 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   }
 
   vitalChartY(value: number, chart: VitalChart): number {
-    return scaleLinear().domain([chart.min, chart.max]).range([140, 10]).clamp(true)(value);
+    return scaleLinear()
+      .domain([chart.min, chart.max])
+      .range([this.vitalChartBottom(chart), 10])
+      .clamp(true)(value);
+  }
+
+  vitalChartViewBox(chart: VitalChart): string {
+    return `0 0 420 ${chart.compact ? 120 : 160}`;
+  }
+
+  vitalChartBottom(chart: VitalChart): number {
+    return chart.compact ? 96 : 140;
+  }
+
+  vitalChartAxisY(chart: VitalChart): number {
+    return chart.compact ? 111 : 154;
+  }
+
+  updateVitalChartHover(event: MouseEvent, chart: VitalChart, chartIndex: number): void {
+    const svg = event.currentTarget as SVGSVGElement;
+    const bounds = svg.getBoundingClientRect();
+
+    if (!bounds.width || chart.xLabels.length === 0) {
+      return;
+    }
+
+    const chartX = ((event.clientX - bounds.left) / bounds.width) * 420;
+    const relativeX = this.clamp(chartX, 42, 402) - 42;
+    const pointIndex = Math.round((relativeX / 360) * Math.max(chart.xLabels.length - 1, 0));
+    this.vitalChartHover.set({ chartIndex, pointIndex });
+  }
+
+  clearVitalChartHover(chartIndex: number): void {
+    if (this.vitalChartHover()?.chartIndex === chartIndex) {
+      this.vitalChartHover.set(null);
+    }
+  }
+
+  vitalChartValueLabelX(pointIndex: number, pointCount: number): number {
+    const pointX = this.vitalChartX(pointIndex, pointCount);
+    return pointIndex >= pointCount - 2 ? pointX - 36 : pointX + 7;
+  }
+
+  vitalChartValueLabelY(value: number, chart: VitalChart): number {
+    return this.clamp(this.vitalChartY(value, chart) - 10, 20, this.vitalChartBottom(chart) - 10);
   }
 
   vitalChartPath(chart: VitalChart, series: VitalChartSeries): string {

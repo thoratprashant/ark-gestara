@@ -232,6 +232,7 @@
 
     @for (tooltip of activeVitalTooltipItems(); track tooltip.id) {
       <aside id="vital-card-tooltip" class="vital-tooltip" role="tooltip"
+        [class.vital-tooltip--blood-pressure]="tooltip.id === 'blood-pressure'"
         (mouseenter)="keepVitalTooltipOpen()" (mouseleave)="scheduleVitalTooltipHide()"
         [style.left.px]="vitalTooltipPosition().left" [style.top.px]="vitalTooltipPosition().top"
         [style.width.px]="vitalTooltipPosition().width">
@@ -252,14 +253,16 @@
           </ol>
         }
 
-        @for (chart of tooltip.charts ?? []; track $index) {
+        @for (chart of tooltip.charts ?? []; track $index; let chartIndex = $index) {
           <div class="vital-tooltip__chart-block">
             @if (chart.label) {
               <h4>{{ chart.label }}</h4>
             }
 
-            <svg class="vital-tooltip__chart" viewBox="0 0 420 160" role="img"
-              [attr.aria-label]="chart.label || tooltip.title">
+            <svg class="vital-tooltip__chart" [attr.viewBox]="vitalChartViewBox(chart)" role="img"
+              [attr.aria-label]="chart.label || tooltip.title"
+              (mousemove)="updateVitalChartHover($event, chart, chartIndex)"
+              (mouseleave)="clearVitalChartHover(chartIndex)">
               @for (tick of chart.yTicks; track tick) {
                 <line class="vital-tooltip__grid-line" x1="42" x2="402"
                   [attr.y1]="vitalChartY(tick, chart)" [attr.y2]="vitalChartY(tick, chart)"></line>
@@ -268,10 +271,10 @@
               }
 
               @for (label of chart.xLabels; track label; let labelIndex = $index) {
-                <line class="vital-tooltip__grid-line" y1="10" y2="140"
+                <line class="vital-tooltip__grid-line" y1="10" [attr.y2]="vitalChartBottom(chart)"
                   [attr.x1]="vitalChartX(labelIndex, chart.xLabels.length)"
                   [attr.x2]="vitalChartX(labelIndex, chart.xLabels.length)"></line>
-                <text class="vital-tooltip__axis-label" y="154" text-anchor="middle"
+                <text class="vital-tooltip__axis-label" [attr.y]="vitalChartAxisY(chart)" text-anchor="middle"
                   [attr.x]="vitalChartX(labelIndex, chart.xLabels.length)">{{ label }}</text>
               }
 
@@ -280,7 +283,7 @@
                   [attr.y1]="vitalChartY(threshold.value, chart)"
                   [attr.y2]="vitalChartY(threshold.value, chart)" [attr.stroke]="threshold.color"></line>
                 @if (threshold.label) {
-                  <text class="vital-tooltip__threshold-label" x="407"
+                  <text class="vital-tooltip__threshold-label" x="398" text-anchor="end"
                     [attr.y]="vitalChartY(threshold.value, chart) + 3" [attr.fill]="threshold.color">
                     {{ threshold.label }}
                   </text>
@@ -296,6 +299,40 @@
                     [attr.cx]="vitalChartX(pointIndex, series.values.length)"
                     [attr.cy]="vitalChartY(value, chart)" [attr.fill]="series.pointColor || series.color"
                     [style.animation-delay.ms]="250 + pointIndex * 85"></circle>
+                }
+              }
+
+              @if (vitalChartHover(); as chartHover) {
+                @if (chartHover.chartIndex === chartIndex) {
+                  <g class="vital-tooltip__crosshair">
+                    <line [attr.x1]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
+                      [attr.x2]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)" y1="10"
+                      [attr.y2]="vitalChartBottom(chart)"></line>
+                    <rect class="vital-tooltip__week-badge"
+                      [attr.x]="vitalChartX(chartHover.pointIndex, chart.xLabels.length) - 18" y="10" width="36"
+                      height="16" rx="5"></rect>
+                    <text class="vital-tooltip__week-label"
+                      [attr.x]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)" y="21" text-anchor="middle">
+                      {{ chart.xLabels[chartHover.pointIndex] }}
+                    </text>
+
+                    @for (series of chart.series; track $index) {
+                      <circle class="vital-tooltip__hover-point" r="5.5"
+                        [attr.cx]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
+                        [attr.cy]="vitalChartY(series.values[chartHover.pointIndex], chart)"
+                        [attr.fill]="series.pointColor || series.color"></circle>
+                      <rect class="vital-tooltip__value-badge"
+                        [attr.x]="vitalChartValueLabelX(chartHover.pointIndex, chart.xLabels.length)"
+                        [attr.y]="vitalChartValueLabelY(series.values[chartHover.pointIndex], chart) - 9" width="34"
+                        height="18" rx="5"></rect>
+                      <text class="vital-tooltip__value-label"
+                        [attr.x]="vitalChartValueLabelX(chartHover.pointIndex, chart.xLabels.length) + 17"
+                        [attr.y]="vitalChartValueLabelY(series.values[chartHover.pointIndex], chart) + 3"
+                        text-anchor="middle">
+                        {{ series.values[chartHover.pointIndex] }}
+                      </text>
+                    }
+                  </g>
                 }
               }
             </svg>

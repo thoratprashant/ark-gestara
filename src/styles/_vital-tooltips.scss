@@ -90,6 +90,18 @@
   margin-top: 0.9rem;
 }
 
+.vital-tooltip--blood-pressure {
+  padding-block: 0.75rem;
+}
+
+.vital-tooltip--blood-pressure .vital-tooltip__chart-block h4 {
+  margin-top: 0.45rem;
+}
+
+.vital-tooltip--blood-pressure .vital-tooltip__chart-block + .vital-tooltip__chart-block {
+  margin-top: 0.45rem;
+}
+
 .vital-tooltip__chart {
   display: block;
   width: 100%;
@@ -134,6 +146,46 @@
   transform-box: fill-box;
   transform-origin: center;
   animation: vital-chart-point-in 260ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.vital-tooltip__crosshair {
+  pointer-events: none;
+}
+
+.vital-tooltip__crosshair > line {
+  stroke: #64748b;
+  stroke-dasharray: 3 3;
+  stroke-width: 1;
+  transition:
+    x1 120ms ease,
+    x2 120ms ease;
+  animation: vital-chart-crosshair-in 180ms ease-out both;
+}
+
+.vital-tooltip__week-badge {
+  fill: #334155;
+  opacity: 0.94;
+}
+
+.vital-tooltip__week-label,
+.vital-tooltip__value-label {
+  fill: #fff;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.vital-tooltip__value-badge {
+  fill: #17242b;
+  filter: drop-shadow(0 2px 3px rgb(23 36 43 / 18%));
+}
+
+.vital-tooltip__hover-point {
+  stroke: #fff;
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: vital-chart-hover-point-in 160ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .vital-tooltip__history {
@@ -219,6 +271,30 @@
   }
 }
 
+@keyframes vital-chart-crosshair-in {
+  from {
+    opacity: 0;
+    stroke-dashoffset: 10;
+  }
+
+  to {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes vital-chart-hover-point-in {
+  from {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 @keyframes vital-history-item-in {
   from {
     opacity: 0;
@@ -244,6 +320,8 @@
   .vital-tooltip,
   .vital-tooltip__series,
   .vital-tooltip__point,
+  .vital-tooltip__crosshair > line,
+  .vital-tooltip__hover-point,
   .vital-tooltip__history li {
     animation-duration: 1ms;
     animation-delay: 0ms;

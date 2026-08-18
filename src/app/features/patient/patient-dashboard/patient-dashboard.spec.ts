@@ -146,6 +146,27 @@ describe('PatientDashboard timeline', () => {
     expect(dashboard.vitalTooltipPosition()).toEqual({ left: 120, top: 166, width: 500 });
     expect(chart && dashboard.vitalChartPath(chart, chart.series[0])).toMatch(/^M42,/);
 
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    vi.spyOn(svg, 'getBoundingClientRect').mockReturnValue({ left: 0, width: 420 } as DOMRect);
+    if (chart) {
+      dashboard.updateVitalChartHover(
+        { currentTarget: svg, clientX: 402 } as unknown as MouseEvent,
+        chart,
+        0,
+      );
+      expect(dashboard.vitalChartHover()).toEqual({ chartIndex: 0, pointIndex: 5 });
+      dashboard.clearVitalChartHover(0);
+      expect(dashboard.vitalChartHover()).toBeNull();
+    }
+
+    dashboard.showVitalTooltip('blood-pressure', {
+      currentTarget: card,
+    } as unknown as Event);
+    const bloodPressureChart = dashboard.activeVitalTooltip()?.charts?.[0];
+    expect(bloodPressureChart && dashboard.vitalChartViewBox(bloodPressureChart)).toBe(
+      '0 0 420 120',
+    );
+
     dashboard.scheduleVitalTooltipHide();
     vi.advanceTimersByTime(100);
     dashboard.keepVitalTooltipOpen();
