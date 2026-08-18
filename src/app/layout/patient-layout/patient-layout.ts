@@ -8,6 +8,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 })
 export class PatientLayout {
   protected readonly sidebarOpen = signal(false);
+  protected readonly headerCompact = signal(false);
 
   protected toggleSidebar(): void {
     this.sidebarOpen.update((isOpen) => !isOpen);
@@ -20,5 +21,17 @@ export class PatientLayout {
   @HostListener('document:keydown.escape')
   protected handleEscape(): void {
     this.closeSidebar();
+  }
+
+  @HostListener('window:scroll')
+  protected handleWindowScroll(): void {
+    if (!this.headerCompact() && window.scrollY > 24) {
+      this.headerCompact.set(true);
+      return;
+    }
+
+    if (this.headerCompact() && window.scrollY <= 8) {
+      this.headerCompact.set(false);
+    }
   }
 }

@@ -24,13 +24,14 @@
   padding: clamp(0.875rem, 2vw, 1.25rem);
   overflow-anchor: none;
   transition:
+    top 300ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 280ms ease,
     padding 420ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .patient-summary--sticky {
   position: sticky;
-  top: 4rem;
+  top: var(--patient-header-height, 4rem);
   z-index: 1020;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
@@ -452,6 +453,17 @@
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 20px;
   font-weight: 700;
+}
+
+.vital-card__value {
+  display: inline-block;
+  min-width: 3ch;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.vital-card__value--pressure {
+  min-width: 6ch;
 }
 
 .vital-card--alert p strong {
@@ -1022,10 +1034,6 @@
 }
 
 @media (min-width: 62rem) {
-  .patient-summary--sticky {
-    top: 4.875rem;
-  }
-
   .patient-summary__details {
     grid-template-columns: minmax(10.5rem, 0.75fr) minmax(0, 3.25fr);
   }

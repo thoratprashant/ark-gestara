@@ -1,4 +1,7 @@
-<div class="patient-layout d-flex flex-column min-vh-100">
+<div
+  class="patient-layout d-flex flex-column min-vh-100"
+  [class.patient-layout--header-compact]="headerCompact()"
+>
   <header class="patient-header">
     <a class="logo-panel" routerLink="/patient/dashboard" aria-label="Gestara patient dashboard">
       <img class="gestara-logo" src="assets/logo.svg" alt="" />

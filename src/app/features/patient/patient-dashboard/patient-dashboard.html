@@ -132,8 +132,8 @@
     <div class="vital-signs__scroller" tabindex="0">
       <div class="vital-signs__list">
         <article class="vital-card vital-card--alert" tabindex="0"
-          (mouseenter)="showVitalTooltip('blood-pressure', $event)" (mouseleave)="hideVitalTooltip()"
-          (focusin)="showVitalTooltip('blood-pressure', $event)" (focusout)="hideVitalTooltip()">
+          (mouseenter)="showVitalTooltip('blood-pressure', $event)" (mouseleave)="scheduleVitalTooltipHide()"
+          (focusin)="showVitalTooltip('blood-pressure', $event)" (focusout)="scheduleVitalTooltipHide()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/chart-red.svg" alt="" />
@@ -141,12 +141,17 @@
             <i aria-hidden="true"></i>
           </div>
           <h3>Blood Pressure</h3>
-          <p><strong>148/92</strong> <span>mmHg</span></p>
+          <p>
+            <strong class="vital-card__value vital-card__value--pressure">
+              {{ vitalCounts().systolic }}/{{ vitalCounts().diastolic }}
+            </strong>
+            <span>mmHg</span>
+          </p>
         </article>
 
         <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('heart-rate', $event)"
-          (mouseleave)="hideVitalTooltip()" (focusin)="showVitalTooltip('heart-rate', $event)"
-          (focusout)="hideVitalTooltip()">
+          (mouseleave)="scheduleVitalTooltipHide()" (focusin)="showVitalTooltip('heart-rate', $event)"
+          (focusout)="scheduleVitalTooltipHide()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/heart-green.svg" alt="" />
@@ -154,12 +159,12 @@
             <i aria-hidden="true"></i>
           </div>
           <h3>Fetal Heart Rate</h3>
-          <p><strong>142</strong> <span>bpm</span></p>
+          <p><strong class="vital-card__value">{{ vitalCounts().heartRate }}</strong> <span>bpm</span></p>
         </article>
 
         <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('fundal-height', $event)"
-          (mouseleave)="hideVitalTooltip()" (focusin)="showVitalTooltip('fundal-height', $event)"
-          (focusout)="hideVitalTooltip()">
+          (mouseleave)="scheduleVitalTooltipHide()" (focusin)="showVitalTooltip('fundal-height', $event)"
+          (focusout)="scheduleVitalTooltipHide()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/measurment-green.svg" alt="" />
@@ -167,12 +172,12 @@
             <i aria-hidden="true"></i>
           </div>
           <h3>Fundal Height</h3>
-          <p><strong>28</strong> <span>cm</span></p>
+          <p><strong class="vital-card__value">{{ vitalCounts().fundalHeight }}</strong> <span>cm</span></p>
         </article>
 
         <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('cervical-exam', $event)"
-          (mouseleave)="hideVitalTooltip()" (focusin)="showVitalTooltip('cervical-exam', $event)"
-          (focusout)="hideVitalTooltip()">
+          (mouseleave)="scheduleVitalTooltipHide()" (focusin)="showVitalTooltip('cervical-exam', $event)"
+          (focusout)="scheduleVitalTooltipHide()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/circle-point-green.svg" alt="" />
@@ -184,8 +189,8 @@
         </article>
 
         <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('bmi', $event)"
-          (mouseleave)="hideVitalTooltip()" (focusin)="showVitalTooltip('bmi', $event)"
-          (focusout)="hideVitalTooltip()">
+          (mouseleave)="scheduleVitalTooltipHide()" (focusin)="showVitalTooltip('bmi', $event)"
+          (focusout)="scheduleVitalTooltipHide()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/bmi-green.svg" alt="" />
@@ -193,13 +198,13 @@
             <i aria-hidden="true"></i>
           </div>
           <h3>BMI</h3>
-          <p><strong>26.3</strong></p>
+          <p><strong class="vital-card__value">{{ vitalCounts().bmi.toFixed(1) }}</strong></p>
           <small>Pre-pregnancy BMI - 22.4</small>
         </article>
 
         <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('current-weight', $event)"
-          (mouseleave)="hideVitalTooltip()" (focusin)="showVitalTooltip('current-weight', $event)"
-          (focusout)="hideVitalTooltip()">
+          (mouseleave)="scheduleVitalTooltipHide()" (focusin)="showVitalTooltip('current-weight', $event)"
+          (focusout)="scheduleVitalTooltipHide()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/bmi-green.svg" alt="" />
@@ -207,12 +212,12 @@
             <i aria-hidden="true"></i>
           </div>
           <h3>Current Weight</h3>
-          <p><strong>165</strong> <span>lbs</span></p>
+          <p><strong class="vital-card__value">{{ vitalCounts().currentWeight }}</strong> <span>lbs</span></p>
         </article>
 
         <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('weight-gain', $event)"
-          (mouseleave)="hideVitalTooltip()" (focusin)="showVitalTooltip('weight-gain', $event)"
-          (focusout)="hideVitalTooltip()">
+          (mouseleave)="scheduleVitalTooltipHide()" (focusin)="showVitalTooltip('weight-gain', $event)"
+          (focusout)="scheduleVitalTooltipHide()">
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/up-green.svg" alt="" />
@@ -220,13 +225,14 @@
             <i aria-hidden="true"></i>
           </div>
           <h3>Weight Gain</h3>
-          <p><strong>+22</strong> <span>lbs</span></p>
+          <p><strong class="vital-card__value">+{{ vitalCounts().weightGain }}</strong> <span>lbs</span></p>
         </article>
       </div>
     </div>
 
     @for (tooltip of activeVitalTooltipItems(); track tooltip.id) {
       <aside id="vital-card-tooltip" class="vital-tooltip" role="tooltip"
+        (mouseenter)="keepVitalTooltipOpen()" (mouseleave)="scheduleVitalTooltipHide()"
         [style.left.px]="vitalTooltipPosition().left" [style.top.px]="vitalTooltipPosition().top"
         [style.width.px]="vitalTooltipPosition().width">
         <h3>{{ tooltip.title }}</h3>

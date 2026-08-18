@@ -117,6 +117,7 @@ describe('PatientDashboard timeline', () => {
   });
 
   it('opens the matching vital tooltip and generates its animated SVG path', () => {
+    vi.useFakeTimers();
     const dashboard = new PatientDashboard();
     const section = document.createElement('section');
     const card = document.createElement('article');
@@ -145,8 +146,57 @@ describe('PatientDashboard timeline', () => {
     expect(dashboard.vitalTooltipPosition()).toEqual({ left: 120, top: 166, width: 500 });
     expect(chart && dashboard.vitalChartPath(chart, chart.series[0])).toMatch(/^M42,/);
 
-    dashboard.hideVitalTooltip();
+    dashboard.scheduleVitalTooltipHide();
+    vi.advanceTimersByTime(100);
+    dashboard.keepVitalTooltipOpen();
+    vi.advanceTimersByTime(200);
+    expect(dashboard.activeVitalTooltip()).not.toBeNull();
+
+    dashboard.scheduleVitalTooltipHide();
+    vi.advanceTimersByTime(180);
     expect(dashboard.activeVitalTooltip()).toBeNull();
+    vi.useRealTimers();
+  });
+
+  it('counts each numeric vital from zero to its assigned value on load', () => {
+    const dashboard = new PatientDashboard();
+    const originalMatchMedia = window.matchMedia;
+    let animationFrame: FrameRequestCallback | undefined;
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: vi.fn(() => ({ matches: false })),
+    });
+    const requestAnimationFrame = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        animationFrame = callback;
+        return 1;
+      });
+
+    dashboard.ngAfterViewInit();
+    expect(dashboard.vitalCounts().systolic).toBe(0);
+
+    animationFrame?.(100);
+    animationFrame?.(650);
+    expect(dashboard.vitalCounts().systolic).toBeGreaterThan(0);
+    expect(dashboard.vitalCounts().systolic).toBeLessThan(148);
+
+    animationFrame?.(1200);
+    expect(dashboard.vitalCounts()).toEqual({
+      bmi: 26.3,
+      currentWeight: 165,
+      diastolic: 92,
+      fundalHeight: 28,
+      heartRate: 142,
+      systolic: 148,
+      weightGain: 22,
+    });
+
+    requestAnimationFrame.mockRestore();
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: originalMatchMedia,
+    });
   });
 
   it('uses scroll hysteresis when switching the summary to sticky mode', () => {

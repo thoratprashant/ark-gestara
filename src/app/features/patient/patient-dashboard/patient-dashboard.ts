@@ -1,4 +1,13 @@
-import { Component, ElementRef, HostListener, ViewChild, computed, signal } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  OnDestroy,
+  ViewChild,
+  computed,
+  signal,
+} from '@angular/core';
 import { scaleLinear } from 'd3-scale';
 
 interface VitalChartSeries {
@@ -41,6 +50,16 @@ interface VitalTooltipPosition {
   left: number;
   top: number;
   width: number;
+}
+
+interface VitalCountValues {
+  bmi: number;
+  diastolic: number;
+  fundalHeight: number;
+  heartRate: number;
+  systolic: number;
+  currentWeight: number;
+  weightGain: number;
 }
 
 type TimelineStatus = 'completed' | 'not-reviewed' | 'ordered' | 'late' | 'abnormal' | 'future';
@@ -213,6 +232,16 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
   },
 ];
 
+const VITAL_COUNT_TARGETS: VitalCountValues = {
+  bmi: 26.3,
+  currentWeight: 165,
+  diastolic: 92,
+  fundalHeight: 28,
+  heartRate: 142,
+  systolic: 148,
+  weightGain: 22,
+};
+
 const INITIAL_TIMELINE: PregnancyTimeline = {
   currentWeek: 28,
   maxWeek: 40,
@@ -357,7 +386,7 @@ const INITIAL_TIMELINE: PregnancyTimeline = {
   templateUrl: './patient-dashboard.html',
   styleUrl: './patient-dashboard.scss',
 })
-export class PatientDashboard {
+export class PatientDashboard implements AfterViewInit, OnDestroy {
   @ViewChild('patientSummary')
   private patientSummary?: ElementRef<HTMLElement>;
 
@@ -376,6 +405,15 @@ export class PatientDashboard {
     return tooltip ? [tooltip] : [];
   });
   readonly vitalTooltipPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 500 });
+  readonly vitalCounts = signal<VitalCountValues>({
+    bmi: 0,
+    currentWeight: 0,
+    diastolic: 0,
+    fundalHeight: 0,
+    heartRate: 0,
+    systolic: 0,
+    weightGain: 0,
+  });
   readonly pregnancyTimeline = signal(this.cloneTimeline(INITIAL_TIMELINE));
   readonly expandedTimelineGroupId = signal<string | null>('routine-prenatal-care');
   readonly weekTicks = Array.from({ length: 11 }, (_, index) => index * 4);
@@ -390,6 +428,20 @@ export class PatientDashboard {
 
   private activeChipInteraction: ActiveChipInteraction | null = null;
   private timelineHistory: PregnancyTimeline[] = [];
+  private vitalCountAnimationFrame: number | null = null;
+  private vitalTooltipHideTimer: number | null = null;
+
+  ngAfterViewInit(): void {
+    this.startVitalCountAnimation();
+  }
+
+  ngOnDestroy(): void {
+    if (this.vitalCountAnimationFrame !== null) {
+      window.cancelAnimationFrame(this.vitalCountAnimationFrame);
+    }
+
+    this.cancelVitalTooltipHide();
+  }
 
   toggleVisitSummary(): void {
     this.visitSummaryExpanded.update((expanded) => !expanded);
@@ -400,6 +452,8 @@ export class PatientDashboard {
   }
 
   showVitalTooltip(tooltipId: string, event: Event): void {
+    this.cancelVitalTooltipHide();
+
     const tooltip = VITAL_TOOLTIPS.find((item) => item.id === tooltipId);
     const section = this.vitalSigns?.nativeElement;
     const card = event.currentTarget as HTMLElement | null;
@@ -424,7 +478,20 @@ export class PatientDashboard {
   }
 
   hideVitalTooltip(): void {
+    this.cancelVitalTooltipHide();
     this.activeVitalTooltip.set(null);
+  }
+
+  scheduleVitalTooltipHide(): void {
+    this.cancelVitalTooltipHide();
+    this.vitalTooltipHideTimer = window.setTimeout(() => {
+      this.activeVitalTooltip.set(null);
+      this.vitalTooltipHideTimer = null;
+    }, 180);
+  }
+
+  keepVitalTooltipOpen(): void {
+    this.cancelVitalTooltipHide();
   }
 
   vitalChartX(index: number, pointCount: number): number {
@@ -645,6 +712,47 @@ export class PatientDashboard {
 
   private headerOffset(): number {
     return window.innerWidth < 992 ? 64 : 78;
+  }
+
+  private startVitalCountAnimation(): void {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      this.vitalCounts.set(VITAL_COUNT_TARGETS);
+      return;
+    }
+
+    const duration = 1100;
+    let startedAt: number | null = null;
+
+    const animate = (timestamp: number): void => {
+      startedAt ??= timestamp;
+      const progress = Math.min((timestamp - startedAt) / duration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+
+      this.vitalCounts.set({
+        bmi: Math.round(VITAL_COUNT_TARGETS.bmi * easedProgress * 10) / 10,
+        currentWeight: Math.round(VITAL_COUNT_TARGETS.currentWeight * easedProgress),
+        diastolic: Math.round(VITAL_COUNT_TARGETS.diastolic * easedProgress),
+        fundalHeight: Math.round(VITAL_COUNT_TARGETS.fundalHeight * easedProgress),
+        heartRate: Math.round(VITAL_COUNT_TARGETS.heartRate * easedProgress),
+        systolic: Math.round(VITAL_COUNT_TARGETS.systolic * easedProgress),
+        weightGain: Math.round(VITAL_COUNT_TARGETS.weightGain * easedProgress),
+      });
+
+      if (progress < 1) {
+        this.vitalCountAnimationFrame = window.requestAnimationFrame(animate);
+      } else {
+        this.vitalCountAnimationFrame = null;
+      }
+    };
+
+    this.vitalCountAnimationFrame = window.requestAnimationFrame(animate);
+  }
+
+  private cancelVitalTooltipHide(): void {
+    if (this.vitalTooltipHideTimer !== null) {
+      window.clearTimeout(this.vitalTooltipHideTimer);
+      this.vitalTooltipHideTimer = null;
+    }
   }
 
   private updateTimelineChip(
