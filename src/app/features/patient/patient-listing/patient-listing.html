@@ -1,0 +1,118 @@
+<section class="patient-listing" aria-labelledby="patient-listing-title">
+  <h1 id="patient-listing-title" class="patient-listing__title">Patient Dashboard</h1>
+
+  <div class="patient-listing__toolbar">
+    <label class="patient-listing__search">
+      <img src="assets/patient-listing/search.svg" alt="" width="16" height="16" />
+      <span class="visually-hidden">Search patients</span>
+      <input
+        type="search"
+        placeholder="Search patients..."
+        [value]="searchTerm()"
+        (input)="updateSearch($event)"
+      />
+    </label>
+
+    <div class="patient-listing__filters" aria-label="Filter patients">
+      <div class="patient-listing__filter-group" aria-label="Trimester">
+        @for (filter of trimesterFilters; track filter.value) {
+          <button
+            type="button"
+            class="patient-listing__filter"
+            [class.is-active]="selectedTrimester() === filter.value"
+            [attr.aria-pressed]="selectedTrimester() === filter.value"
+            (click)="selectTrimester(filter.value)"
+          >
+            {{ filter.label }}
+          </button>
+        }
+      </div>
+
+      <span class="patient-listing__filter-divider" aria-hidden="true"></span>
+
+      <div class="patient-listing__filter-group" aria-label="Risk level">
+        @for (risk of riskFilters; track risk) {
+          <button
+            type="button"
+            class="patient-listing__filter"
+            [class.is-active]="selectedRisk() === risk"
+            [attr.aria-pressed]="selectedRisk() === risk"
+            (click)="toggleRisk(risk)"
+          >
+            {{ risk }} Risk
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="patient-listing__table-shell">
+    <div class="patient-listing__table-scroll">
+      <table class="patient-listing__table">
+        <caption class="visually-hidden">
+          Patient list with pregnancy dates, next visit, and risk level
+        </caption>
+        <colgroup>
+          <col class="patient-column" />
+          <col class="age-column" />
+          <col class="date-column" />
+          <col class="date-column" />
+          <col class="date-column" />
+          <col class="risk-column" />
+          <col class="action-column" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th scope="col">Patient</th>
+            <th scope="col">Age</th>
+            <th scope="col">Gestational Age</th>
+            <th scope="col">Due Date</th>
+            <th scope="col">Next Visit</th>
+            <th scope="col">Risk</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (patient of filteredPatients(); track patient.name) {
+            <tr>
+              <td>
+                <div class="patient-listing__identity">
+                  <span
+                    class="patient-listing__avatar"
+                    [class.patient-listing__avatar--medium]="patient.risk === 'Medium'"
+                  >
+                    {{ patient.initials }}
+                  </span>
+                  <span class="patient-listing__name">{{ patient.name }}</span>
+                </div>
+              </td>
+              <td>{{ patient.age }}</td>
+              <td>{{ patient.gestationalAge }}</td>
+              <td>{{ patient.dueDate }}</td>
+              <td>{{ patient.nextVisit }}</td>
+              <td>
+                <span
+                  class="patient-listing__risk"
+                  [class.patient-listing__risk--medium]="patient.risk === 'Medium'"
+                  [class.patient-listing__risk--low]="patient.risk === 'Low'"
+                >
+                  {{ patient.risk }}
+                </span>
+              </td>
+              <td>
+                <a class="patient-listing__view" routerLink="/patient/dashboard">
+                  <img src="assets/patient-listing/view.svg" alt="" width="16" height="16" />
+                  <span>View</span>
+                </a>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="patient-listing__empty" colspan="7">No patients match these filters.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

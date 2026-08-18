@@ -15,6 +15,11 @@ export const PATIENT_ROUTES: Routes = [
           ),
       },
       {
+        path: 'patient-listing',
+        loadComponent: () =>
+          import('./patient-listing/patient-listing').then((m) => m.PatientListing),
+      },
+      {
         path: 'previous-visits',
         loadComponent: () =>
           import('./previous-visits/previous-visits').then((m) => m.PreviousVisits),
