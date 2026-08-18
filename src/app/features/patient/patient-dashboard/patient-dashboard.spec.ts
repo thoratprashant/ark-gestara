@@ -148,4 +148,37 @@ describe('PatientDashboard timeline', () => {
     dashboard.hideVitalTooltip();
     expect(dashboard.activeVitalTooltip()).toBeNull();
   });
+
+  it('uses scroll hysteresis when switching the summary to sticky mode', () => {
+    const dashboard = new PatientDashboard();
+    const summary = document.createElement('section');
+    vi.spyOn(summary, 'getBoundingClientRect').mockReturnValue({
+      top: 70,
+      height: 286.4,
+    } as DOMRect);
+    (
+      dashboard as unknown as {
+        patientSummary: ElementRef<HTMLElement>;
+      }
+    ).patientSummary = new ElementRef(summary);
+
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 5 });
+    dashboard.onWindowScroll();
+
+    expect(dashboard.summarySticky()).toBe(false);
+    expect(dashboard.summaryExpanded()).toBe(true);
+
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 12 });
+
+    dashboard.onWindowScroll();
+
+    expect(dashboard.summarySticky()).toBe(true);
+    expect(dashboard.summaryExpanded()).toBe(false);
+
+    Object.defineProperty(window, 'scrollY', { configurable: true, value: 0 });
+    dashboard.onWindowScroll();
+
+    expect(dashboard.summarySticky()).toBe(false);
+    expect(dashboard.summaryExpanded()).toBe(true);
+  });
 });

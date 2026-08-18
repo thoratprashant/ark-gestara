@@ -1,7 +1,6 @@
-<div class="patient-dashboard" [class.patient-dashboard--summary-sticky]="summarySticky()">
+<div class="patient-dashboard">
   <section #patientSummary class="patient-summary" [class.patient-summary--collapsed]="!summaryExpanded()"
-    [class.patient-summary--sticky]="summarySticky()" [style.left.px]="summarySticky() ? stickyLeft() : null"
-    [style.width.px]="summarySticky() ? stickyWidth() : null" aria-labelledby="patient-name">
+    [class.patient-summary--sticky]="summarySticky()" aria-labelledby="patient-name">
     <header class="patient-summary__header">
       <div class="patient-identity">
         <h1 id="patient-name">Sarah Johnson</h1>

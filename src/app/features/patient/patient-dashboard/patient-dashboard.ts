@@ -368,8 +368,6 @@ export class PatientDashboard {
 
   readonly summaryExpanded = signal(true);
   readonly summarySticky = signal(false);
-  readonly stickyLeft = signal(0);
-  readonly stickyWidth = signal(0);
   readonly visitSummaryExpanded = signal(true);
   readonly progressNoteExpanded = signal(true);
   readonly activeVitalTooltip = signal<VitalTooltip | null>(null);
@@ -627,9 +625,7 @@ export class PatientDashboard {
     const headerOffset = this.headerOffset();
     const summaryBounds = summary.getBoundingClientRect();
 
-    if (!this.summarySticky() && summaryBounds.top <= headerOffset) {
-      this.updateStickyBounds();
-
+    if (!this.summarySticky() && window.scrollY > 8 && summaryBounds.top <= headerOffset) {
       if (this.summaryExpanded()) {
         this.summaryExpanded.set(false);
       }
@@ -644,24 +640,6 @@ export class PatientDashboard {
       if (!this.summaryManuallyCollapsed) {
         this.summaryExpanded.set(true);
       }
-    }
-  }
-
-  @HostListener('window:resize')
-  onWindowResize(): void {
-    if (this.summarySticky()) {
-      this.updateStickyBounds();
-    }
-  }
-
-  private updateStickyBounds(): void {
-    const summary = this.patientSummary?.nativeElement;
-    const dashboard = summary?.parentElement;
-
-    if (dashboard) {
-      const dashboardBounds = dashboard.getBoundingClientRect();
-      this.stickyLeft.set(dashboardBounds.left);
-      this.stickyWidth.set(dashboardBounds.width);
     }
   }
 
