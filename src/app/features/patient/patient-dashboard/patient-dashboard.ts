@@ -250,6 +250,47 @@ const VITAL_COUNT_TARGETS: VitalCountValues = {
   weightGain: 22,
 };
 
+const ADDITIONAL_TIMELINE_GROUPS: TimelineGroup[] = [
+  ['hypertension-monitoring', 'Hypertension Monitoring', 'Blood pressure review'],
+  ['medication-management', 'Medication Management', 'Medication reconciliation'],
+  ['fetal-surveillance', 'Fetal Surveillance', 'Non-stress testing'],
+  ['nutrition-lifestyle', 'Nutrition & Lifestyle', 'Nutrition counseling'],
+  ['laboratory-follow-up', 'Laboratory Follow-up', 'Repeat laboratory panel'],
+  ['delivery-planning', 'Delivery Planning', 'Delivery readiness review'],
+  ['postpartum-planning', 'Postpartum Planning', 'Postpartum care plan'],
+  ['patient-education', 'Patient Education', 'Pregnancy education'],
+].map(([id, label, rowLabel], index) => {
+  const statuses: TimelineStatus[] = [
+    'completed',
+    'not-reviewed',
+    'ordered',
+    'late',
+    'abnormal',
+    'future',
+  ];
+  const startWeek = 8 + ((index * 4) % 25);
+
+  return {
+    id,
+    label,
+    rows: [
+      {
+        id: `${id}-task`,
+        label: rowLabel,
+        chips: [
+          {
+            id: `${id}-chip`,
+            label: rowLabel,
+            status: statuses[index % statuses.length],
+            startWeek,
+            endWeek: Math.min(startWeek + 5, 40),
+          },
+        ],
+      },
+    ],
+  };
+});
+
 const INITIAL_TIMELINE: PregnancyTimeline = {
   currentWeek: 28,
   maxWeek: 40,
@@ -385,6 +426,7 @@ const INITIAL_TIMELINE: PregnancyTimeline = {
         },
       ],
     },
+    ...ADDITIONAL_TIMELINE_GROUPS,
   ],
 };
 
@@ -424,7 +466,9 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     weightGain: 0,
   });
   readonly pregnancyTimeline = signal(this.cloneTimeline(INITIAL_TIMELINE));
-  readonly expandedTimelineGroupId = signal<string | null>('routine-prenatal-care');
+  readonly expandedTimelineGroupIds = signal<ReadonlySet<string>>(
+    new Set(INITIAL_TIMELINE.groups.slice(0, 5).map((group) => group.id)),
+  );
   readonly weekTicks = Array.from({ length: 11 }, (_, index) => index * 4);
   readonly timelineLegend: ReadonlyArray<{ label: string; status: TimelineStatus }> = [
     { label: 'Completed/Reviewed', status: 'completed' },
@@ -570,7 +614,21 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   }
 
   toggleTimelineGroup(groupId: string): void {
-    this.expandedTimelineGroupId.update((expandedId) => (expandedId === groupId ? null : groupId));
+    this.expandedTimelineGroupIds.update((expandedIds) => {
+      const nextExpandedIds = new Set(expandedIds);
+
+      if (nextExpandedIds.has(groupId)) {
+        nextExpandedIds.delete(groupId);
+      } else {
+        nextExpandedIds.add(groupId);
+      }
+
+      return nextExpandedIds;
+    });
+  }
+
+  isTimelineGroupExpanded(groupId: string): boolean {
+    return this.expandedTimelineGroupIds().has(groupId);
   }
 
   weekPercent(week: number): number {

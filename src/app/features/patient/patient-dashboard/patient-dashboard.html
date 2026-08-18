@@ -391,13 +391,13 @@
               <button
                 class="problem-timeline__group-toggle"
                 type="button"
-                [attr.aria-expanded]="expandedTimelineGroupId() === group.id"
+                [attr.aria-expanded]="isTimelineGroupExpanded(group.id)"
                 [attr.aria-controls]="'timeline-group-' + group.id"
                 (click)="toggleTimelineGroup(group.id)"
               >
                 <img
                   class="problem-timeline__group-icon"
-                  [src]="expandedTimelineGroupId() === group.id ? 'assets/timeline-routine.svg' : 'assets/timeline-gdm.svg'"
+                  [src]="isTimelineGroupExpanded(group.id) ? 'assets/timeline-routine.svg' : 'assets/timeline-gdm.svg'"
                   alt=""
                   aria-hidden="true"
                 />
@@ -416,13 +416,13 @@
 
             <div
               class="problem-timeline__group-motion"
-              [class.problem-timeline__group-motion--open]="expandedTimelineGroupId() === group.id"
-              [attr.aria-hidden]="expandedTimelineGroupId() !== group.id"
+              [class.problem-timeline__group-motion--open]="isTimelineGroupExpanded(group.id)"
+              [attr.aria-hidden]="!isTimelineGroupExpanded(group.id)"
             >
               <div
                 [id]="'timeline-group-' + group.id"
                 class="problem-timeline__group-motion-inner"
-                [attr.inert]="expandedTimelineGroupId() === group.id ? null : ''"
+                [attr.inert]="isTimelineGroupExpanded(group.id) ? null : ''"
               >
                 @for (row of group.rows; track row.id) {
                   <div class="problem-timeline__row">

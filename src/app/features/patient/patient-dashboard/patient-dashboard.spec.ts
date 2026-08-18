@@ -12,14 +12,25 @@ describe('PatientDashboard timeline', () => {
     }).compileComponents();
   });
 
-  it('keeps no more than one timeline group expanded', () => {
+  it('starts with five of ten groups expanded and toggles each group independently', () => {
     const dashboard = new PatientDashboard();
+    const groups = dashboard.pregnancyTimeline().groups;
 
-    dashboard.toggleTimelineGroup('gdm-monitoring');
-    expect(dashboard.expandedTimelineGroupId()).toBe('gdm-monitoring');
+    expect(groups).toHaveLength(10);
+    expect(groups.slice(0, 5).every((group) => dashboard.isTimelineGroupExpanded(group.id))).toBe(
+      true,
+    );
+    expect(groups.slice(5).every((group) => !dashboard.isTimelineGroupExpanded(group.id))).toBe(
+      true,
+    );
 
-    dashboard.toggleTimelineGroup('gdm-monitoring');
-    expect(dashboard.expandedTimelineGroupId()).toBeNull();
+    dashboard.toggleTimelineGroup(groups[5].id);
+    expect(dashboard.isTimelineGroupExpanded(groups[5].id)).toBe(true);
+    expect(dashboard.isTimelineGroupExpanded(groups[0].id)).toBe(true);
+
+    dashboard.toggleTimelineGroup(groups[0].id);
+    expect(dashboard.isTimelineGroupExpanded(groups[0].id)).toBe(false);
+    expect(dashboard.isTimelineGroupExpanded(groups[5].id)).toBe(true);
   });
 
   it('uses the Figma legend statuses and keeps edge ticks centered inside the axis', () => {
