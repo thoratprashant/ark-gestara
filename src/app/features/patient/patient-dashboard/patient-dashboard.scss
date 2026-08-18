@@ -4,6 +4,8 @@
 }
 
 .patient-dashboard {
+  --patient-summary-sticky-height: 4.375rem;
+
   display: grid;
   gap: clamp(1rem, 2vw, 1.5rem);
   margin-inline: auto;
@@ -1044,6 +1046,10 @@
 }
 
 @media (max-width: 47.999rem) {
+  .patient-dashboard {
+    --patient-summary-sticky-height: 7.25rem;
+  }
+
   .clinical-section__body {
     padding-top: 1rem;
   }
