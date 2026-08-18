@@ -27,7 +27,13 @@ interface VitalChart {
   label?: string;
   max: number;
   min: number;
+  normalRange?: {
+    color?: string;
+    max: number;
+    min: number;
+  };
   series: VitalChartSeries[];
+  showVerticalGrid?: boolean;
   thresholds?: VitalChartThreshold[];
   xLabels: string[];
   yTicks: number[];
@@ -40,6 +46,11 @@ interface VitalHistoryItem {
 
 interface VitalTooltip {
   charts?: VitalChart[];
+  footer?: {
+    color: string;
+    message: string;
+    status?: string;
+  };
   history?: VitalHistoryItem[];
   id: string;
   subtitle?: string;
@@ -113,17 +124,22 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
   {
     id: 'blood-pressure',
     title: 'Blood Pressure Trend',
-    width: 600,
+    width: 520,
+    footer: {
+      color: '#ff595f',
+      message: 'Elevated BP readings: 33%',
+    },
     charts: [
       {
         compact: true,
         label: 'Systolic Blood Pressure (Abnormal: ≥140 mmHg)',
         min: 100,
         max: 160,
-        yTicks: [100, 115, 130, 145, 160],
+        yTicks: [100, 120, 140, 160],
         xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
-        thresholds: [{ value: 140, label: 'Abnormal', color: '#ef4444' }],
-        series: [{ values: [118, 122, 128, 138, 142, 145, 148], color: '#8b35ff' }],
+        normalRange: { min: 100, max: 140 },
+        thresholds: [{ value: 140, label: 'Abn', color: '#ff595f' }],
+        series: [{ values: [114, 126, 128, 124, 136, 140, 147], color: '#5b65ed' }],
       },
       {
         compact: true,
@@ -132,8 +148,9 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
         max: 100,
         yTicks: [60, 70, 80, 90, 100],
         xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
-        thresholds: [{ value: 90, label: 'Abnormal', color: '#ef4444' }],
-        series: [{ values: [76, 78, 82, 86, 88, 90, 92], color: '#ec3b96' }],
+        normalRange: { min: 60, max: 90 },
+        thresholds: [{ value: 90, label: 'Abn', color: '#ff595f' }],
+        series: [{ values: [71, 77, 79, 81, 84, 87, 92], color: '#5b65ed' }],
       },
     ],
   },
@@ -141,7 +158,11 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
     id: 'heart-rate',
     title: 'Fetal Heart Rate Trend',
     subtitle: 'Normal Range: 110-160 bpm',
-    width: 500,
+    width: 520,
+    footer: {
+      color: '#0d9488',
+      message: 'Fetal heart rate is stable and within normal limits',
+    },
     charts: [
       {
         min: 100,
@@ -149,10 +170,11 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
         yTicks: [100, 120, 140, 170],
         xLabels: ['12w', '16w', '20w', '24w', '26w', '28w'],
         thresholds: [
-          { value: 110, label: '', color: '#10b981' },
-          { value: 160, label: '', color: '#10b981' },
+          { value: 110, label: '', color: '#0d9488' },
+          { value: 160, label: '', color: '#0d9488' },
         ],
-        series: [{ values: [166, 159, 153, 149, 146, 142], color: '#3b82f6' }],
+        normalRange: { min: 110, max: 160 },
+        series: [{ values: [166, 156, 149, 143, 140, 136], color: '#3b82f6' }],
       },
     ],
   },
@@ -160,21 +182,27 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
     id: 'fundal-height',
     title: 'Fundal Height Trend',
     subtitle: 'Expected: Fundal height (cm) ≈ Gestational age (weeks)',
-    width: 500,
+    width: 520,
+    footer: {
+      color: '#10b981',
+      message: 'Consistent with gestational age (98th percentile)',
+      status: 'Normal Growth',
+    },
     charts: [
       {
         min: 10,
         max: 35,
         yTicks: [10, 17, 24, 35],
         xLabels: ['16w', '20w', '24w', '26w', '28w'],
-        series: [{ values: [16, 20, 24, 26, 28], color: '#f59e0b' }],
+        normalRange: { min: 16, max: 26, color: 'rgba(16, 185, 129, 0.1)' },
+        series: [{ values: [17, 20, 24, 26, 29], color: '#f59e0b' }],
       },
     ],
   },
   {
     id: 'cervical-exam',
     title: 'Cervical Exam History',
-    width: 400,
+    width: 520,
     history: [
       { week: '36w', detail: 'Closed, thick, -3 station' },
       { week: '37w', detail: 'Closed, thick, -3 station' },
@@ -187,14 +215,15 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
     id: 'bmi',
     title: 'BMI Trend',
     subtitle: 'Tracking BMI progression throughout pregnancy',
-    width: 500,
+    width: 520,
     charts: [
       {
         min: 20,
         max: 30,
         yTicks: [20, 23, 26, 30],
         xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
-        series: [{ values: [23.2, 23.5, 24.1, 24.8, 25.6, 26.3, 26.8], color: '#6366f1' }],
+        showVerticalGrid: true,
+        series: [{ values: [24.4, 24.8, 25, 25.7, 26.1, 27, 27.6], color: '#6366f1' }],
       },
     ],
   },
@@ -202,14 +231,15 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
     id: 'current-weight',
     title: 'Weight Trend',
     subtitle: 'Maternal weight progression throughout pregnancy',
-    width: 500,
+    width: 528,
     charts: [
       {
         min: 140,
         max: 170,
         yTicks: [140, 148, 156, 170],
         xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
-        series: [{ values: [143, 145, 148, 153, 158, 162, 165], color: '#10b981' }],
+        showVerticalGrid: true,
+        series: [{ values: [141, 143, 146, 150, 155, 160, 163], color: '#0d9488' }],
       },
     ],
   },
@@ -217,7 +247,7 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
     id: 'weight-gain',
     title: 'Weight Gain Trend',
     subtitle: 'Recommended gain for Normal weight: 25-35 lbs (Pre-pregnancy BMI: 23.2)',
-    width: 500,
+    width: 528,
     charts: [
       {
         min: 0,
@@ -225,9 +255,10 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
         yTicks: [0, 10, 20, 30, 40],
         xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
         thresholds: [
-          { value: 25, label: 'Min', color: '#10b981' },
-          { value: 35, label: 'Max', color: '#10b981' },
+          { value: 25, label: '', color: '#10b981' },
+          { value: 35, label: '', color: '#10b981' },
         ],
+        showVerticalGrid: true,
         series: [
           {
             values: [0, 2, 5, 10, 15, 19, 22],
@@ -573,6 +604,18 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   vitalChartAxisY(chart: VitalChart): number {
     return chart.compact ? 111 : 154;
+  }
+
+  vitalChartRangeHeight(chart: VitalChart): number {
+    if (!chart.normalRange) {
+      return 0;
+    }
+
+    return Math.max(
+      0,
+      this.vitalChartY(chart.normalRange.min, chart) -
+        this.vitalChartY(chart.normalRange.max, chart),
+    );
   }
 
   updateVitalChartHover(event: MouseEvent, chart: VitalChart, chartIndex: number): void {

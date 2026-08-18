@@ -154,7 +154,7 @@ describe('PatientDashboard timeline', () => {
     const tooltip = dashboard.activeVitalTooltip();
     const chart = tooltip?.charts?.[0];
     expect(tooltip?.title).toBe('Fetal Heart Rate Trend');
-    expect(dashboard.vitalTooltipPosition()).toEqual({ left: 120, top: 166, width: 500 });
+    expect(dashboard.vitalTooltipPosition()).toEqual({ left: 120, top: 166, width: 520 });
     expect(chart && dashboard.vitalChartPath(chart, chart.series[0])).toMatch(/^M42,/);
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
