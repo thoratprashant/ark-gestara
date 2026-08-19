@@ -190,6 +190,73 @@ describe('PatientDashboard timeline', () => {
     vi.useRealTimers();
   });
 
+  it('opens each Figma result tooltip at the top-right edge of its result card', () => {
+    vi.useFakeTimers();
+    const dashboard = new PatientDashboard();
+    const card = document.createElement('article');
+    vi.spyOn(card, 'getBoundingClientRect').mockReturnValue({
+      left: 120,
+      right: 600,
+      top: 200,
+      bottom: 360,
+    } as DOMRect);
+
+    dashboard.showResultTooltip('cbc', { currentTarget: card } as unknown as Event);
+
+    expect(dashboard.activeResultTooltip()?.title).toBe('Complete Blood Count (CBC)');
+    expect(dashboard.activeResultTooltip()?.rows).toHaveLength(14);
+    expect(dashboard.resultTooltipPosition()).toEqual({ left: 180, top: 200, width: 420 });
+
+    dashboard.showResultTooltip('home-bp', { currentTarget: card } as unknown as Event);
+    expect(dashboard.activeResultTooltip()?.chart?.series.map((series) => series.label)).toEqual([
+      'Systolic',
+      'Diastolic',
+    ]);
+    expect(dashboard.resultTooltipPosition()).toEqual({ left: 80, top: 200, width: 520 });
+
+    dashboard.showResultTooltip('blood-glucose', { currentTarget: card } as unknown as Event);
+    expect(dashboard.activeResultTooltip()?.footer.map((item) => item.message)).toEqual([
+      'Elevated fasting readings: 50%',
+      'Elevated post-prandial readings: 0%',
+    ]);
+    expect(dashboard.resultTooltipPosition()).toEqual({ left: 80, top: 200, width: 520 });
+
+    dashboard.scheduleResultTooltipHide();
+    vi.advanceTimersByTime(180);
+    expect(dashboard.activeResultTooltip()).toBeNull();
+    vi.useRealTimers();
+  });
+
+  it('opens the pre-eclampsia assessment below the high-risk summary fact', () => {
+    vi.useFakeTimers();
+    const dashboard = new PatientDashboard();
+    const riskFact = document.createElement('button');
+    vi.spyOn(riskFact, 'getBoundingClientRect').mockReturnValue({
+      right: 900,
+      bottom: 120,
+    } as DOMRect);
+
+    dashboard.showRiskAssessment({ currentTarget: riskFact } as unknown as Event);
+
+    expect(dashboard.riskAssessmentOpen()).toBe(true);
+    expect(dashboard.riskAssessmentPosition()).toEqual({ left: 300, top: 128, width: 600 });
+    expect(
+      dashboard.highRiskFactors.filter((factor) => factor.selected).map((factor) => factor.label),
+    ).toEqual(['Chronic hypertension']);
+    expect(dashboard.moderateRiskFactors).toHaveLength(5);
+
+    dashboard.scheduleRiskAssessmentHide();
+    vi.advanceTimersByTime(100);
+    dashboard.keepRiskAssessmentOpen();
+    vi.advanceTimersByTime(200);
+    expect(dashboard.riskAssessmentOpen()).toBe(true);
+
+    dashboard.scheduleRiskAssessmentHide();
+    vi.advanceTimersByTime(180);
+    expect(dashboard.riskAssessmentOpen()).toBe(false);
+    vi.useRealTimers();
+  });
+
   it('counts each numeric vital from zero to its assigned value on load', () => {
     const dashboard = new PatientDashboard();
     const originalMatchMedia = window.matchMedia;

@@ -12,7 +12,9 @@ import { scaleLinear } from 'd3-scale';
 
 interface VitalChartSeries {
   color: string;
+  label?: string;
   pointColor?: string;
+  pointColors?: string[];
   values: number[];
 }
 
@@ -61,6 +63,24 @@ interface VitalTooltip {
 interface VitalTooltipPosition {
   left: number;
   top: number;
+  width: number;
+}
+
+interface ResultTableRow {
+  alert?: 'low';
+  name: string;
+  range: string;
+  value: string;
+}
+
+interface ResultTooltip {
+  chart?: VitalChart;
+  closeable?: boolean;
+  footer: ReadonlyArray<{ color: string; message: string }>;
+  id: string;
+  rows?: ResultTableRow[];
+  subtitle?: string;
+  title: string;
   width: number;
 }
 
@@ -268,6 +288,83 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
         ],
       },
     ],
+  },
+];
+
+const RESULT_TOOLTIPS: ResultTooltip[] = [
+  {
+    id: 'cbc',
+    title: 'Complete Blood Count (CBC)',
+    width: 420,
+    closeable: true,
+    footer: [],
+    rows: [
+      { name: 'WBC', value: '9.2 K/uL', range: '(4.0 - 11.0)' },
+      { name: 'Hemoglobin', value: '11.2 g/dL', range: '(11.5 - 15.5)', alert: 'low' },
+      { name: 'Hematocrit', value: '34.0 %', range: '(34.0 - 45.0)' },
+      { name: 'Platelets', value: '245 K/uL', range: '(150 - 400)' },
+      { name: 'RBC', value: '3.8 M/uL', range: '(3.8 - 5.2)' },
+      { name: 'MCV', value: '88.0 fL', range: '(80.0 - 100.0)' },
+      { name: 'MCH', value: '29.0 pg', range: '(27.0 - 33.0)' },
+      { name: 'MCHC', value: '33.0 g/dL', range: '(32.0 - 36.0)' },
+      { name: 'RDW', value: '13.2 %', range: '(11.5 - 14.5)' },
+      { name: 'Neutrophils', value: '65.0 %', range: '(40.0 - 70.0)' },
+      { name: 'Lymphocytes', value: '28.0 %', range: '(20.0 - 40.0)' },
+      { name: 'Monocytes', value: '5.0 %', range: '(2.0 - 8.0)' },
+      { name: 'Eosinophils', value: '2.0 %', range: '(1.0 - 4.0)' },
+      { name: 'Basophils', value: '0.5 %', range: '(0.0 - 1.0)' },
+    ],
+  },
+  {
+    id: 'home-bp',
+    title: 'Blood Pressure Trend',
+    subtitle: 'Target: <140/90 mmHg',
+    width: 520,
+    footer: [{ color: '#f06a6a', message: 'Elevated BP readings: 33%' }],
+    chart: {
+      compact: true,
+      min: 70,
+      max: 160,
+      yTicks: [70, 95, 120, 160],
+      xLabels: ['3/22 PM', '3/23 PM', '3/24 PM', '3/25 PM', '3/26 PM', '3/27 PM'],
+      thresholds: [
+        { value: 140, label: '', color: '#ff595f' },
+        { value: 90, label: '', color: '#f58cb4' },
+      ],
+      series: [
+        { label: 'Systolic', values: [128, 138, 128, 148, 135, 142], color: '#e9298a' },
+        { label: 'Diastolic', values: [82, 92, 82, 86, 86, 82], color: '#f58cb4' },
+      ],
+    },
+  },
+  {
+    id: 'blood-glucose',
+    title: 'Blood Glucose Trend',
+    subtitle: 'Target: Fasting <95 mg/dL, Post-prandial <140 mg/dL',
+    width: 520,
+    footer: [
+      { color: '#f06a6a', message: 'Elevated fasting readings: 50%' },
+      { color: '#0d9488', message: 'Elevated post-prandial readings: 0%' },
+    ],
+    chart: {
+      compact: true,
+      min: 80,
+      max: 150,
+      yTicks: [80, 100, 120, 140, 150],
+      xLabels: ['3/22', '3/23', '3/24', '3/25', '3/26', '3/27'],
+      thresholds: [
+        { value: 140, label: '', color: '#ff595f' },
+        { value: 95, label: '', color: '#d99b00' },
+      ],
+      series: [
+        {
+          label: 'Glucose Level',
+          values: [125, 138, 92, 132, 104, 142],
+          color: '#1e90ff',
+          pointColors: ['#1e90ff', '#1e90ff', '#0d9488', '#1e90ff', '#0d9488', '#1e90ff'],
+        },
+      ],
+    },
   },
 ];
 
@@ -486,6 +583,30 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     return tooltip ? [tooltip] : [];
   });
   readonly vitalTooltipPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 500 });
+  readonly activeResultTooltip = signal<ResultTooltip | null>(null);
+  readonly activeResultTooltipItems = computed(() => {
+    const tooltip = this.activeResultTooltip();
+    return tooltip ? [tooltip] : [];
+  });
+  readonly resultTooltipPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 420 });
+  readonly resultTooltipMaxHeight = signal(600);
+  readonly riskAssessmentOpen = signal(false);
+  readonly riskAssessmentPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 600 });
+  readonly riskAssessmentMaxHeight = signal(690);
+  readonly highRiskFactors = [
+    { label: 'Hypertensive disorder in previous pregnancy', selected: false },
+    { label: 'Chronic kidney disease', selected: false },
+    { label: 'Autoimmune disease (SLE, APS)', selected: false },
+    { label: 'Type 1 or Type 2 diabetes', selected: false },
+    { label: 'Chronic hypertension', selected: true },
+  ] as const;
+  readonly moderateRiskFactors = [
+    'First pregnancy (nulliparity)',
+    'Obesity (BMI >30 kg/m²)',
+    'Family history of pre-eclampsia',
+    'Multiple gestation',
+    'Maternal age ≥35 years',
+  ] as const;
   readonly vitalChartHover = signal<VitalChartHover | null>(null);
   readonly vitalCounts = signal<VitalCountValues>({
     bmi: 0,
@@ -514,6 +635,8 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   private timelineHistory: PregnancyTimeline[] = [];
   private vitalCountAnimationFrame: number | null = null;
   private vitalTooltipHideTimer: number | null = null;
+  private resultTooltipHideTimer: number | null = null;
+  private riskAssessmentHideTimer: number | null = null;
 
   ngAfterViewInit(): void {
     this.startVitalCountAnimation();
@@ -525,6 +648,8 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     }
 
     this.cancelVitalTooltipHide();
+    this.cancelResultTooltipHide();
+    this.cancelRiskAssessmentHide();
   }
 
   toggleVisitSummary(): void {
@@ -579,6 +704,85 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   keepVitalTooltipOpen(): void {
     this.cancelVitalTooltipHide();
+  }
+
+  showResultTooltip(tooltipId: string, event: Event): void {
+    this.cancelResultTooltipHide();
+    const tooltip = RESULT_TOOLTIPS.find((item) => item.id === tooltipId);
+    const card = event.currentTarget as HTMLElement | null;
+
+    if (!tooltip || !card) {
+      return;
+    }
+
+    const cardBounds = card.getBoundingClientRect();
+    const width = Math.min(tooltip.width, Math.max(window.innerWidth - 24, 280));
+    const maximumLeft = Math.max(12, window.innerWidth - width - 12);
+    const top = Math.max(12, cardBounds.top);
+
+    this.resultTooltipPosition.set({
+      left: this.clamp(cardBounds.right - width, 12, maximumLeft),
+      top,
+      width,
+    });
+    this.resultTooltipMaxHeight.set(Math.max(180, window.innerHeight - top - 12));
+    this.activeResultTooltip.set(tooltip);
+  }
+
+  hideResultTooltip(): void {
+    this.cancelResultTooltipHide();
+    this.activeResultTooltip.set(null);
+  }
+
+  scheduleResultTooltipHide(): void {
+    this.cancelResultTooltipHide();
+    this.resultTooltipHideTimer = window.setTimeout(() => {
+      this.activeResultTooltip.set(null);
+      this.resultTooltipHideTimer = null;
+    }, 180);
+  }
+
+  keepResultTooltipOpen(): void {
+    this.cancelResultTooltipHide();
+  }
+
+  showRiskAssessment(event: Event): void {
+    this.cancelRiskAssessmentHide();
+    const trigger = event.currentTarget as HTMLElement | null;
+
+    if (!trigger) {
+      return;
+    }
+
+    const triggerBounds = trigger.getBoundingClientRect();
+    const width = Math.min(600, Math.max(window.innerWidth - 24, 280));
+    const maximumLeft = Math.max(12, window.innerWidth - width - 12);
+    const top = triggerBounds.bottom + 8;
+
+    this.riskAssessmentPosition.set({
+      left: this.clamp(triggerBounds.right - width, 12, maximumLeft),
+      top,
+      width,
+    });
+    this.riskAssessmentMaxHeight.set(Math.max(180, window.innerHeight - top - 12));
+    this.riskAssessmentOpen.set(true);
+  }
+
+  hideRiskAssessment(): void {
+    this.cancelRiskAssessmentHide();
+    this.riskAssessmentOpen.set(false);
+  }
+
+  scheduleRiskAssessmentHide(): void {
+    this.cancelRiskAssessmentHide();
+    this.riskAssessmentHideTimer = window.setTimeout(() => {
+      this.riskAssessmentOpen.set(false);
+      this.riskAssessmentHideTimer = null;
+    }, 180);
+  }
+
+  keepRiskAssessmentOpen(): void {
+    this.cancelRiskAssessmentHide();
   }
 
   vitalChartX(index: number, pointCount: number): number {
@@ -652,6 +856,21 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       .map((value, index) => {
         const command = index === 0 ? 'M' : 'L';
         return `${command}${this.vitalChartX(index, series.values.length)},${this.vitalChartY(value, chart)}`;
+      })
+      .join(' ');
+  }
+
+  resultChartX(index: number, pointCount: number): number {
+    return scaleLinear()
+      .domain([0, Math.max(pointCount - 1, 1)])
+      .range([35, 469])(index);
+  }
+
+  resultChartPath(chart: VitalChart, series: VitalChartSeries): string {
+    return series.values
+      .map((value, index) => {
+        const command = index === 0 ? 'M' : 'L';
+        return `${command}${this.resultChartX(index, series.values.length)},${this.vitalChartY(value, chart)}`;
       })
       .join(' ');
   }
@@ -840,6 +1059,14 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   @HostListener('window:scroll')
   onWindowScroll(): void {
+    if (this.activeResultTooltip()) {
+      this.hideResultTooltip();
+    }
+
+    if (this.riskAssessmentOpen()) {
+      this.hideRiskAssessment();
+    }
+
     const summary = this.patientSummary?.nativeElement;
 
     if (!summary) {
@@ -909,6 +1136,20 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     if (this.vitalTooltipHideTimer !== null) {
       window.clearTimeout(this.vitalTooltipHideTimer);
       this.vitalTooltipHideTimer = null;
+    }
+  }
+
+  private cancelResultTooltipHide(): void {
+    if (this.resultTooltipHideTimer !== null) {
+      window.clearTimeout(this.resultTooltipHideTimer);
+      this.resultTooltipHideTimer = null;
+    }
+  }
+
+  private cancelRiskAssessmentHide(): void {
+    if (this.riskAssessmentHideTimer !== null) {
+      window.clearTimeout(this.riskAssessmentHideTimer);
+      this.riskAssessmentHideTimer = null;
     }
   }
 

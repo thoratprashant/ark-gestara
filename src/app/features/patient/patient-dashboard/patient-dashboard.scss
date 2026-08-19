@@ -135,6 +135,7 @@
 
 .summary-fact > span:last-child {
   display: grid;
+  gap: 2px;
 }
 
 .summary-fact small {
@@ -146,7 +147,7 @@
 
 .summary-fact strong {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   line-height: 1.2;
 }
@@ -154,6 +155,21 @@
 .summary-fact--risk {
   color: #f06a6a;
   background: #fff0f1;
+  border: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.summary-fact--risk:hover,
+.summary-fact--risk:focus-visible {
+  background: #ffe8ea;
+  box-shadow: 0 0 0 2px rgba(240, 106, 106, 0.16);
+  outline: none;
 }
 
 .summary-fact--risk strong {
@@ -669,6 +685,21 @@
   background: #fafaf9;
   border: 1px solid #e3ded9;
   border-radius: 0.75rem;
+  cursor: default;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.result-card:hover,
+.result-card:focus-visible {
+  background: #fff;
+  border-color: #78c9c5;
+  box-shadow:
+    0 0 0 2px rgba(13, 148, 136, 0.08),
+    0 0.5rem 1.25rem rgba(23, 36, 43, 0.12);
+  outline: none;
 }
 
 .result-card header {
@@ -1119,7 +1150,8 @@
   .summary-toggle__icon,
   .clinical-section__content-motion,
   .clinical-section__chevron,
-  .clinical-section__toggle {
+  .clinical-section__toggle,
+  .result-card {
     transition-duration: 1ms;
   }
 

@@ -19,7 +19,7 @@
 .problem-timeline__header {
   position: sticky;
   top: var(--problem-timeline-sticky-top);
-  z-index: 1025;
+  z-index: 1018;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -441,7 +441,7 @@
   .problem-timeline__axis-row {
     position: sticky;
     top: calc(var(--problem-timeline-sticky-top) + var(--problem-timeline-header-height));
-    z-index: 1024;
+    z-index: 1018;
     box-shadow: 0 0.3rem 0.75rem rgba(23, 36, 43, 0.05);
   }
 }
