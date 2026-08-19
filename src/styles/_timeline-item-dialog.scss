@@ -1,0 +1,12 @@
+.timeline-item-dialog-panel {
+  --mat-dialog-container-max-width: 26.375rem;
+  --mat-dialog-container-min-width: 0;
+  --mat-dialog-container-shape: 0.987rem;
+
+  .mat-mdc-dialog-surface {
+    overflow: hidden;
+    background: #fff;
+    border: 0.658px solid #e3ded9;
+    box-shadow: 0 7.897px 21.059px rgba(0, 0, 0, 0.1);
+  }
+}

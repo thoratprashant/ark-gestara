@@ -784,6 +784,7 @@
                 type="button"
                 matTooltip="Add timeline item"
                 [attr.aria-label]="'Add timeline item to ' + group.label"
+                (click)="openTimelineItemDialog(group.id)"
               >
                 +
               </button>
@@ -855,6 +856,17 @@
             </div>
           </article>
         }
+      </div>
+
+      <div class="problem-timeline__add-problem-row d-flex align-items-center">
+        <button
+          class="problem-timeline__add-problem d-flex align-items-center justify-content-center text-nowrap"
+          type="button"
+          (click)="openAddProblemDialog()"
+        >
+          <img src="assets/problem-dialog/add.svg" alt="" aria-hidden="true" />
+          Add Problem
+        </button>
       </div>
     </div>
   </section>

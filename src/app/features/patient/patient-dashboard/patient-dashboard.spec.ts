@@ -1,9 +1,13 @@
 import { ElementRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
+import { of } from 'rxjs';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { PatientDashboard } from './patient-dashboard';
 import { PatientDashboardModule } from './patient-dashboard.module';
+import { AddProblemDialog } from './add-problem-dialog/add-problem-dialog';
+import { TimelineItemDialog } from './timeline-item-dialog/timeline-item-dialog';
 
 describe('PatientDashboard timeline', () => {
   beforeAll(async () => {
@@ -31,6 +35,122 @@ describe('PatientDashboard timeline', () => {
     dashboard.toggleTimelineGroup(groups[0].id);
     expect(dashboard.isTimelineGroupExpanded(groups[0].id)).toBe(false);
     expect(dashboard.isTimelineGroupExpanded(groups[5].id)).toBe(true);
+  });
+
+  it('opens the Material timeline dialog with enabled task and medication fields', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dialog = TestBed.inject(MatDialog);
+    fixture.detectChanges();
+
+    const addButton = fixture.nativeElement.querySelector(
+      '.problem-timeline__group-add',
+    ) as HTMLButtonElement;
+    addButton.click();
+    fixture.detectChanges();
+
+    expect(dialog.openDialogs).toHaveLength(1);
+    const dialogComponent = dialog.openDialogs[0].componentInstance as TimelineItemDialog;
+    expect(dialogComponent.mode()).toBe('task');
+    expect(
+      Object.values(dialogComponent.taskForm.controls).every((control) => control.enabled),
+    ).toBe(true);
+
+    dialogComponent.setMode('medication');
+    expect(dialogComponent.mode()).toBe('medication');
+    expect(
+      Object.values(dialogComponent.medicationForm.controls).every((control) => control.enabled),
+    ).toBe(true);
+
+    dialog.closeAll();
+  });
+
+  it('adds the submitted dialog item to the selected timeline group and keeps undo available', () => {
+    const dialog = {
+      open: vi.fn(() => ({
+        afterClosed: () =>
+          of({
+            endWeek: 32.5,
+            mode: 'task' as const,
+            name: 'Weekly glucose review',
+            startWeek: 28.5,
+          }),
+      })),
+    } as unknown as MatDialog;
+    const dashboard = new PatientDashboard(dialog);
+    const group = dashboard.pregnancyTimeline().groups[0];
+    const originalRowCount = group.rows.length;
+
+    dashboard.openTimelineItemDialog(group.id);
+
+    expect(dialog.open).toHaveBeenCalledWith(
+      TimelineItemDialog,
+      expect.objectContaining({ restoreFocus: false }),
+    );
+    const updatedGroup = dashboard.pregnancyTimeline().groups[0];
+    expect(updatedGroup.rows).toHaveLength(originalRowCount + 1);
+    expect(updatedGroup.rows.at(-1)?.label).toBe('Weekly glucose review');
+    expect(updatedGroup.rows.at(-1)?.chips[0]).toMatchObject({
+      startWeek: 28.5,
+      endWeek: 32.5,
+      status: 'future',
+    });
+    expect(dashboard.canUndoTimeline()).toBe(true);
+  });
+
+  it('opens the Add Problem Material dialog with an enabled problem-name field', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dialog = TestBed.inject(MatDialog);
+    fixture.detectChanges();
+
+    const addProblemButton = fixture.nativeElement.querySelector(
+      '.problem-timeline__add-problem',
+    ) as HTMLButtonElement;
+    addProblemButton.click();
+    fixture.detectChanges();
+
+    expect(dialog.openDialogs).toHaveLength(1);
+    const dialogComponent = dialog.openDialogs[0].componentInstance as AddProblemDialog;
+    expect(dialogComponent.form.controls.name.enabled).toBe(true);
+
+    dialog.closeAll();
+  });
+
+  it('places the Add Problem action after the timeline groups', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    fixture.detectChanges();
+
+    const groups = fixture.nativeElement.querySelectorAll(
+      '.problem-timeline__group',
+    ) as NodeListOf<HTMLElement>;
+    const lastGroup = groups.item(groups.length - 1);
+    const addProblemButton = fixture.nativeElement.querySelector(
+      '.problem-timeline__add-problem',
+    ) as HTMLButtonElement;
+
+    expect(lastGroup.compareDocumentPosition(addProblemButton) & Node.DOCUMENT_POSITION_FOLLOWING)
+      .toBeTruthy();
+  });
+
+  it('adds a submitted problem as an expandable timeline group with undo support', () => {
+    const dialog = {
+      open: vi.fn(() => ({
+        afterClosed: () => of({ name: 'Maternal anemia' }),
+      })),
+    } as unknown as MatDialog;
+    const dashboard = new PatientDashboard(dialog);
+    const originalGroupCount = dashboard.pregnancyTimeline().groups.length;
+
+    dashboard.openAddProblemDialog();
+
+    expect(dialog.open).toHaveBeenCalledWith(
+      AddProblemDialog,
+      expect.objectContaining({ restoreFocus: false }),
+    );
+    const addedGroup = dashboard.pregnancyTimeline().groups.at(-1);
+    expect(dashboard.pregnancyTimeline().groups).toHaveLength(originalGroupCount + 1);
+    expect(addedGroup).toMatchObject({ label: 'Maternal anemia', rows: [] });
+    expect(addedGroup && dashboard.isTimelineGroupExpanded(addedGroup.id)).toBe(true);
+    expect(dashboard.canUndoTimeline()).toBe(true);
   });
 
   it('uses the Figma legend statuses and keeps edge ticks centered inside the axis', () => {

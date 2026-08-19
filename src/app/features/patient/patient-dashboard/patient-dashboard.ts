@@ -8,7 +8,14 @@ import {
   computed,
   signal,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { scaleLinear } from 'd3-scale';
+
+import { AddProblemDialog, AddProblemDialogResult } from './add-problem-dialog/add-problem-dialog';
+import {
+  TimelineItemDialog,
+  TimelineItemDialogResult,
+} from './timeline-item-dialog/timeline-item-dialog';
 
 interface VitalChartSeries {
   color: string;
@@ -664,6 +671,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   private resultTooltipHideTimer: number | null = null;
   private riskAssessmentHideTimer: number | null = null;
   private deliveryWindowTooltipHideTimer: number | null = null;
+  private timelineItemSequence = 0;
+  private timelineProblemSequence = 0;
+
+  constructor(private readonly dialog?: MatDialog) {}
 
   ngAfterViewInit(): void {
     this.startVitalCountAnimation();
@@ -972,6 +983,56 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   isTimelineGroupExpanded(groupId: string): boolean {
     return this.expandedTimelineGroupIds().has(groupId);
+  }
+
+  openAddProblemDialog(): void {
+    if (!this.dialog) {
+      return;
+    }
+
+    const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    this.dialog
+      .open<AddProblemDialog, void, AddProblemDialogResult>(AddProblemDialog, {
+        autoFocus: 'first-tabbable',
+        maxWidth: 'calc(100vw - 1.5rem)',
+        panelClass: 'add-problem-dialog-panel',
+        restoreFocus: false,
+        width: '498px',
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          this.addTimelineProblem(result.name);
+        }
+
+        trigger?.focus({ preventScroll: true });
+      });
+  }
+
+  openTimelineItemDialog(groupId: string): void {
+    if (!this.dialog) {
+      return;
+    }
+
+    const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    this.dialog
+      .open<TimelineItemDialog, void, TimelineItemDialogResult>(TimelineItemDialog, {
+        autoFocus: 'first-tabbable',
+        maxWidth: 'calc(100vw - 1.5rem)',
+        panelClass: 'timeline-item-dialog-panel',
+        restoreFocus: false,
+        width: '422px',
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          this.addTimelineItem(groupId, result);
+        }
+
+        trigger?.focus({ preventScroll: true });
+      });
   }
 
   weekPercent(week: number): number {
@@ -1291,6 +1352,60 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
           : group,
       ),
     }));
+  }
+
+  private addTimelineItem(groupId: string, item: TimelineItemDialogResult): void {
+    this.rememberTimeline();
+    const itemId = `custom-timeline-item-${++this.timelineItemSequence}`;
+    const endWeek = item.mode === 'medication' ? 40 : item.endWeek;
+    const label =
+      item.mode === 'medication' && item.dosage ? `${item.name} (${item.dosage})` : item.name;
+
+    this.pregnancyTimeline.update((timeline) => ({
+      ...timeline,
+      groups: timeline.groups.map((group) =>
+        group.id === groupId
+          ? {
+              ...group,
+              rows: [
+                ...group.rows,
+                {
+                  id: itemId,
+                  label,
+                  chips: [
+                    {
+                      id: `${itemId}-chip`,
+                      label,
+                      status: 'future',
+                      startWeek: item.startWeek,
+                      endWeek,
+                    },
+                  ],
+                },
+              ],
+            }
+          : group,
+      ),
+    }));
+    this.expandedTimelineGroupIds.update((expandedIds) => new Set(expandedIds).add(groupId));
+  }
+
+  private addTimelineProblem(name: string): void {
+    this.rememberTimeline();
+    const problemId = `custom-problem-${++this.timelineProblemSequence}`;
+
+    this.pregnancyTimeline.update((timeline) => ({
+      ...timeline,
+      groups: [
+        ...timeline.groups,
+        {
+          id: problemId,
+          label: name,
+          rows: [],
+        },
+      ],
+    }));
+    this.expandedTimelineGroupIds.update((expandedIds) => new Set(expandedIds).add(problemId));
   }
 
   private rememberTimeline(): void {
