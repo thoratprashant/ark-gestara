@@ -127,8 +127,69 @@ describe('PatientDashboard timeline', () => {
       '.problem-timeline__add-problem',
     ) as HTMLButtonElement;
 
-    expect(lastGroup.compareDocumentPosition(addProblemButton) & Node.DOCUMENT_POSITION_FOLLOWING)
-      .toBeTruthy();
+    expect(
+      lastGroup.compareDocumentPosition(addProblemButton) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+  });
+
+  it('shows condition-specific tooltip content from every timeline group toggle', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    fixture.detectChanges();
+
+    const dashboard = fixture.componentInstance;
+    const groups = dashboard.pregnancyTimeline().groups;
+    const toggles = Array.from(
+      fixture.nativeElement.querySelectorAll('.problem-timeline__group-toggle'),
+    ) as HTMLButtonElement[];
+
+    expect(toggles).toHaveLength(groups.length);
+    expect(new Set(groups.map((group) => group.condition.tags[0].label)).size).toBe(groups.length);
+
+    toggles.forEach((toggle, index) => {
+      toggle.dispatchEvent(new MouseEvent('mouseenter'));
+      fixture.detectChanges();
+
+      const tooltip = fixture.nativeElement.querySelector(
+        '#timeline-condition-tooltip',
+      ) as HTMLElement;
+      expect(tooltip.textContent).toContain(groups[index].label);
+      expect(tooltip.textContent).toContain(groups[index].condition.tags[0].label);
+      expect(tooltip.textContent).toContain(groups[index].condition.description);
+    });
+  });
+
+  it('keeps the full Figma tooltip visible by opening above groups near the viewport edge', () => {
+    const dashboard = new PatientDashboard();
+    const toggle = document.createElement('button');
+    const icon = document.createElement('img');
+    icon.className = 'problem-timeline__group-icon';
+    toggle.appendChild(icon);
+    const group = dashboard.pregnancyTimeline().groups[0];
+    vi.spyOn(toggle, 'getBoundingClientRect').mockReturnValue({
+      bottom: 740,
+      height: 40,
+      left: 120,
+      right: 300,
+      top: 700,
+      width: 180,
+    } as DOMRect);
+    vi.spyOn(icon, 'getBoundingClientRect').mockReturnValue({
+      bottom: 726,
+      height: 14,
+      left: 140,
+      right: 154,
+      top: 712,
+      width: 14,
+    } as DOMRect);
+
+    dashboard.showTimelineGroupTooltip(group, { currentTarget: toggle } as unknown as Event);
+
+    expect(dashboard.timelineGroupTooltipPosition()).toEqual({
+      left: 140,
+      top: 425.994,
+      width: 350,
+    });
+    expect(dashboard.timelineGroupTooltipMaxHeight()).toBe(266.006);
   });
 
   it('adds a submitted problem as an expandable timeline group with undo support', () => {

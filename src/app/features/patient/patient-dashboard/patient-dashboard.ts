@@ -130,9 +130,23 @@ interface TimelineRow {
   chips: TimelineChip[];
 }
 
+type TimelineConditionTagTone = 'blue' | 'pink' | 'purple' | 'teal';
+
+interface TimelineConditionTag {
+  label: string;
+  tone: TimelineConditionTagTone;
+}
+
+interface TimelineConditionDetails {
+  description: string;
+  tags: TimelineConditionTag[];
+}
+
 interface TimelineGroup {
+  condition: TimelineConditionDetails;
   id: string;
   label: string;
+  resolved?: boolean;
   rows: TimelineRow[];
 }
 
@@ -392,6 +406,99 @@ const VITAL_COUNT_TARGETS: VitalCountValues = {
   weightGain: 22,
 };
 
+const TIMELINE_CONDITION_DETAILS: Record<string, TimelineConditionDetails> = {
+  'routine-prenatal-care': {
+    description: 'Encounter for supervision of other normal pregnancy third trimester.',
+    tags: [
+      { label: 'Z34.83', tone: 'purple' },
+      { label: 'T3', tone: 'pink' },
+      { label: 'Multigravida', tone: 'blue' },
+      { label: 'Singleton', tone: 'teal' },
+    ],
+  },
+  'gdm-monitoring': {
+    description: 'Gestational diabetes mellitus in pregnancy, diet controlled.',
+    tags: [
+      { label: 'O24.410', tone: 'purple' },
+      { label: 'T3', tone: 'pink' },
+      { label: 'GDM', tone: 'blue' },
+      { label: 'Diet controlled', tone: 'teal' },
+    ],
+  },
+  'hypertension-monitoring': {
+    description: 'Gestational hypertension without significant proteinuria, third trimester.',
+    tags: [
+      { label: 'O13.3', tone: 'purple' },
+      { label: 'T3', tone: 'pink' },
+      { label: 'High risk', tone: 'blue' },
+      { label: 'Monitoring', tone: 'teal' },
+    ],
+  },
+  'medication-management': {
+    description: 'Encounter for medication reconciliation and long-term drug therapy review.',
+    tags: [
+      { label: 'Z79.899', tone: 'purple' },
+      { label: 'Active', tone: 'pink' },
+      { label: 'Maternal', tone: 'blue' },
+      { label: 'Medication review', tone: 'teal' },
+    ],
+  },
+  'fetal-surveillance': {
+    description: 'Maternal care for fetal surveillance during the third trimester.',
+    tags: [
+      { label: 'O36.8390', tone: 'purple' },
+      { label: 'T3', tone: 'pink' },
+      { label: 'Singleton', tone: 'blue' },
+      { label: 'Fetal monitoring', tone: 'teal' },
+    ],
+  },
+  'nutrition-lifestyle': {
+    description: 'Dietary counseling and surveillance during pregnancy.',
+    tags: [
+      { label: 'Z71.3', tone: 'purple' },
+      { label: 'Active', tone: 'pink' },
+      { label: 'Nutrition', tone: 'blue' },
+      { label: 'Lifestyle', tone: 'teal' },
+    ],
+  },
+  'laboratory-follow-up': {
+    description: 'Encounter for antenatal screening and follow-up laboratory testing.',
+    tags: [
+      { label: 'Z36.9', tone: 'purple' },
+      { label: 'T3', tone: 'pink' },
+      { label: 'Screening', tone: 'blue' },
+      { label: 'Lab follow-up', tone: 'teal' },
+    ],
+  },
+  'delivery-planning': {
+    description: 'Encounter for supervision and delivery readiness planning.',
+    tags: [
+      { label: 'Z3A.28', tone: 'purple' },
+      { label: 'T3', tone: 'pink' },
+      { label: 'Singleton', tone: 'blue' },
+      { label: 'Delivery plan', tone: 'teal' },
+    ],
+  },
+  'postpartum-planning': {
+    description: 'Encounter for postpartum care planning and maternal follow-up.',
+    tags: [
+      { label: 'Z39.2', tone: 'purple' },
+      { label: 'Future', tone: 'pink' },
+      { label: 'Maternal', tone: 'blue' },
+      { label: 'Postpartum', tone: 'teal' },
+    ],
+  },
+  'patient-education': {
+    description: 'Encounter for counseling and pregnancy-related patient education.',
+    tags: [
+      { label: 'Z71.89', tone: 'purple' },
+      { label: 'Active', tone: 'pink' },
+      { label: 'Prenatal', tone: 'blue' },
+      { label: 'Education', tone: 'teal' },
+    ],
+  },
+};
+
 const ADDITIONAL_TIMELINE_GROUPS: TimelineGroup[] = [
   ['hypertension-monitoring', 'Hypertension Monitoring', 'Blood pressure review'],
   ['medication-management', 'Medication Management', 'Medication reconciliation'],
@@ -413,6 +520,7 @@ const ADDITIONAL_TIMELINE_GROUPS: TimelineGroup[] = [
   const startWeek = 8 + ((index * 4) % 25);
 
   return {
+    condition: TIMELINE_CONDITION_DETAILS[id],
     id,
     label,
     rows: [
@@ -438,6 +546,7 @@ const INITIAL_TIMELINE: PregnancyTimeline = {
   maxWeek: 40,
   groups: [
     {
+      condition: TIMELINE_CONDITION_DETAILS['routine-prenatal-care'],
       id: 'routine-prenatal-care',
       label: 'Routine Prenatal Care',
       rows: [
@@ -524,6 +633,7 @@ const INITIAL_TIMELINE: PregnancyTimeline = {
       ],
     },
     {
+      condition: TIMELINE_CONDITION_DETAILS['gdm-monitoring'],
       id: 'gdm-monitoring',
       label: 'GDM Monitoring',
       rows: [
@@ -613,6 +723,13 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     top: 0,
     width: 300,
   });
+  readonly activeTimelineGroupTooltip = signal<TimelineGroup | null>(null);
+  readonly timelineGroupTooltipPosition = signal<VitalTooltipPosition>({
+    left: 0,
+    top: 0,
+    width: 350,
+  });
+  readonly timelineGroupTooltipMaxHeight = signal(320);
   readonly tooltipGlassFocusRect = signal<TooltipGlassFocusRect>({
     bottom: 0,
     left: 0,
@@ -624,7 +741,8 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       this.activeVitalTooltip() !== null ||
       this.activeResultTooltip() !== null ||
       this.riskAssessmentOpen() ||
-      this.deliveryWindowTooltipOpen(),
+      this.deliveryWindowTooltipOpen() ||
+      this.activeTimelineGroupTooltip() !== null,
   );
   readonly highRiskFactors = [
     { label: 'Hypertensive disorder in previous pregnancy', selected: false },
@@ -671,6 +789,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   private resultTooltipHideTimer: number | null = null;
   private riskAssessmentHideTimer: number | null = null;
   private deliveryWindowTooltipHideTimer: number | null = null;
+  private timelineGroupTooltipHideTimer: number | null = null;
   private timelineItemSequence = 0;
   private timelineProblemSequence = 0;
 
@@ -689,6 +808,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.cancelResultTooltipHide();
     this.cancelRiskAssessmentHide();
     this.cancelDeliveryWindowTooltipHide();
+    this.cancelTimelineGroupTooltipHide();
   }
 
   toggleVisitSummary(): void {
@@ -704,6 +824,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.hideResultTooltip();
     this.hideRiskAssessment();
     this.hideDeliveryWindowTooltip();
+    this.hideTimelineGroupTooltip();
     this.vitalChartHover.set(null);
 
     const tooltip = VITAL_TOOLTIPS.find((item) => item.id === tooltipId);
@@ -754,6 +875,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.hideVitalTooltip();
     this.hideRiskAssessment();
     this.hideDeliveryWindowTooltip();
+    this.hideTimelineGroupTooltip();
     const tooltip = RESULT_TOOLTIPS.find((item) => item.id === tooltipId);
     const card = event.currentTarget as HTMLElement | null;
 
@@ -798,6 +920,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.hideVitalTooltip();
     this.hideResultTooltip();
     this.hideDeliveryWindowTooltip();
+    this.hideTimelineGroupTooltip();
     const trigger = event.currentTarget as HTMLElement | null;
 
     if (!trigger) {
@@ -841,6 +964,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.hideVitalTooltip();
     this.hideResultTooltip();
     this.hideRiskAssessment();
+    this.hideTimelineGroupTooltip();
     const trigger = event.currentTarget as HTMLElement | null;
 
     if (!trigger) {
@@ -875,6 +999,84 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   keepDeliveryWindowTooltipOpen(): void {
     this.cancelDeliveryWindowTooltipHide();
+  }
+
+  showTimelineGroupTooltip(group: TimelineGroup, event: Event): void {
+    this.cancelTimelineGroupTooltipHide();
+    this.hideVitalTooltip();
+    this.hideResultTooltip();
+    this.hideRiskAssessment();
+    this.hideDeliveryWindowTooltip();
+    const trigger = event.currentTarget as HTMLElement | null;
+
+    if (!trigger) {
+      return;
+    }
+
+    const triggerBounds = trigger.getBoundingClientRect();
+    const iconBounds = trigger
+      .querySelector<HTMLElement>('.problem-timeline__group-icon')
+      ?.getBoundingClientRect();
+    const width = Math.min(350, Math.max(window.innerWidth - 24, 280));
+    const tooltipHeight = Math.min(266.006, Math.max(window.innerHeight - 24, 180));
+    const tooltipLeftMargin = 15;
+    const maximumLeft = Math.max(12, window.innerWidth - width - 12 - tooltipLeftMargin);
+    const spaceBelow = window.innerHeight - triggerBounds.bottom - 12;
+    const top =
+      spaceBelow >= tooltipHeight + 8
+        ? triggerBounds.bottom + 8
+        : Math.max(12, triggerBounds.top - tooltipHeight - 8);
+
+    this.timelineGroupTooltipPosition.set({
+      left: this.clamp(iconBounds?.left ?? triggerBounds.left, 12, maximumLeft),
+      top,
+      width,
+    });
+    this.timelineGroupTooltipMaxHeight.set(tooltipHeight);
+    this.setTooltipGlassFocus(triggerBounds);
+    this.activeTimelineGroupTooltip.set(group);
+  }
+
+  hideTimelineGroupTooltip(): void {
+    this.cancelTimelineGroupTooltipHide();
+    this.activeTimelineGroupTooltip.set(null);
+  }
+
+  scheduleTimelineGroupTooltipHide(): void {
+    this.cancelTimelineGroupTooltipHide();
+    this.timelineGroupTooltipHideTimer = window.setTimeout(() => {
+      this.activeTimelineGroupTooltip.set(null);
+      this.timelineGroupTooltipHideTimer = null;
+    }, 180);
+  }
+
+  keepTimelineGroupTooltipOpen(): void {
+    this.cancelTimelineGroupTooltipHide();
+  }
+
+  resolveTimelineProblem(groupId: string): void {
+    this.rememberTimeline();
+    this.pregnancyTimeline.update((timeline) => ({
+      ...timeline,
+      groups: timeline.groups.map((group) =>
+        group.id === groupId ? { ...group, resolved: true } : group,
+      ),
+    }));
+    this.hideTimelineGroupTooltip();
+  }
+
+  deleteTimelineProblem(groupId: string): void {
+    this.rememberTimeline();
+    this.pregnancyTimeline.update((timeline) => ({
+      ...timeline,
+      groups: timeline.groups.filter((group) => group.id !== groupId),
+    }));
+    this.expandedTimelineGroupIds.update((expandedIds) => {
+      const nextExpandedIds = new Set(expandedIds);
+      nextExpandedIds.delete(groupId);
+      return nextExpandedIds;
+    });
+    this.hideTimelineGroupTooltip();
   }
 
   vitalChartX(index: number, pointCount: number): number {
@@ -1213,6 +1415,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       this.hideDeliveryWindowTooltip();
     }
 
+    if (this.activeTimelineGroupTooltip()) {
+      this.hideTimelineGroupTooltip();
+    }
+
     const summary = this.patientSummary?.nativeElement;
 
     if (!summary) {
@@ -1303,6 +1509,13 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     if (this.deliveryWindowTooltipHideTimer !== null) {
       window.clearTimeout(this.deliveryWindowTooltipHideTimer);
       this.deliveryWindowTooltipHideTimer = null;
+    }
+  }
+
+  private cancelTimelineGroupTooltipHide(): void {
+    if (this.timelineGroupTooltipHideTimer !== null) {
+      window.clearTimeout(this.timelineGroupTooltipHideTimer);
+      this.timelineGroupTooltipHideTimer = null;
     }
   }
 
@@ -1399,6 +1612,15 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       groups: [
         ...timeline.groups,
         {
+          condition: {
+            description: `Patient-specific condition added to the problem list: ${name}.`,
+            tags: [
+              { label: 'Patient added', tone: 'purple' },
+              { label: 'Active', tone: 'pink' },
+              { label: 'Clinical', tone: 'blue' },
+              { label: 'Follow-up', tone: 'teal' },
+            ],
+          },
           id: problemId,
           label: name,
           rows: [],
@@ -1421,6 +1643,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       ...timeline,
       groups: timeline.groups.map((group) => ({
         ...group,
+        condition: {
+          ...group.condition,
+          tags: group.condition.tags.map((tag) => ({ ...tag })),
+        },
         rows: group.rows.map((row) => ({
           ...row,
           chips: row.chips.map((chip) => ({ ...chip })),
