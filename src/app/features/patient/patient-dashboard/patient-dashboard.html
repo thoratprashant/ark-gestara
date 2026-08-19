@@ -1,4 +1,29 @@
 <div class="patient-dashboard">
+  @if (tooltipGlassActive()) {
+    <div class="tooltip-glass-overlay" aria-hidden="true">
+      <span
+        class="tooltip-glass-overlay__pane tooltip-glass-overlay__pane--top"
+        [style.height.px]="tooltipGlassFocusRect().top"
+      ></span>
+      <span
+        class="tooltip-glass-overlay__pane tooltip-glass-overlay__pane--left"
+        [style.top.px]="tooltipGlassFocusRect().top"
+        [style.width.px]="tooltipGlassFocusRect().left"
+        [style.height.px]="tooltipGlassFocusRect().bottom - tooltipGlassFocusRect().top"
+      ></span>
+      <span
+        class="tooltip-glass-overlay__pane tooltip-glass-overlay__pane--right"
+        [style.top.px]="tooltipGlassFocusRect().top"
+        [style.left.px]="tooltipGlassFocusRect().right"
+        [style.height.px]="tooltipGlassFocusRect().bottom - tooltipGlassFocusRect().top"
+      ></span>
+      <span
+        class="tooltip-glass-overlay__pane tooltip-glass-overlay__pane--bottom"
+        [style.top.px]="tooltipGlassFocusRect().bottom"
+      ></span>
+    </div>
+  }
+
   <section
     #patientSummary
     class="patient-summary"
@@ -43,7 +68,17 @@
                 <strong>June 15, 2026</strong>
               </span>
             </article>
-            <article class="summary-fact">
+            <button
+              class="summary-fact summary-fact--delivery"
+              type="button"
+              aria-describedby="delivery-window-tooltip"
+              [attr.aria-expanded]="deliveryWindowTooltipOpen()"
+              (mouseenter)="showDeliveryWindowTooltip($event)"
+              (mouseleave)="scheduleDeliveryWindowTooltipHide()"
+              (focusin)="showDeliveryWindowTooltip($event)"
+              (focusout)="scheduleDeliveryWindowTooltipHide()"
+              (click)="showDeliveryWindowTooltip($event)"
+            >
               <img
                 class="summary-fact__icon"
                 src="assets/calender-green.svg"
@@ -54,7 +89,7 @@
                 <small>Recommended Delivery Window</small>
                 <strong>Week 36–39</strong>
               </span>
-            </article>
+            </button>
             <button
               class="summary-fact summary-fact--risk"
               type="button"
@@ -182,6 +217,41 @@
       </div>
     </div>
   </section>
+
+  @if (deliveryWindowTooltipOpen()) {
+    <aside
+      id="delivery-window-tooltip"
+      class="delivery-window-tooltip"
+      role="tooltip"
+      aria-label="Recommended Delivery Window details"
+      (mouseenter)="keepDeliveryWindowTooltipOpen()"
+      (mouseleave)="scheduleDeliveryWindowTooltipHide()"
+      [style.left.px]="deliveryWindowTooltipPosition().left"
+      [style.top.px]="deliveryWindowTooltipPosition().top"
+      [style.width.px]="deliveryWindowTooltipPosition().width"
+    >
+      <header class="delivery-window-tooltip__header">
+        <h2>Recommended Delivery Window</h2>
+        <p>Week 36–39</p>
+      </header>
+
+      <img
+        class="delivery-window-tooltip__divider"
+        src="assets/delivery-window/divider.svg"
+        alt=""
+        aria-hidden="true"
+      />
+
+      <section class="delivery-window-tooltip__content">
+        <h3>Indication:</h3>
+        <p>GDM and gestational hypertension - recommend delivery at term.</p>
+      </section>
+
+      <p class="delivery-window-tooltip__help">
+        Drag the edges to adjust the window, or drag the center to move it.
+      </p>
+    </aside>
+  }
 
   @if (riskAssessmentOpen()) {
     <aside

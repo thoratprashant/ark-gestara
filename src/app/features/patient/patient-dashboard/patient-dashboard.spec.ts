@@ -139,7 +139,11 @@ describe('PatientDashboard timeline', () => {
     } as DOMRect);
     vi.spyOn(card, 'getBoundingClientRect').mockReturnValue({
       left: 120,
+      right: 300,
+      top: 180,
       bottom: 260,
+      width: 180,
+      height: 80,
     } as DOMRect);
     (
       dashboard as unknown as {
@@ -155,6 +159,12 @@ describe('PatientDashboard timeline', () => {
     const chart = tooltip?.charts?.[0];
     expect(tooltip?.title).toBe('Fetal Heart Rate Trend');
     expect(dashboard.vitalTooltipPosition()).toEqual({ left: 120, top: 166, width: 520 });
+    expect(dashboard.tooltipGlassFocusRect()).toEqual({
+      left: 114,
+      right: 306,
+      top: 174,
+      bottom: 266,
+    });
     expect(chart && dashboard.vitalChartPath(chart, chart.series[0])).toMatch(/^M42,/);
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -206,6 +216,13 @@ describe('PatientDashboard timeline', () => {
     expect(dashboard.activeResultTooltip()?.title).toBe('Complete Blood Count (CBC)');
     expect(dashboard.activeResultTooltip()?.rows).toHaveLength(14);
     expect(dashboard.resultTooltipPosition()).toEqual({ left: 180, top: 200, width: 420 });
+    expect(dashboard.tooltipGlassActive()).toBe(true);
+    expect(dashboard.tooltipGlassFocusRect()).toEqual({
+      left: 114,
+      right: 606,
+      top: 194,
+      bottom: 366,
+    });
 
     dashboard.showResultTooltip('home-bp', { currentTarget: card } as unknown as Event);
     expect(dashboard.activeResultTooltip()?.chart?.series.map((series) => series.label)).toEqual([
@@ -232,14 +249,24 @@ describe('PatientDashboard timeline', () => {
     const dashboard = new PatientDashboard();
     const riskFact = document.createElement('button');
     vi.spyOn(riskFact, 'getBoundingClientRect').mockReturnValue({
+      left: 760,
       right: 900,
+      top: 80,
       bottom: 120,
+      width: 140,
+      height: 40,
     } as DOMRect);
 
     dashboard.showRiskAssessment({ currentTarget: riskFact } as unknown as Event);
 
     expect(dashboard.riskAssessmentOpen()).toBe(true);
     expect(dashboard.riskAssessmentPosition()).toEqual({ left: 300, top: 128, width: 600 });
+    expect(dashboard.tooltipGlassFocusRect()).toEqual({
+      left: 754,
+      right: 906,
+      top: 74,
+      bottom: 126,
+    });
     expect(
       dashboard.highRiskFactors.filter((factor) => factor.selected).map((factor) => factor.label),
     ).toEqual(['Chronic hypertension']);
@@ -254,6 +281,45 @@ describe('PatientDashboard timeline', () => {
     dashboard.scheduleRiskAssessmentHide();
     vi.advanceTimersByTime(180);
     expect(dashboard.riskAssessmentOpen()).toBe(false);
+    expect(dashboard.tooltipGlassActive()).toBe(false);
+    vi.useRealTimers();
+  });
+
+  it('opens the delivery window tooltip below the recommended delivery summary fact', () => {
+    vi.useFakeTimers();
+    const dashboard = new PatientDashboard();
+    const deliveryFact = document.createElement('button');
+    vi.spyOn(deliveryFact, 'getBoundingClientRect').mockReturnValue({
+      left: 620,
+      right: 860,
+      top: 80,
+      bottom: 120,
+      width: 240,
+      height: 40,
+    } as DOMRect);
+
+    dashboard.showDeliveryWindowTooltip({ currentTarget: deliveryFact } as unknown as Event);
+
+    expect(dashboard.deliveryWindowTooltipOpen()).toBe(true);
+    expect(dashboard.deliveryWindowTooltipPosition()).toEqual({ left: 560, top: 128, width: 300 });
+    expect(dashboard.tooltipGlassActive()).toBe(true);
+    expect(dashboard.tooltipGlassFocusRect()).toEqual({
+      left: 614,
+      right: 866,
+      top: 74,
+      bottom: 126,
+    });
+
+    dashboard.scheduleDeliveryWindowTooltipHide();
+    vi.advanceTimersByTime(100);
+    dashboard.keepDeliveryWindowTooltipOpen();
+    vi.advanceTimersByTime(200);
+    expect(dashboard.deliveryWindowTooltipOpen()).toBe(true);
+
+    dashboard.scheduleDeliveryWindowTooltipHide();
+    vi.advanceTimersByTime(180);
+    expect(dashboard.deliveryWindowTooltipOpen()).toBe(false);
+    expect(dashboard.tooltipGlassActive()).toBe(false);
     vi.useRealTimers();
   });
 

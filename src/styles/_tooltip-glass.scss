@@ -1,0 +1,52 @@
+.tooltip-glass-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  pointer-events: none;
+}
+
+.tooltip-glass-overlay__pane {
+  position: fixed;
+  background: rgba(248, 250, 252, 0.26);
+  box-shadow: inset 0 0 1.5rem rgba(255, 255, 255, 0.18);
+  pointer-events: none;
+  backdrop-filter: blur(3px) saturate(0.9);
+  -webkit-backdrop-filter: blur(3px) saturate(0.9);
+  animation: tooltip-glass-in 180ms ease-out both;
+}
+
+.tooltip-glass-overlay__pane--top {
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+.tooltip-glass-overlay__pane--left {
+  left: 0;
+}
+
+.tooltip-glass-overlay__pane--right {
+  right: 0;
+}
+
+.tooltip-glass-overlay__pane--bottom {
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+@keyframes tooltip-glass-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tooltip-glass-overlay__pane {
+    animation-duration: 1ms;
+  }
+}

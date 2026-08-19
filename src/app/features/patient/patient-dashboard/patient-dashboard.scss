@@ -165,6 +165,24 @@
     box-shadow 180ms ease;
 }
 
+.summary-fact--delivery {
+  border: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.summary-fact--delivery:hover,
+.summary-fact--delivery:focus-visible {
+  background: #dff2f0;
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.14);
+  outline: none;
+}
+
 .summary-fact--risk:hover,
 .summary-fact--risk:focus-visible {
   background: #ffe8ea;

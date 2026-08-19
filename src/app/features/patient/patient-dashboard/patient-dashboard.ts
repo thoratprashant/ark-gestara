@@ -66,6 +66,13 @@ interface VitalTooltipPosition {
   width: number;
 }
 
+interface TooltipGlassFocusRect {
+  bottom: number;
+  left: number;
+  right: number;
+  top: number;
+}
+
 interface ResultTableRow {
   alert?: 'low';
   name: string;
@@ -593,6 +600,25 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   readonly riskAssessmentOpen = signal(false);
   readonly riskAssessmentPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 600 });
   readonly riskAssessmentMaxHeight = signal(690);
+  readonly deliveryWindowTooltipOpen = signal(false);
+  readonly deliveryWindowTooltipPosition = signal<VitalTooltipPosition>({
+    left: 0,
+    top: 0,
+    width: 300,
+  });
+  readonly tooltipGlassFocusRect = signal<TooltipGlassFocusRect>({
+    bottom: 0,
+    left: 0,
+    right: 0,
+    top: 0,
+  });
+  readonly tooltipGlassActive = computed(
+    () =>
+      this.activeVitalTooltip() !== null ||
+      this.activeResultTooltip() !== null ||
+      this.riskAssessmentOpen() ||
+      this.deliveryWindowTooltipOpen(),
+  );
   readonly highRiskFactors = [
     { label: 'Hypertensive disorder in previous pregnancy', selected: false },
     { label: 'Chronic kidney disease', selected: false },
@@ -637,6 +663,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   private vitalTooltipHideTimer: number | null = null;
   private resultTooltipHideTimer: number | null = null;
   private riskAssessmentHideTimer: number | null = null;
+  private deliveryWindowTooltipHideTimer: number | null = null;
 
   ngAfterViewInit(): void {
     this.startVitalCountAnimation();
@@ -650,6 +677,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.cancelVitalTooltipHide();
     this.cancelResultTooltipHide();
     this.cancelRiskAssessmentHide();
+    this.cancelDeliveryWindowTooltipHide();
   }
 
   toggleVisitSummary(): void {
@@ -662,6 +690,9 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   showVitalTooltip(tooltipId: string, event: Event): void {
     this.cancelVitalTooltipHide();
+    this.hideResultTooltip();
+    this.hideRiskAssessment();
+    this.hideDeliveryWindowTooltip();
     this.vitalChartHover.set(null);
 
     const tooltip = VITAL_TOOLTIPS.find((item) => item.id === tooltipId);
@@ -684,6 +715,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       top: cardBounds.bottom - sectionBounds.top + 6,
       width,
     });
+    this.setTooltipGlassFocus(cardBounds);
     this.activeVitalTooltip.set(tooltip);
   }
 
@@ -708,6 +740,9 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   showResultTooltip(tooltipId: string, event: Event): void {
     this.cancelResultTooltipHide();
+    this.hideVitalTooltip();
+    this.hideRiskAssessment();
+    this.hideDeliveryWindowTooltip();
     const tooltip = RESULT_TOOLTIPS.find((item) => item.id === tooltipId);
     const card = event.currentTarget as HTMLElement | null;
 
@@ -726,6 +761,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       width,
     });
     this.resultTooltipMaxHeight.set(Math.max(180, window.innerHeight - top - 12));
+    this.setTooltipGlassFocus(cardBounds);
     this.activeResultTooltip.set(tooltip);
   }
 
@@ -748,6 +784,9 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   showRiskAssessment(event: Event): void {
     this.cancelRiskAssessmentHide();
+    this.hideVitalTooltip();
+    this.hideResultTooltip();
+    this.hideDeliveryWindowTooltip();
     const trigger = event.currentTarget as HTMLElement | null;
 
     if (!trigger) {
@@ -765,6 +804,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       width,
     });
     this.riskAssessmentMaxHeight.set(Math.max(180, window.innerHeight - top - 12));
+    this.setTooltipGlassFocus(triggerBounds);
     this.riskAssessmentOpen.set(true);
   }
 
@@ -783,6 +823,47 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   keepRiskAssessmentOpen(): void {
     this.cancelRiskAssessmentHide();
+  }
+
+  showDeliveryWindowTooltip(event: Event): void {
+    this.cancelDeliveryWindowTooltipHide();
+    this.hideVitalTooltip();
+    this.hideResultTooltip();
+    this.hideRiskAssessment();
+    const trigger = event.currentTarget as HTMLElement | null;
+
+    if (!trigger) {
+      return;
+    }
+
+    const triggerBounds = trigger.getBoundingClientRect();
+    const width = Math.min(300, Math.max(window.innerWidth - 24, 280));
+    const maximumLeft = Math.max(12, window.innerWidth - width - 12);
+
+    this.deliveryWindowTooltipPosition.set({
+      left: this.clamp(triggerBounds.right - width, 12, maximumLeft),
+      top: triggerBounds.bottom + 8,
+      width,
+    });
+    this.setTooltipGlassFocus(triggerBounds);
+    this.deliveryWindowTooltipOpen.set(true);
+  }
+
+  hideDeliveryWindowTooltip(): void {
+    this.cancelDeliveryWindowTooltipHide();
+    this.deliveryWindowTooltipOpen.set(false);
+  }
+
+  scheduleDeliveryWindowTooltipHide(): void {
+    this.cancelDeliveryWindowTooltipHide();
+    this.deliveryWindowTooltipHideTimer = window.setTimeout(() => {
+      this.deliveryWindowTooltipOpen.set(false);
+      this.deliveryWindowTooltipHideTimer = null;
+    }, 180);
+  }
+
+  keepDeliveryWindowTooltipOpen(): void {
+    this.cancelDeliveryWindowTooltipHide();
   }
 
   vitalChartX(index: number, pointCount: number): number {
@@ -1067,6 +1148,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       this.hideRiskAssessment();
     }
 
+    if (this.deliveryWindowTooltipOpen()) {
+      this.hideDeliveryWindowTooltip();
+    }
+
     const summary = this.patientSummary?.nativeElement;
 
     if (!summary) {
@@ -1151,6 +1236,32 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       window.clearTimeout(this.riskAssessmentHideTimer);
       this.riskAssessmentHideTimer = null;
     }
+  }
+
+  private cancelDeliveryWindowTooltipHide(): void {
+    if (this.deliveryWindowTooltipHideTimer !== null) {
+      window.clearTimeout(this.deliveryWindowTooltipHideTimer);
+      this.deliveryWindowTooltipHideTimer = null;
+    }
+  }
+
+  private setTooltipGlassFocus(bounds: DOMRect): void {
+    const padding = 6;
+    const left = Number.isFinite(bounds.left) ? bounds.left : 0;
+    const top = Number.isFinite(bounds.top) ? bounds.top : 0;
+    const right = Number.isFinite(bounds.right)
+      ? bounds.right
+      : left + (Number.isFinite(bounds.width) ? bounds.width : 0);
+    const bottom = Number.isFinite(bounds.bottom)
+      ? bounds.bottom
+      : top + (Number.isFinite(bounds.height) ? bounds.height : 0);
+
+    this.tooltipGlassFocusRect.set({
+      left: this.clamp(left - padding, 0, window.innerWidth),
+      top: this.clamp(top - padding, 0, window.innerHeight),
+      right: this.clamp(right + padding, 0, window.innerWidth),
+      bottom: this.clamp(bottom + padding, 0, window.innerHeight),
+    });
   }
 
   private updateTimelineChip(
