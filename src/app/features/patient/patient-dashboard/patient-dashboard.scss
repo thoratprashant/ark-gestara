@@ -1094,6 +1094,85 @@
   }
 }
 
+@media (min-width: 48rem) and (max-width: 74.999rem) {
+  .patient-dashboard {
+    gap: 1.125rem;
+  }
+
+  .patient-summary,
+  .vital-signs {
+    border-radius: 1rem;
+  }
+
+  .vital-signs__scroller {
+    overflow: visible;
+  }
+
+  .vital-signs__list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .vital-card {
+    min-width: 0;
+    min-height: 8.5rem;
+    white-space: normal;
+  }
+
+  .vital-card__top {
+    gap: 1rem;
+  }
+
+  .vital-card p,
+  .vital-card small {
+    overflow-wrap: anywhere;
+  }
+
+  .summary-toggle,
+  .clinical-section__toggle {
+    flex-basis: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .order-card__remove {
+    flex-basis: 2.25rem;
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .reviewed-button,
+  .review-systems-button,
+  .progress-note__toolbar button {
+    min-height: 2.5rem;
+  }
+}
+
+@media (min-width: 48rem) and (max-width: 61.999rem) {
+  .vital-signs__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .visit-summary__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .progress-note__toolbar {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .progress-note__toolbar > div {
+    margin-left: auto;
+  }
+
+  .assessment-plan ul,
+  .note-list-block ul {
+    width: 100%;
+  }
+}
+
 @media (max-width: 47.999rem) {
   .patient-dashboard {
     --patient-summary-sticky-height: 7.25rem;

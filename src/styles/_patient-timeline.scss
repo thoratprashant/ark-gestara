@@ -466,6 +466,39 @@
   }
 }
 
+@media (min-width: 48rem) and (max-width: 74.999rem) {
+  .problem-timeline__undo,
+  .problem-timeline__add-problem {
+    min-height: 2.5rem;
+  }
+
+  .problem-timeline__add-problem {
+    height: 2.5rem;
+  }
+
+  .problem-timeline__group-toggle {
+    min-height: 2.75rem;
+  }
+
+  .problem-timeline__group-add {
+    flex-basis: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .problem-timeline__row {
+    min-height: 3rem;
+  }
+
+  .problem-timeline__chip {
+    min-height: 1.75rem;
+  }
+
+  .problem-timeline__resize-handle {
+    flex-basis: 0.5rem;
+  }
+}
+
 @media (min-width: 62rem) {
   .problem-timeline__scroller {
     overflow: visible;
