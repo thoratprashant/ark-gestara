@@ -1257,11 +1257,14 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   }
 
   timelineChipTooltip(chip: TimelineChip): string {
-    const status =
-      this.timelineLegend.find((item) => item.status === chip.status)?.label ?? chip.status;
+    const status = this.timelineStatusLabel(chip.status);
     const range = `${this.formatWeek(chip.startWeek)} to ${this.formatWeek(chip.endWeek)}`;
     const currentWeekNote = this.chipCrossesCurrentWeek(chip) ? ' - crosses the current week' : '';
     return `${chip.label}: ${range} - ${status}${currentWeekNote}`;
+  }
+
+  timelineStatusLabel(status: TimelineStatus): string {
+    return this.timelineLegend.find((item) => item.status === status)?.label ?? status;
   }
 
   startChipInteraction(
@@ -1336,6 +1339,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       interaction.chipId,
       this.roundToQuarterWeek(startWeek),
       this.roundToQuarterWeek(endWeek),
+      interaction.mode === 'move',
     );
   }
 
@@ -1363,7 +1367,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     const duration = chip.endWeek - chip.startWeek;
     const direction = event.key === 'ArrowLeft' ? -0.5 : 0.5;
     const startWeek = this.clamp(chip.startWeek + direction, 0, maxWeek - duration);
-    this.updateTimelineChip(groupId, rowId, chip.id, startWeek, startWeek + duration);
+    this.updateTimelineChip(groupId, rowId, chip.id, startWeek, startWeek + duration, true);
   }
 
   undoTimelineChange(): void {
@@ -1544,6 +1548,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     chipId: string,
     startWeek: number,
     endWeek: number,
+    updateLateOrFutureStatus = false,
   ): void {
     this.pregnancyTimeline.update((timeline) => ({
       ...timeline,
@@ -1556,7 +1561,20 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
                   ? {
                       ...row,
                       chips: row.chips.map((chip) =>
-                        chip.id === chipId ? { ...chip, startWeek, endWeek } : chip,
+                        chip.id === chipId
+                          ? {
+                              ...chip,
+                              startWeek,
+                              endWeek,
+                              status:
+                                updateLateOrFutureStatus &&
+                                (chip.status === 'late' || chip.status === 'future')
+                                  ? startWeek >= timeline.currentWeek
+                                    ? 'future'
+                                    : 'late'
+                                  : chip.status,
+                            }
+                          : chip,
                       ),
                     }
                   : row,

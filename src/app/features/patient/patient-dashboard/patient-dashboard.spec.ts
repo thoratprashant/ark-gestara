@@ -229,7 +229,32 @@ describe('PatientDashboard timeline', () => {
     expect(dashboard.weekTickPercent(40)).toBeLessThan(100);
   });
 
-  it('marks a chip red only while it crosses the JSON current-week line', () => {
+  it('renders each timeline chip label from its data status', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    fixture.detectChanges();
+    const statusLabels: Record<string, string> = {
+      completed: 'Completed/Reviewed',
+      'not-reviewed': 'Completed/Not Reviewed',
+      ordered: 'Ordered',
+      late: 'Late',
+      abnormal: 'Abnormal',
+      future: 'Future',
+    };
+
+    const chips = Array.from(
+      fixture.nativeElement.querySelectorAll('.problem-timeline__chip'),
+    ) as HTMLElement[];
+
+    expect(chips.length).toBeGreaterThan(0);
+    chips.forEach((chip) => {
+      const status = chip.dataset['status'] ?? '';
+      expect(chip.querySelector('.problem-timeline__chip-label')?.textContent?.trim()).toBe(
+        statusLabels[status],
+      );
+    });
+  });
+
+  it('detects when a chip crosses the JSON current-week line without changing its status', () => {
     const dashboard = new PatientDashboard();
     const chip = dashboard.pregnancyTimeline().groups[0].rows[0].chips[1];
 
@@ -283,6 +308,7 @@ describe('PatientDashboard timeline', () => {
     const movedChip = dashboard.pregnancyTimeline().groups[0].rows[0].chips[1];
     expect(movedChip.startWeek).toBe(26);
     expect(movedChip.endWeek).toBe(29);
+    expect(movedChip.status).toBe('ordered');
     expect(dashboard.chipCrossesCurrentWeek(movedChip)).toBe(true);
 
     dashboard.startChipInteraction(
@@ -306,6 +332,63 @@ describe('PatientDashboard timeline', () => {
 
     const resizedChip = dashboard.pregnancyTimeline().groups[0].rows[0].chips[1];
     expect(resizedChip.endWeek).toBe(31);
+  });
+
+  it('switches only late and future chips when they move across the current-week line', () => {
+    const dashboard = new PatientDashboard();
+    const track = document.createElement('div');
+    const chipElement = document.createElement('div');
+    track.className = 'problem-timeline__track';
+    track.append(chipElement);
+    vi.spyOn(track, 'getBoundingClientRect').mockReturnValue({ width: 400 } as DOMRect);
+
+    const lateChip = dashboard.pregnancyTimeline().groups[0].rows[2].chips[0];
+    dashboard.startChipInteraction(
+      {
+        currentTarget: chipElement,
+        pointerId: 3,
+        clientX: 100,
+        preventDefault: vi.fn(),
+        stopPropagation: vi.fn(),
+      } as unknown as PointerEvent,
+      'routine-prenatal-care',
+      'genetic-screening',
+      lateChip,
+      'move',
+    );
+    dashboard.onChipPointerMove({
+      pointerId: 3,
+      clientX: 340,
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent);
+    dashboard.endChipInteraction({ pointerId: 3 } as PointerEvent);
+
+    const futureChip = dashboard.pregnancyTimeline().groups[0].rows[2].chips[0];
+    expect(futureChip.startWeek).toBe(28);
+    expect(futureChip.status).toBe('future');
+
+    dashboard.startChipInteraction(
+      {
+        currentTarget: chipElement,
+        pointerId: 4,
+        clientX: 340,
+        preventDefault: vi.fn(),
+        stopPropagation: vi.fn(),
+      } as unknown as PointerEvent,
+      'routine-prenatal-care',
+      'genetic-screening',
+      futureChip,
+      'move',
+    );
+    dashboard.onChipPointerMove({
+      pointerId: 4,
+      clientX: 330,
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent);
+
+    const lateAgainChip = dashboard.pregnancyTimeline().groups[0].rows[2].chips[0];
+    expect(lateAgainChip.startWeek).toBe(27);
+    expect(lateAgainChip.status).toBe('late');
   });
 
   it('opens the matching vital tooltip and generates its animated SVG path', () => {

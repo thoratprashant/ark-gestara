@@ -578,7 +578,6 @@
 
                   @for (chip of row.chips; track chip.id) {
                   <div class="problem-timeline__chip" [attr.data-status]="chip.status"
-                    [class.problem-timeline__chip--crossing]="chipCrossesCurrentWeek(chip)"
                     [style.left.%]="weekPercent(chip.startWeek)"
                     [style.width.%]="weekPercent(chip.endWeek - chip.startWeek)"
                     [matTooltip]="timelineChipTooltip(chip)" matTooltipPosition="above" role="button" tabindex="0"
@@ -591,7 +590,9 @@
                       aria-hidden="true" (pointerdown)="
                               startChipInteraction($event, group.id, row.id, chip, 'resize-start')
                             "></span>
-                    <span class="problem-timeline__chip-label">{{ chip.label }}</span>
+                    <span class="problem-timeline__chip-label">
+                      {{ timelineStatusLabel(chip.status) }}
+                    </span>
                     <span class="problem-timeline__resize-handle problem-timeline__resize-handle--end"
                       aria-hidden="true" (pointerdown)="
                               startChipInteraction($event, group.id, row.id, chip, 'resize-end')
