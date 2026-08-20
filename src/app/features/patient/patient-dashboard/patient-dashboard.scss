@@ -91,8 +91,8 @@
 .patient-identity strong {
   color: #0d9488;
   font-family: Inter, sans-serif;
-  font-size: 10.9px;
-  font-weight: 700;
+  font-size: 10px;
+  font-weight: 600;
 }
 
 .summary-facts {
@@ -417,7 +417,7 @@
   flex: 0 0 auto;
   flex-direction: column;
   justify-content: center;
-  padding: clamp(0.75rem, 1.5vw, 1rem);
+  padding: 11px 15px;
   background: #fff;
   border-color: #bfe5e3;
   border-radius: 0.875rem;
@@ -446,12 +446,14 @@
 .vital-card--alert .vital-card__top i {
   background: #ff6569;
 }
-
+.text-green{
+  color: #0d9488 !important;
+}
 .vital-card__icon {
   display: grid;
   place-items: center;
-  width: 2rem;
-  height: 2rem;
+  width: 2.3rem;
+  height: 2.3rem;
   color: #008f89;
   background: #e2f4f3;
   border-radius: 0.625rem;
@@ -471,7 +473,7 @@
 .vital-card h3 {
   color: #73808c;
   font-family: Inter, sans-serif;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   margin-bottom: 0.35rem;
 }
@@ -487,20 +489,16 @@
 .vital-card p strong {
   color: #171f26;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 700;
+  margin-right: 0.25rem;
 }
 
 .vital-card__value {
-  display: inline-block;
-  min-width: 3ch;
+  display: inline-block; 
   font-variant-numeric: tabular-nums;
   text-align: right;
-}
-
-.vital-card__value--pressure {
-  min-width: 6ch;
-}
+} 
 
 .vital-card--alert p strong {
   color: #f06a6a;
