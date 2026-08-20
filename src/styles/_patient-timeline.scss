@@ -513,6 +513,11 @@
 }
 
 @media (max-width: 35.999rem) {
+  .problem-timeline {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 45rem;
+  }
+
   .problem-timeline__tools {
     align-items: flex-start;
     flex-direction: column;

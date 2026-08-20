@@ -4,7 +4,14 @@
 >
   <header class="patient-header">
     <a class="logo-panel" routerLink="/patient/dashboard" aria-label="Gestara patient dashboard">
-      <img class="gestara-logo" src="assets/logo.svg" alt="" />
+      <img
+        class="gestara-logo"
+        src="assets/logo.png"
+        width="380"
+        height="128"
+        alt=""
+        fetchpriority="high"
+      />
     </a>
 
     <div class="header-main">
@@ -113,7 +120,15 @@
         aria-label="Gestara patient dashboard"
         (click)="closeSidebar()"
       >
-        <img class="gestara-logo" src="assets/logo.svg" alt="" />
+        <img
+          class="gestara-logo"
+          src="assets/logo.png"
+          width="380"
+          height="128"
+          alt=""
+          loading="lazy"
+          decoding="async"
+        />
       </a>
 
       <button

@@ -1178,6 +1178,11 @@
     --patient-summary-sticky-height: 7.25rem;
   }
 
+  .clinical-section {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 40rem;
+  }
+
   .clinical-section__body {
     padding-top: 1rem;
   }

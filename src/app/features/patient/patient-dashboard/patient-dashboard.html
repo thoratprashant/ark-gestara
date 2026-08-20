@@ -161,7 +161,10 @@
             <img
               class="img-fluid d-block mx-auto"
               src="assets/social-round.png"
+              width="162"
+              height="152"
               alt="Social determinants of health screening diagram"
+              decoding="async"
             />
             <figcaption>Social Determinants of Health Screening</figcaption>
           </figure>
@@ -791,7 +794,7 @@
               <button
                 class="problem-timeline__group-add"
                 type="button"
-                matTooltip="Add timeline item"
+                title="Add timeline item"
                 [attr.aria-label]="'Add timeline item to ' + group.label"
                 (click)="openTimelineItemDialog(group.id)"
               >
