@@ -862,6 +862,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     top: 0,
     width: 320,
   });
+  readonly timelineStatusTooltipMaxHeight = signal(560);
   readonly tooltipGlassFocusRect = signal<TooltipGlassFocusRect>({
     bottom: 0,
     left: 0,
@@ -1188,6 +1189,20 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.cancelTimelineGroupTooltipHide();
   }
 
+  timelineStatusTooltipNoteRows(note: string): number {
+    const approximateCharactersPerLine = 38;
+
+    return Math.max(
+      2,
+      note
+        .split('\n')
+        .reduce(
+          (rows, line) => rows + Math.max(1, Math.ceil(line.length / approximateCharactersPerLine)),
+          0,
+        ),
+    );
+  }
+
   showTimelineStatusTooltip(chip: TimelineChip, event: Event): void {
     this.cancelTimelineStatusTooltipHide();
     this.hideVitalTooltip();
@@ -1203,12 +1218,12 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     const triggerBounds = trigger.getBoundingClientRect();
     const width = Math.min(320, Math.max(260, window.innerWidth - 24));
     const preferredHeight: Record<TimelineStatus, number> = {
-      abnormal: 414,
-      completed: 312,
-      future: 348,
-      late: 584,
-      'not-reviewed': 312,
-      ordered: 370,
+      abnormal: 490,
+      completed: 380,
+      future: 400,
+      late: 650,
+      'not-reviewed': 380,
+      ordered: 440,
     };
     const spaceBelow = window.innerHeight - triggerBounds.bottom - 12;
     const spaceAbove = triggerBounds.top - 12;
@@ -1217,7 +1232,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
         ? 'below'
         : 'above';
     const availableHeight = placement === 'below' ? spaceBelow : spaceAbove;
-    const maxHeight = Math.min(preferredHeight[chip.status], Math.max(180, availableHeight - 10));
+    const maxHeight = Math.max(
+      0,
+      Math.min(preferredHeight[chip.status], availableHeight - 10, window.innerHeight - 24),
+    );
     const left = this.clamp(
       triggerBounds.left + triggerBounds.width / 2 - width / 2,
       12,
@@ -1235,6 +1253,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       top,
       width,
     });
+    this.timelineStatusTooltipMaxHeight.set(maxHeight);
     this.activeTimelineStatusTooltip.set({ chipId: chip.id, tooltip });
   }
 
@@ -1246,6 +1265,11 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   scheduleTimelineStatusTooltipHide(): void {
     this.cancelTimelineStatusTooltipHide();
     this.timelineStatusTooltipHideTimer = window.setTimeout(() => {
+      if (this.timelineStatusTooltipHasFocus()) {
+        this.timelineStatusTooltipHideTimer = null;
+        return;
+      }
+
       this.activeTimelineStatusTooltip.set(null);
       this.timelineStatusTooltipHideTimer = null;
     }, 180);
@@ -1253,6 +1277,17 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   keepTimelineStatusTooltipOpen(): void {
     this.cancelTimelineStatusTooltipHide();
+  }
+
+  onTimelineStatusTooltipFocusOut(event: FocusEvent): void {
+    const tooltip = event.currentTarget as HTMLElement | null;
+    const nextTarget = event.relatedTarget as Node | null;
+
+    if (tooltip && nextTarget && tooltip.contains(nextTarget)) {
+      return;
+    }
+
+    this.scheduleTimelineStatusTooltipHide();
   }
 
   resolveTimelineProblem(groupId: string): void {
@@ -1626,7 +1661,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       this.hideTimelineGroupTooltip();
     }
 
-    if (this.activeTimelineStatusTooltip()) {
+    if (this.activeTimelineStatusTooltip() && !this.timelineStatusTooltipHasFocus()) {
       this.hideTimelineStatusTooltip();
     }
 
@@ -1735,6 +1770,12 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       window.clearTimeout(this.timelineStatusTooltipHideTimer);
       this.timelineStatusTooltipHideTimer = null;
     }
+  }
+
+  private timelineStatusTooltipHasFocus(): boolean {
+    return document.activeElement instanceof HTMLElement
+      ? document.activeElement.closest('.timeline-status-tooltip') !== null
+      : false;
   }
 
   private setTooltipGlassFocus(bounds: DOMRect): void {

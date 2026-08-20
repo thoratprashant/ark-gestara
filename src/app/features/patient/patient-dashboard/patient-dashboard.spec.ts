@@ -282,10 +282,76 @@ describe('PatientDashboard timeline', () => {
       expect(tooltip.querySelector('.timeline-status-tooltip__badge')?.textContent?.trim()).toBe(
         badge,
       );
-      const recordList = tooltip.querySelector('.timeline-status-tooltip__test-list');
-      expect(
-        recordList?.classList.contains('timeline-status-tooltip__test-list--scrollable') ?? false,
-      ).toBe(status === 'late');
+      expect(tooltip.style.maxHeight).not.toBe('');
+      expect(tooltip.querySelector('.timeline-status-tooltip__test-list--scrollable')).toBeNull();
+    });
+  });
+
+  it('expands tooltip notes according to their wrapped content', () => {
+    const dashboard = new PatientDashboard();
+
+    expect(dashboard.timelineStatusTooltipNoteRows('Short note')).toBe(2);
+    expect(dashboard.timelineStatusTooltipNoteRows('A'.repeat(100))).toBe(3);
+    expect(dashboard.timelineStatusTooltipNoteRows('First line\nSecond line\nThird line')).toBe(3);
+  });
+
+  it('keeps the status tooltip open while its controls are being used', () => {
+    vi.useFakeTimers();
+    const fixture = TestBed.createComponent(PatientDashboard);
+    fixture.detectChanges();
+    const dashboard = fixture.componentInstance;
+    const chip = fixture.nativeElement.querySelector(
+      '.problem-timeline__chip[data-status="ordered"]',
+    ) as HTMLElement;
+
+    chip.dispatchEvent(new MouseEvent('mouseenter'));
+    fixture.detectChanges();
+
+    const tooltip = fixture.nativeElement.querySelector('.timeline-status-tooltip') as HTMLElement;
+    const input = tooltip.querySelector('input') as HTMLInputElement;
+    input.focus();
+    dashboard.scheduleTimelineStatusTooltipHide();
+    vi.advanceTimersByTime(200);
+
+    expect(dashboard.activeTimelineStatusTooltip()).not.toBeNull();
+
+    const outsideButton = document.createElement('button');
+    document.body.append(outsideButton);
+    outsideButton.focus();
+    dashboard.onTimelineStatusTooltipFocusOut({
+      currentTarget: tooltip,
+      relatedTarget: outsideButton,
+    } as unknown as FocusEvent);
+    vi.advanceTimersByTime(200);
+
+    expect(dashboard.activeTimelineStatusTooltip()).toBeNull();
+    outsideButton.remove();
+    vi.useRealTimers();
+  });
+
+  it('limits the complete tooltip height only when vertical space is constrained', () => {
+    const dashboard = new PatientDashboard();
+    const trigger = document.createElement('div');
+    const originalInnerHeight = window.innerHeight;
+    const lateChip = dashboard.pregnancyTimeline().groups[0].rows[2].chips[0];
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 260 });
+    vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue({
+      bottom: 100,
+      height: 20,
+      left: 100,
+      right: 200,
+      top: 80,
+      width: 100,
+    } as DOMRect);
+
+    dashboard.showTimelineStatusTooltip(lateChip, {
+      currentTarget: trigger,
+    } as unknown as Event);
+
+    expect(dashboard.timelineStatusTooltipMaxHeight()).toBe(138);
+    Object.defineProperty(window, 'innerHeight', {
+      configurable: true,
+      value: originalInnerHeight,
     });
   });
 

@@ -1,21 +1,36 @@
 <div class="patient-dashboard">
   @if (tooltipGlassActive()) {
-  <div class="tooltip-glass-overlay" aria-hidden="true">
-    <span class="tooltip-glass-overlay__pane tooltip-glass-overlay__pane--top"
-      [style.height.px]="tooltipGlassFocusRect().top"></span>
-    <span class="tooltip-glass-overlay__pane tooltip-glass-overlay__pane--left"
-      [style.top.px]="tooltipGlassFocusRect().top" [style.width.px]="tooltipGlassFocusRect().left"
-      [style.height.px]="tooltipGlassFocusRect().bottom - tooltipGlassFocusRect().top"></span>
-    <span class="tooltip-glass-overlay__pane tooltip-glass-overlay__pane--right"
-      [style.top.px]="tooltipGlassFocusRect().top" [style.left.px]="tooltipGlassFocusRect().right"
-      [style.height.px]="tooltipGlassFocusRect().bottom - tooltipGlassFocusRect().top"></span>
-    <span class="tooltip-glass-overlay__pane tooltip-glass-overlay__pane--bottom"
-      [style.top.px]="tooltipGlassFocusRect().bottom"></span>
-  </div>
+    <div class="tooltip-glass-overlay" aria-hidden="true">
+      <span
+        class="tooltip-glass-overlay__pane tooltip-glass-overlay__pane--top"
+        [style.height.px]="tooltipGlassFocusRect().top"
+      ></span>
+      <span
+        class="tooltip-glass-overlay__pane tooltip-glass-overlay__pane--left"
+        [style.top.px]="tooltipGlassFocusRect().top"
+        [style.width.px]="tooltipGlassFocusRect().left"
+        [style.height.px]="tooltipGlassFocusRect().bottom - tooltipGlassFocusRect().top"
+      ></span>
+      <span
+        class="tooltip-glass-overlay__pane tooltip-glass-overlay__pane--right"
+        [style.top.px]="tooltipGlassFocusRect().top"
+        [style.left.px]="tooltipGlassFocusRect().right"
+        [style.height.px]="tooltipGlassFocusRect().bottom - tooltipGlassFocusRect().top"
+      ></span>
+      <span
+        class="tooltip-glass-overlay__pane tooltip-glass-overlay__pane--bottom"
+        [style.top.px]="tooltipGlassFocusRect().bottom"
+      ></span>
+    </div>
   }
 
-  <section #patientSummary class="patient-summary" [class.patient-summary--collapsed]="!summaryExpanded()"
-    [class.patient-summary--sticky]="summarySticky()" aria-labelledby="patient-name">
+  <section
+    #patientSummary
+    class="patient-summary"
+    [class.patient-summary--collapsed]="!summaryExpanded()"
+    [class.patient-summary--sticky]="summarySticky()"
+    aria-labelledby="patient-name"
+  >
     <header class="patient-summary__header">
       <div class="patient-identity">
         <h1 id="patient-name">Sarah Johnson</h1>
@@ -28,73 +43,126 @@
 
       <div class="patient-summary__controls">
         @if (!summaryExpanded()) {
-        <div class="summary-facts" aria-label="Patient summary">
-          <article class="summary-fact">
-            <img class="summary-fact__icon" src="assets/calender-green.svg" alt="" aria-hidden="true" />
-            <span>
-              <small>Current Gestational Age</small>
-              <strong>28w 4d</strong>
-            </span>
-          </article>
-          <article class="summary-fact">
-            <img class="summary-fact__icon" src="assets/calender-green.svg" alt="" aria-hidden="true" />
-            <span>
-              <small>Estimated Due Date</small>
-              <strong>June 15, 2026</strong>
-            </span>
-          </article>
-          <button class="summary-fact summary-fact--delivery" type="button" aria-describedby="delivery-window-tooltip"
-            [attr.aria-expanded]="deliveryWindowTooltipOpen()" (mouseenter)="showDeliveryWindowTooltip($event)"
-            (mouseleave)="scheduleDeliveryWindowTooltipHide()" (focusin)="showDeliveryWindowTooltip($event)"
-            (focusout)="scheduleDeliveryWindowTooltipHide()" (click)="showDeliveryWindowTooltip($event)">
-            <img class="summary-fact__icon" src="assets/calender-green.svg" alt="" aria-hidden="true" />
-            <span>
-              <small>Recommended Delivery Window</small>
-              <strong>Week 36–39</strong>
-            </span>
-          </button>
-          <button class="summary-fact summary-fact--risk" type="button" aria-haspopup="dialog"
-            [attr.aria-expanded]="riskAssessmentOpen()" (mouseenter)="showRiskAssessment($event)"
-            (mouseleave)="scheduleRiskAssessmentHide()" (focusin)="showRiskAssessment($event)"
-            (focusout)="scheduleRiskAssessmentHide()" (click)="showRiskAssessment($event)">
+          <div class="summary-facts" aria-label="Patient summary">
+            <article class="summary-fact">
+              <img
+                class="summary-fact__icon"
+                src="assets/calender-green.svg"
+                alt=""
+                aria-hidden="true"
+              />
+              <span>
+                <small>Current Gestational Age</small>
+                <strong>28w 4d</strong>
+              </span>
+            </article>
+            <article class="summary-fact">
+              <img
+                class="summary-fact__icon"
+                src="assets/calender-green.svg"
+                alt=""
+                aria-hidden="true"
+              />
+              <span>
+                <small>Estimated Due Date</small>
+                <strong>June 15, 2026</strong>
+              </span>
+            </article>
+            <button
+              class="summary-fact summary-fact--delivery"
+              type="button"
+              aria-describedby="delivery-window-tooltip"
+              [attr.aria-expanded]="deliveryWindowTooltipOpen()"
+              (mouseenter)="showDeliveryWindowTooltip($event)"
+              (mouseleave)="scheduleDeliveryWindowTooltipHide()"
+              (focusin)="showDeliveryWindowTooltip($event)"
+              (focusout)="scheduleDeliveryWindowTooltipHide()"
+              (click)="showDeliveryWindowTooltip($event)"
+            >
+              <img
+                class="summary-fact__icon"
+                src="assets/calender-green.svg"
+                alt=""
+                aria-hidden="true"
+              />
+              <span>
+                <small>Recommended Delivery Window</small>
+                <strong>Week 36–39</strong>
+              </span>
+            </button>
+            <button
+              class="summary-fact summary-fact--risk"
+              type="button"
+              aria-haspopup="dialog"
+              [attr.aria-expanded]="riskAssessmentOpen()"
+              (mouseenter)="showRiskAssessment($event)"
+              (mouseleave)="scheduleRiskAssessmentHide()"
+              (focusin)="showRiskAssessment($event)"
+              (focusout)="scheduleRiskAssessmentHide()"
+              (click)="showRiskAssessment($event)"
+            >
+              <img class="summary-fact__icon" src="assets/warn-red.svg" alt="" aria-hidden="true" />
+              <span>
+                <small>Pre-eclampsia Risk</small>
+                <strong>High Risk</strong>
+              </span>
+            </button>
+          </div>
+        } @else {
+          <button
+            class="summary-fact summary-fact--risk patient-summary__risk"
+            type="button"
+            aria-haspopup="dialog"
+            [attr.aria-expanded]="riskAssessmentOpen()"
+            (mouseenter)="showRiskAssessment($event)"
+            (mouseleave)="scheduleRiskAssessmentHide()"
+            (focusin)="showRiskAssessment($event)"
+            (focusout)="scheduleRiskAssessmentHide()"
+            (click)="showRiskAssessment($event)"
+          >
             <img class="summary-fact__icon" src="assets/warn-red.svg" alt="" aria-hidden="true" />
             <span>
               <small>Pre-eclampsia Risk</small>
               <strong>High Risk</strong>
             </span>
           </button>
-        </div>
-        } @else {
-        <button class="summary-fact summary-fact--risk patient-summary__risk" type="button" aria-haspopup="dialog"
-          [attr.aria-expanded]="riskAssessmentOpen()" (mouseenter)="showRiskAssessment($event)"
-          (mouseleave)="scheduleRiskAssessmentHide()" (focusin)="showRiskAssessment($event)"
-          (focusout)="scheduleRiskAssessmentHide()" (click)="showRiskAssessment($event)">
-          <img class="summary-fact__icon" src="assets/warn-red.svg" alt="" aria-hidden="true" />
-          <span>
-            <small>Pre-eclampsia Risk</small>
-            <strong>High Risk</strong>
-          </span>
-        </button>
         }
 
-        <button class="summary-toggle" type="button" [attr.aria-expanded]="summaryExpanded()"
-          aria-controls="patient-summary-details" (click)="toggleSummary()">
+        <button
+          class="summary-toggle"
+          type="button"
+          [attr.aria-expanded]="summaryExpanded()"
+          aria-controls="patient-summary-details"
+          (click)="toggleSummary()"
+        >
           <span class="visually-hidden">
             {{ summaryExpanded() ? 'Collapse' : 'Expand' }} patient summary
           </span>
-          <span class="summary-toggle__icon" [class.summary-toggle__icon--expanded]="summaryExpanded()"
-            aria-hidden="true"></span>
+          <span
+            class="summary-toggle__icon"
+            [class.summary-toggle__icon--expanded]="summaryExpanded()"
+            aria-hidden="true"
+          ></span>
         </button>
       </div>
     </header>
 
-    <div class="patient-summary__details-motion" [class.patient-summary__details-motion--open]="summaryExpanded()"
-      [attr.aria-hidden]="!summaryExpanded()">
-      <div class="patient-summary__details-motion-inner" [attr.inert]="summaryExpanded() ? null : ''">
+    <div
+      class="patient-summary__details-motion"
+      [class.patient-summary__details-motion--open]="summaryExpanded()"
+      [attr.aria-hidden]="!summaryExpanded()"
+    >
+      <div
+        class="patient-summary__details-motion-inner"
+        [attr.inert]="summaryExpanded() ? null : ''"
+      >
         <div id="patient-summary-details" class="patient-summary__details">
           <figure class="patient-summary__screening">
-            <img class="img-fluid d-block mx-auto" src="assets/social-round.png"
-              alt="Social determinants of health screening diagram" />
+            <img
+              class="img-fluid d-block mx-auto"
+              src="assets/social-round.png"
+              alt="Social determinants of health screening diagram"
+            />
             <figcaption>Social Determinants of Health Screening</figcaption>
           </figure>
 
@@ -151,98 +219,126 @@
   </section>
 
   @if (deliveryWindowTooltipOpen()) {
-  <aside id="delivery-window-tooltip" class="delivery-window-tooltip" role="tooltip"
-    aria-label="Recommended Delivery Window details" (mouseenter)="keepDeliveryWindowTooltipOpen()"
-    (mouseleave)="scheduleDeliveryWindowTooltipHide()" [style.left.px]="deliveryWindowTooltipPosition().left"
-    [style.top.px]="deliveryWindowTooltipPosition().top" [style.width.px]="deliveryWindowTooltipPosition().width">
-    <header class="delivery-window-tooltip__header">
-      <h2>Recommended Delivery Window</h2>
-      <p>Week 36–39</p>
-    </header>
+    <aside
+      id="delivery-window-tooltip"
+      class="delivery-window-tooltip"
+      role="tooltip"
+      aria-label="Recommended Delivery Window details"
+      (mouseenter)="keepDeliveryWindowTooltipOpen()"
+      (mouseleave)="scheduleDeliveryWindowTooltipHide()"
+      [style.left.px]="deliveryWindowTooltipPosition().left"
+      [style.top.px]="deliveryWindowTooltipPosition().top"
+      [style.width.px]="deliveryWindowTooltipPosition().width"
+    >
+      <header class="delivery-window-tooltip__header">
+        <h2>Recommended Delivery Window</h2>
+        <p>Week 36–39</p>
+      </header>
 
-    <img class="delivery-window-tooltip__divider" src="assets/delivery-window/divider.svg" alt="" aria-hidden="true" />
+      <img
+        class="delivery-window-tooltip__divider"
+        src="assets/delivery-window/divider.svg"
+        alt=""
+        aria-hidden="true"
+      />
 
-    <section class="delivery-window-tooltip__content">
-      <h3>Indication:</h3>
-      <p>GDM and gestational hypertension - recommend delivery at term.</p>
-    </section>
+      <section class="delivery-window-tooltip__content">
+        <h3>Indication:</h3>
+        <p>GDM and gestational hypertension - recommend delivery at term.</p>
+      </section>
 
-    <p class="delivery-window-tooltip__help">
-      Drag the edges to adjust the window, or drag the center to move it.
-    </p>
-  </aside>
+      <p class="delivery-window-tooltip__help">
+        Drag the edges to adjust the window, or drag the center to move it.
+      </p>
+    </aside>
   }
 
   @if (riskAssessmentOpen()) {
-  <aside class="risk-assessment-tooltip" role="dialog" aria-label="Pre-eclampsia Risk Assessment" aria-modal="false"
-    (mouseenter)="keepRiskAssessmentOpen()" (mouseleave)="scheduleRiskAssessmentHide()"
-    (focusin)="keepRiskAssessmentOpen()" (pointerdown)="keepRiskAssessmentOpen()" (change)="keepRiskAssessmentOpen()"
-    (keydown.escape)="hideRiskAssessment()" [style.left.px]="riskAssessmentPosition().left"
-    [style.top.px]="riskAssessmentPosition().top" [style.width.px]="riskAssessmentPosition().width"
-    [style.max-height.px]="riskAssessmentMaxHeight()">
-    <header class="risk-assessment-tooltip__header">
-      <div>
-        <h2>Pre-eclampsia Risk Assessment</h2>
-        <p>
-          Sarah Johnson, 32yo <span aria-hidden="true">•</span> 28 Weeks 4 Days
-          <span aria-hidden="true">•</span> G3P1011
-        </p>
-      </div>
-      <button type="button" aria-label="Close risk assessment" (click)="hideRiskAssessment()">
-        <img src="assets/risk-assessment/asset-1.svg" alt="" aria-hidden="true" />
-      </button>
-    </header>
-
-    <section class="risk-assessment-tooltip__banner" aria-label="Risk summary">
-      <span class="risk-assessment-tooltip__warning-icon">
-        <img src="assets/risk-assessment/asset-2.svg" alt="" aria-hidden="true" />
-      </span>
-      <div>
-        <strong>High Risk Detected (1 High Factor)</strong>
-        <p>Daily low-dose aspirin (81-150 mg) is recommended starting from 12-16 weeks.</p>
-      </div>
-    </section>
-
-    <div class="risk-assessment-tooltip__body">
-      <fieldset class="risk-assessment-tooltip__factors risk-assessment-tooltip__factors--high">
-        <legend>High Risk Factors (1)</legend>
+    <aside
+      class="risk-assessment-tooltip"
+      role="dialog"
+      aria-label="Pre-eclampsia Risk Assessment"
+      aria-modal="false"
+      (mouseenter)="keepRiskAssessmentOpen()"
+      (mouseleave)="scheduleRiskAssessmentHide()"
+      (focusin)="keepRiskAssessmentOpen()"
+      (pointerdown)="keepRiskAssessmentOpen()"
+      (change)="keepRiskAssessmentOpen()"
+      (keydown.escape)="hideRiskAssessment()"
+      [style.left.px]="riskAssessmentPosition().left"
+      [style.top.px]="riskAssessmentPosition().top"
+      [style.width.px]="riskAssessmentPosition().width"
+      [style.max-height.px]="riskAssessmentMaxHeight()"
+    >
+      <header class="risk-assessment-tooltip__header">
         <div>
-          @for (factor of highRiskFactors; track factor.label) {
-          <label>
-            <input type="checkbox" [checked]="factor.selected" />
-            <span class="risk-assessment-tooltip__checkbox" aria-hidden="true">
-              <img src="assets/risk-assessment/asset-3.svg" alt="" />
-            </span>
-            <span>{{ factor.label }}</span>
-          </label>
-          }
+          <h2>Pre-eclampsia Risk Assessment</h2>
+          <p>
+            Sarah Johnson, 32yo <span aria-hidden="true">•</span> 28 Weeks 4 Days
+            <span aria-hidden="true">•</span> G3P1011
+          </p>
         </div>
-      </fieldset>
+        <button type="button" aria-label="Close risk assessment" (click)="hideRiskAssessment()">
+          <img src="assets/risk-assessment/asset-1.svg" alt="" aria-hidden="true" />
+        </button>
+      </header>
 
-      <img class="risk-assessment-tooltip__divider" src="assets/risk-assessment/asset-4.svg" alt=""
-        aria-hidden="true" />
-
-      <fieldset class="risk-assessment-tooltip__factors risk-assessment-tooltip__factors--moderate">
-        <legend>Moderate Risk Factors (0)</legend>
+      <section class="risk-assessment-tooltip__banner" aria-label="Risk summary">
+        <span class="risk-assessment-tooltip__warning-icon">
+          <img src="assets/risk-assessment/asset-2.svg" alt="" aria-hidden="true" />
+        </span>
         <div>
-          @for (factor of moderateRiskFactors; track factor) {
-          <label>
-            <input type="checkbox" />
-            <span class="risk-assessment-tooltip__checkbox" aria-hidden="true">
-              <img src="assets/risk-assessment/asset-3.svg" alt="" />
-            </span>
-            <span>{{ factor }}</span>
-          </label>
-          }
+          <strong>High Risk Detected (1 High Factor)</strong>
+          <p>Daily low-dose aspirin (81-150 mg) is recommended starting from 12-16 weeks.</p>
         </div>
-      </fieldset>
-    </div>
+      </section>
 
-    <footer class="risk-assessment-tooltip__footer">
-      <button type="button" (click)="hideRiskAssessment()">Cancel</button>
-      <button type="button" (click)="hideRiskAssessment()">Save Assessment</button>
-    </footer>
-  </aside>
+      <div class="risk-assessment-tooltip__body">
+        <fieldset class="risk-assessment-tooltip__factors risk-assessment-tooltip__factors--high">
+          <legend>High Risk Factors (1)</legend>
+          <div>
+            @for (factor of highRiskFactors; track factor.label) {
+              <label>
+                <input type="checkbox" [checked]="factor.selected" />
+                <span class="risk-assessment-tooltip__checkbox" aria-hidden="true">
+                  <img src="assets/risk-assessment/asset-3.svg" alt="" />
+                </span>
+                <span>{{ factor.label }}</span>
+              </label>
+            }
+          </div>
+        </fieldset>
+
+        <img
+          class="risk-assessment-tooltip__divider"
+          src="assets/risk-assessment/asset-4.svg"
+          alt=""
+          aria-hidden="true"
+        />
+
+        <fieldset
+          class="risk-assessment-tooltip__factors risk-assessment-tooltip__factors--moderate"
+        >
+          <legend>Moderate Risk Factors (0)</legend>
+          <div>
+            @for (factor of moderateRiskFactors; track factor) {
+              <label>
+                <input type="checkbox" />
+                <span class="risk-assessment-tooltip__checkbox" aria-hidden="true">
+                  <img src="assets/risk-assessment/asset-3.svg" alt="" />
+                </span>
+                <span>{{ factor }}</span>
+              </label>
+            }
+          </div>
+        </fieldset>
+      </div>
+
+      <footer class="risk-assessment-tooltip__footer">
+        <button type="button" (click)="hideRiskAssessment()">Cancel</button>
+        <button type="button" (click)="hideRiskAssessment()">Save Assessment</button>
+      </footer>
+    </aside>
   }
 
   <section #vitalSigns class="vital-signs" aria-labelledby="vital-signs-title">
@@ -250,9 +346,14 @@
 
     <div class="vital-signs__scroller" tabindex="0">
       <div class="vital-signs__list">
-        <article class="vital-card vital-card--alert" tabindex="0"
-          (mouseenter)="showVitalTooltip('blood-pressure', $event)" (mouseleave)="scheduleVitalTooltipHide()"
-          (focusin)="showVitalTooltip('blood-pressure', $event)" (focusout)="scheduleVitalTooltipHide()">
+        <article
+          class="vital-card vital-card--alert"
+          tabindex="0"
+          (mouseenter)="showVitalTooltip('blood-pressure', $event)"
+          (mouseleave)="scheduleVitalTooltipHide()"
+          (focusin)="showVitalTooltip('blood-pressure', $event)"
+          (focusout)="scheduleVitalTooltipHide()"
+        >
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/chart-red.svg" alt="" />
@@ -268,9 +369,14 @@
           </p>
         </article>
 
-        <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('heart-rate', $event)"
-          (mouseleave)="scheduleVitalTooltipHide()" (focusin)="showVitalTooltip('heart-rate', $event)"
-          (focusout)="scheduleVitalTooltipHide()">
+        <article
+          class="vital-card"
+          tabindex="0"
+          (mouseenter)="showVitalTooltip('heart-rate', $event)"
+          (mouseleave)="scheduleVitalTooltipHide()"
+          (focusin)="showVitalTooltip('heart-rate', $event)"
+          (focusout)="scheduleVitalTooltipHide()"
+        >
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/heart-green.svg" alt="" />
@@ -284,9 +390,14 @@
           </p>
         </article>
 
-        <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('fundal-height', $event)"
-          (mouseleave)="scheduleVitalTooltipHide()" (focusin)="showVitalTooltip('fundal-height', $event)"
-          (focusout)="scheduleVitalTooltipHide()">
+        <article
+          class="vital-card"
+          tabindex="0"
+          (mouseenter)="showVitalTooltip('fundal-height', $event)"
+          (mouseleave)="scheduleVitalTooltipHide()"
+          (focusin)="showVitalTooltip('fundal-height', $event)"
+          (focusout)="scheduleVitalTooltipHide()"
+        >
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/measurment-green.svg" alt="" />
@@ -300,9 +411,14 @@
           </p>
         </article>
 
-        <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('cervical-exam', $event)"
-          (mouseleave)="scheduleVitalTooltipHide()" (focusin)="showVitalTooltip('cervical-exam', $event)"
-          (focusout)="scheduleVitalTooltipHide()">
+        <article
+          class="vital-card"
+          tabindex="0"
+          (mouseenter)="showVitalTooltip('cervical-exam', $event)"
+          (mouseleave)="scheduleVitalTooltipHide()"
+          (focusin)="showVitalTooltip('cervical-exam', $event)"
+          (focusout)="scheduleVitalTooltipHide()"
+        >
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/circle-point-green.svg" alt="" />
@@ -313,9 +429,14 @@
           <p><strong>Closed, thick, -3 station</strong></p>
         </article>
 
-        <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('bmi', $event)"
-          (mouseleave)="scheduleVitalTooltipHide()" (focusin)="showVitalTooltip('bmi', $event)"
-          (focusout)="scheduleVitalTooltipHide()">
+        <article
+          class="vital-card"
+          tabindex="0"
+          (mouseenter)="showVitalTooltip('bmi', $event)"
+          (mouseleave)="scheduleVitalTooltipHide()"
+          (focusin)="showVitalTooltip('bmi', $event)"
+          (focusout)="scheduleVitalTooltipHide()"
+        >
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/bmi-green.svg" alt="" />
@@ -329,9 +450,14 @@
           <small>Pre-pregnancy BMI - 22.4</small>
         </article>
 
-        <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('current-weight', $event)"
-          (mouseleave)="scheduleVitalTooltipHide()" (focusin)="showVitalTooltip('current-weight', $event)"
-          (focusout)="scheduleVitalTooltipHide()">
+        <article
+          class="vital-card"
+          tabindex="0"
+          (mouseenter)="showVitalTooltip('current-weight', $event)"
+          (mouseleave)="scheduleVitalTooltipHide()"
+          (focusin)="showVitalTooltip('current-weight', $event)"
+          (focusout)="scheduleVitalTooltipHide()"
+        >
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/bmi-green.svg" alt="" />
@@ -345,9 +471,14 @@
           </p>
         </article>
 
-        <article class="vital-card" tabindex="0" (mouseenter)="showVitalTooltip('weight-gain', $event)"
-          (mouseleave)="scheduleVitalTooltipHide()" (focusin)="showVitalTooltip('weight-gain', $event)"
-          (focusout)="scheduleVitalTooltipHide()">
+        <article
+          class="vital-card"
+          tabindex="0"
+          (mouseenter)="showVitalTooltip('weight-gain', $event)"
+          (mouseleave)="scheduleVitalTooltipHide()"
+          (focusin)="showVitalTooltip('weight-gain', $event)"
+          (focusout)="scheduleVitalTooltipHide()"
+        >
           <div class="vital-card__top">
             <span class="vital-card__icon" aria-hidden="true">
               <img src="assets/up-green.svg" alt="" />
@@ -364,137 +495,219 @@
     </div>
 
     @for (tooltip of activeVitalTooltipItems(); track tooltip.id) {
-    <aside id="vital-card-tooltip" class="vital-tooltip" role="tooltip"
-      [class.vital-tooltip--blood-pressure]="tooltip.id === 'blood-pressure'" [attr.data-tooltip-id]="tooltip.id"
-      (mouseenter)="keepVitalTooltipOpen()" (mouseleave)="scheduleVitalTooltipHide()"
-      [style.left.px]="vitalTooltipPosition().left" [style.top.px]="vitalTooltipPosition().top"
-      [style.width.px]="vitalTooltipPosition().width">
-      <h3>{{ tooltip.title }}</h3>
+      <aside
+        id="vital-card-tooltip"
+        class="vital-tooltip"
+        role="tooltip"
+        [class.vital-tooltip--blood-pressure]="tooltip.id === 'blood-pressure'"
+        [attr.data-tooltip-id]="tooltip.id"
+        (mouseenter)="keepVitalTooltipOpen()"
+        (mouseleave)="scheduleVitalTooltipHide()"
+        [style.left.px]="vitalTooltipPosition().left"
+        [style.top.px]="vitalTooltipPosition().top"
+        [style.width.px]="vitalTooltipPosition().width"
+      >
+        <h3>{{ tooltip.title }}</h3>
 
-      @if (tooltip.subtitle) {
-      <p class="vital-tooltip__subtitle">{{ tooltip.subtitle }}</p>
-      }
-
-      @if (tooltip.history) {
-      <ol class="vital-tooltip__history">
-        @for (item of tooltip.history; track item.week; let historyIndex = $index) {
-        <li [style.animation-delay.ms]="historyIndex * 65">
-          <strong>{{ item.week }}</strong>
-          <span>{{ item.detail }}</span>
-        </li>
-        }
-      </ol>
-      }
-
-      @for (chart of tooltip.charts ?? []; track $index; let chartIndex = $index) {
-      <div class="vital-tooltip__chart-block">
-        @if (chart.label) {
-        <h4>{{ chart.label }}</h4>
+        @if (tooltip.subtitle) {
+          <p class="vital-tooltip__subtitle">{{ tooltip.subtitle }}</p>
         }
 
-        <svg class="vital-tooltip__chart" [attr.viewBox]="vitalChartViewBox(chart)" role="img"
-          [attr.aria-label]="chart.label || tooltip.title"
-          (mousemove)="updateVitalChartHover($event, chart, chartIndex)"
-          (mouseleave)="clearVitalChartHover(chartIndex)">
-          @if (chart.normalRange) {
-          <rect class="vital-tooltip__normal-range" x="42" [attr.y]="vitalChartY(chart.normalRange.max, chart)"
-            width="360" [attr.height]="vitalChartRangeHeight(chart)"
-            [attr.fill]="chart.normalRange.color || 'rgba(13, 148, 136, 0.08)'"></rect>
-          }
-
-          @for (tick of chart.yTicks; track tick) {
-          <line class="vital-tooltip__grid-line" x1="42" x2="402" [attr.y1]="vitalChartY(tick, chart)"
-            [attr.y2]="vitalChartY(tick, chart)"></line>
-          <text class="vital-tooltip__axis-label" x="36" text-anchor="end" [attr.y]="vitalChartY(tick, chart) + 4">
-            {{ tick }}
-          </text>
-          }
-
-          @for (label of chart.xLabels; track label; let labelIndex = $index) {
-          @if (chart.showVerticalGrid) {
-          <line class="vital-tooltip__grid-line" y1="10" [attr.y2]="vitalChartBottom(chart)"
-            [attr.x1]="vitalChartX(labelIndex, chart.xLabels.length)"
-            [attr.x2]="vitalChartX(labelIndex, chart.xLabels.length)"></line>
-          }
-          <text class="vital-tooltip__axis-label" [attr.y]="vitalChartAxisY(chart)" text-anchor="middle"
-            [attr.x]="vitalChartX(labelIndex, chart.xLabels.length)">
-            {{ label }}
-          </text>
-          }
-
-          @for (threshold of chart.thresholds ?? []; track threshold.value) {
-          <line class="vital-tooltip__threshold" x1="42" x2="402" [attr.y1]="vitalChartY(threshold.value, chart)"
-            [attr.y2]="vitalChartY(threshold.value, chart)" [attr.stroke]="threshold.color"></line>
-          @if (threshold.label) {
-          <text class="vital-tooltip__threshold-label" x="398" text-anchor="end"
-            [attr.y]="vitalChartY(threshold.value, chart) + 3" [attr.fill]="threshold.color">
-            {{ threshold.label }}
-          </text>
-          }
-          }
-
-          @for (series of chart.series; track $index) {
-          <path class="vital-tooltip__series" pathLength="100" fill="none" [attr.d]="vitalChartPath(chart, series)"
-            [attr.stroke]="series.color"></path>
-
-          @for (value of series.values; track $index; let pointIndex = $index) {
-          <circle class="vital-tooltip__point" r="4.5" [attr.cx]="vitalChartX(pointIndex, series.values.length)"
-            [attr.cy]="vitalChartY(value, chart)" [attr.fill]="series.pointColor || series.color"
-            [style.animation-delay.ms]="250 + pointIndex * 85"></circle>
-          }
-          }
-
-          @if (vitalChartHover(); as chartHover) {
-          @if (chartHover.chartIndex === chartIndex) {
-          <g class="vital-tooltip__crosshair">
-            <line [attr.x1]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
-              [attr.x2]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)" y1="10"
-              [attr.y2]="vitalChartBottom(chart)"></line>
-            <rect class="vital-tooltip__week-badge"
-              [attr.x]="vitalChartX(chartHover.pointIndex, chart.xLabels.length) - 18" y="10" width="36" height="16"
-              rx="5"></rect>
-            <text class="vital-tooltip__week-label" [attr.x]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
-              y="21" text-anchor="middle">
-              {{ chart.xLabels[chartHover.pointIndex] }}
-            </text>
-
-            @for (series of chart.series; track $index) {
-            <circle class="vital-tooltip__hover-point" r="5.5"
-              [attr.cx]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
-              [attr.cy]="vitalChartY(series.values[chartHover.pointIndex], chart)"
-              [attr.fill]="series.pointColor || series.color"></circle>
-            <rect class="vital-tooltip__value-badge" [attr.x]="
-                          vitalChartValueLabelX(chartHover.pointIndex, chart.xLabels.length)
-                        " [attr.y]="
-                          vitalChartValueLabelY(series.values[chartHover.pointIndex], chart) - 9
-                        " width="34" height="18" rx="5"></rect>
-            <text class="vital-tooltip__value-label" [attr.x]="
-                          vitalChartValueLabelX(chartHover.pointIndex, chart.xLabels.length) + 17
-                        " [attr.y]="
-                          vitalChartValueLabelY(series.values[chartHover.pointIndex], chart) + 3
-                        " text-anchor="middle">
-              {{ series.values[chartHover.pointIndex] }}
-            </text>
+        @if (tooltip.history) {
+          <ol class="vital-tooltip__history">
+            @for (item of tooltip.history; track item.week; let historyIndex = $index) {
+              <li [style.animation-delay.ms]="historyIndex * 65">
+                <strong>{{ item.week }}</strong>
+                <span>{{ item.detail }}</span>
+              </li>
             }
-          </g>
-          }
-          }
-        </svg>
-      </div>
-      }
-
-      @if (tooltip.footer) {
-      <footer class="vital-tooltip__footer" [style.color]="tooltip.footer.color">
-        <strong>{{ tooltip.footer.message }}</strong>
-        @if (tooltip.footer.status) {
-        <span class="vital-tooltip__status">
-          <i [style.background-color]="tooltip.footer.color" aria-hidden="true"></i>
-          {{ tooltip.footer.status }}
-        </span>
+          </ol>
         }
-      </footer>
-      }
-    </aside>
+
+        @for (chart of tooltip.charts ?? []; track $index; let chartIndex = $index) {
+          <div class="vital-tooltip__chart-block">
+            @if (chart.label) {
+              <h4>{{ chart.label }}</h4>
+            }
+
+            <svg
+              class="vital-tooltip__chart"
+              [attr.viewBox]="vitalChartViewBox(chart)"
+              role="img"
+              [attr.aria-label]="chart.label || tooltip.title"
+              (mousemove)="updateVitalChartHover($event, chart, chartIndex)"
+              (mouseleave)="clearVitalChartHover(chartIndex)"
+            >
+              @if (chart.normalRange) {
+                <rect
+                  class="vital-tooltip__normal-range"
+                  x="42"
+                  [attr.y]="vitalChartY(chart.normalRange.max, chart)"
+                  width="360"
+                  [attr.height]="vitalChartRangeHeight(chart)"
+                  [attr.fill]="chart.normalRange.color || 'rgba(13, 148, 136, 0.08)'"
+                ></rect>
+              }
+
+              @for (tick of chart.yTicks; track tick) {
+                <line
+                  class="vital-tooltip__grid-line"
+                  x1="42"
+                  x2="402"
+                  [attr.y1]="vitalChartY(tick, chart)"
+                  [attr.y2]="vitalChartY(tick, chart)"
+                ></line>
+                <text
+                  class="vital-tooltip__axis-label"
+                  x="36"
+                  text-anchor="end"
+                  [attr.y]="vitalChartY(tick, chart) + 4"
+                >
+                  {{ tick }}
+                </text>
+              }
+
+              @for (label of chart.xLabels; track label; let labelIndex = $index) {
+                @if (chart.showVerticalGrid) {
+                  <line
+                    class="vital-tooltip__grid-line"
+                    y1="10"
+                    [attr.y2]="vitalChartBottom(chart)"
+                    [attr.x1]="vitalChartX(labelIndex, chart.xLabels.length)"
+                    [attr.x2]="vitalChartX(labelIndex, chart.xLabels.length)"
+                  ></line>
+                }
+                <text
+                  class="vital-tooltip__axis-label"
+                  [attr.y]="vitalChartAxisY(chart)"
+                  text-anchor="middle"
+                  [attr.x]="vitalChartX(labelIndex, chart.xLabels.length)"
+                >
+                  {{ label }}
+                </text>
+              }
+
+              @for (threshold of chart.thresholds ?? []; track threshold.value) {
+                <line
+                  class="vital-tooltip__threshold"
+                  x1="42"
+                  x2="402"
+                  [attr.y1]="vitalChartY(threshold.value, chart)"
+                  [attr.y2]="vitalChartY(threshold.value, chart)"
+                  [attr.stroke]="threshold.color"
+                ></line>
+                @if (threshold.label) {
+                  <text
+                    class="vital-tooltip__threshold-label"
+                    x="398"
+                    text-anchor="end"
+                    [attr.y]="vitalChartY(threshold.value, chart) + 3"
+                    [attr.fill]="threshold.color"
+                  >
+                    {{ threshold.label }}
+                  </text>
+                }
+              }
+
+              @for (series of chart.series; track $index) {
+                <path
+                  class="vital-tooltip__series"
+                  pathLength="100"
+                  fill="none"
+                  [attr.d]="vitalChartPath(chart, series)"
+                  [attr.stroke]="series.color"
+                ></path>
+
+                @for (value of series.values; track $index; let pointIndex = $index) {
+                  <circle
+                    class="vital-tooltip__point"
+                    r="4.5"
+                    [attr.cx]="vitalChartX(pointIndex, series.values.length)"
+                    [attr.cy]="vitalChartY(value, chart)"
+                    [attr.fill]="series.pointColor || series.color"
+                    [style.animation-delay.ms]="250 + pointIndex * 85"
+                  ></circle>
+                }
+              }
+
+              @if (vitalChartHover(); as chartHover) {
+                @if (chartHover.chartIndex === chartIndex) {
+                  <g class="vital-tooltip__crosshair">
+                    <line
+                      [attr.x1]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
+                      [attr.x2]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
+                      y1="10"
+                      [attr.y2]="vitalChartBottom(chart)"
+                    ></line>
+                    <rect
+                      class="vital-tooltip__week-badge"
+                      [attr.x]="vitalChartX(chartHover.pointIndex, chart.xLabels.length) - 18"
+                      y="10"
+                      width="36"
+                      height="16"
+                      rx="5"
+                    ></rect>
+                    <text
+                      class="vital-tooltip__week-label"
+                      [attr.x]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
+                      y="21"
+                      text-anchor="middle"
+                    >
+                      {{ chart.xLabels[chartHover.pointIndex] }}
+                    </text>
+
+                    @for (series of chart.series; track $index) {
+                      <circle
+                        class="vital-tooltip__hover-point"
+                        r="5.5"
+                        [attr.cx]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
+                        [attr.cy]="vitalChartY(series.values[chartHover.pointIndex], chart)"
+                        [attr.fill]="series.pointColor || series.color"
+                      ></circle>
+                      <rect
+                        class="vital-tooltip__value-badge"
+                        [attr.x]="
+                          vitalChartValueLabelX(chartHover.pointIndex, chart.xLabels.length)
+                        "
+                        [attr.y]="
+                          vitalChartValueLabelY(series.values[chartHover.pointIndex], chart) - 9
+                        "
+                        width="34"
+                        height="18"
+                        rx="5"
+                      ></rect>
+                      <text
+                        class="vital-tooltip__value-label"
+                        [attr.x]="
+                          vitalChartValueLabelX(chartHover.pointIndex, chart.xLabels.length) + 17
+                        "
+                        [attr.y]="
+                          vitalChartValueLabelY(series.values[chartHover.pointIndex], chart) + 3
+                        "
+                        text-anchor="middle"
+                      >
+                        {{ series.values[chartHover.pointIndex] }}
+                      </text>
+                    }
+                  </g>
+                }
+              }
+            </svg>
+          </div>
+        }
+
+        @if (tooltip.footer) {
+          <footer class="vital-tooltip__footer" [style.color]="tooltip.footer.color">
+            <strong>{{ tooltip.footer.message }}</strong>
+            @if (tooltip.footer.status) {
+              <span class="vital-tooltip__status">
+                <i [style.background-color]="tooltip.footer.color" aria-hidden="true"></i>
+                {{ tooltip.footer.status }}
+              </span>
+            }
+          </footer>
+        }
+      </aside>
     }
   </section>
 
@@ -505,15 +718,19 @@
       <div class="problem-timeline__tools">
         <div class="problem-timeline__legend" aria-label="Timeline status legend">
           @for (legendItem of timelineLegend; track legendItem.status) {
-          <span class="problem-timeline__legend-item">
-            <i [attr.data-status]="legendItem.status" aria-hidden="true"></i>
-            {{ legendItem.label }}
-          </span>
+            <span class="problem-timeline__legend-item">
+              <i [attr.data-status]="legendItem.status" aria-hidden="true"></i>
+              {{ legendItem.label }}
+            </span>
           }
         </div>
 
-        <button class="problem-timeline__undo" type="button" [disabled]="!canUndoTimeline()"
-          (click)="undoTimelineChange()">
+        <button
+          class="problem-timeline__undo"
+          type="button"
+          [disabled]="!canUndoTimeline()"
+          (click)="undoTimelineChange()"
+        >
           <img src="assets/timeline-undo.svg" alt="" aria-hidden="true" />
           Undo
         </button>
@@ -522,102 +739,148 @@
 
     <div class="problem-timeline__scroller" tabindex="0" (scroll)="hideTimelineStatusTooltip()">
       <div class="problem-timeline__canvas">
-        <span class="problem-timeline__current-line problem-timeline__current-line--full"
+        <span
+          class="problem-timeline__current-line problem-timeline__current-line--full"
           [style.left]="timelineLinePosition()"
-          [attr.aria-label]="'Current pregnancy week: ' + pregnancyTimeline().currentWeek"></span>
+          [attr.aria-label]="'Current pregnancy week: ' + pregnancyTimeline().currentWeek"
+        ></span>
 
         <div class="problem-timeline__axis-row">
           <div class="problem-timeline__label problem-timeline__label--heading">Problem / Task</div>
           <div class="problem-timeline__axis">
             @for (week of weekTicks; track week) {
-            <span class="problem-timeline__tick" [style.left.%]="weekTickPercent(week)">{{ week }}w</span>
+              <span class="problem-timeline__tick" [style.left.%]="weekTickPercent(week)"
+                >{{ week }}w</span
+              >
             }
           </div>
         </div>
 
         @for (group of pregnancyTimeline().groups; track group.id) {
-        <article class="problem-timeline__group">
-          <div class="problem-timeline__group-header">
-            <button class="problem-timeline__group-toggle" type="button"
-              [attr.aria-expanded]="isTimelineGroupExpanded(group.id)"
-              [attr.aria-controls]="'timeline-group-' + group.id" [attr.aria-describedby]="
+          <article class="problem-timeline__group">
+            <div class="problem-timeline__group-header">
+              <button
+                class="problem-timeline__group-toggle"
+                type="button"
+                [attr.aria-expanded]="isTimelineGroupExpanded(group.id)"
+                [attr.aria-controls]="'timeline-group-' + group.id"
+                [attr.aria-describedby]="
                   activeTimelineGroupTooltip()?.id === group.id
                     ? 'timeline-condition-tooltip'
                     : null
-                " (mouseenter)="showTimelineGroupTooltip(group, $event)"
-              (mouseleave)="scheduleTimelineGroupTooltipHide()" (focusin)="showTimelineGroupTooltip(group, $event)"
-              (focusout)="scheduleTimelineGroupTooltipHide()" (click)="toggleTimelineGroup(group.id)">
-              <img class="problem-timeline__group-icon" [src]="
+                "
+                (mouseenter)="showTimelineGroupTooltip(group, $event)"
+                (mouseleave)="scheduleTimelineGroupTooltipHide()"
+                (focusin)="showTimelineGroupTooltip(group, $event)"
+                (focusout)="scheduleTimelineGroupTooltipHide()"
+                (click)="toggleTimelineGroup(group.id)"
+              >
+                <img
+                  class="problem-timeline__group-icon"
+                  [src]="
                     isTimelineGroupExpanded(group.id)
                       ? 'assets/timeline-routine.svg'
                       : 'assets/timeline-gdm.svg'
-                  " alt="" aria-hidden="true" />
-              <strong>{{ group.label }}</strong>
-            </button>
+                  "
+                  alt=""
+                  aria-hidden="true"
+                />
+                <strong>{{ group.label }}</strong>
+              </button>
 
-            <button class="problem-timeline__group-add" type="button" matTooltip="Add timeline item"
-              [attr.aria-label]="'Add timeline item to ' + group.label" (click)="openTimelineItemDialog(group.id)">
-              +
-            </button>
-          </div>
-
-          <div class="problem-timeline__group-motion"
-            [class.problem-timeline__group-motion--open]="isTimelineGroupExpanded(group.id)"
-            [attr.aria-hidden]="!isTimelineGroupExpanded(group.id)">
-            <div [id]="'timeline-group-' + group.id" class="problem-timeline__group-motion-inner"
-              [attr.inert]="isTimelineGroupExpanded(group.id) ? null : ''">
-              @for (row of group.rows; track row.id) {
-              <div class="problem-timeline__row">
-                <div class="problem-timeline__label">{{ row.label }}</div>
-
-                <div class="problem-timeline__track">
-                  @for (week of weekTicks; track week) {
-                  <span class="problem-timeline__grid-line" [style.left.%]="weekPercent(week)"
-                    aria-hidden="true"></span>
-                  }
-
-                  @for (chip of row.chips; track chip.id) {
-                  <div class="problem-timeline__chip" [attr.data-status]="chip.status"
-                    [style.left.%]="weekPercent(chip.startWeek)"
-                    [style.width.%]="weekPercent(chip.endWeek - chip.startWeek)"
-                    role="button" tabindex="0" [attr.aria-describedby]="
-                          activeTimelineStatusTooltip()?.chipId === chip.id
-                            ? 'timeline-status-tooltip'
-                            : null
-                        "
-                    [attr.aria-label]="
-                            timelineChipTooltip(chip) + '. Use left and right arrow keys to move.'
-                          " (mouseenter)="showTimelineStatusTooltip(chip, $event)"
-                    (mouseleave)="scheduleTimelineStatusTooltipHide()"
-                    (focusin)="showTimelineStatusTooltip(chip, $event)"
-                    (focusout)="scheduleTimelineStatusTooltipHide()" (pointerdown)="
-                            startChipInteraction($event, group.id, row.id, chip, 'move')
-                          " (keydown)="moveChipWithKeyboard($event, group.id, row.id, chip)">
-                    <span class="problem-timeline__resize-handle problem-timeline__resize-handle--start"
-                      aria-hidden="true" (pointerdown)="
-                              startChipInteraction($event, group.id, row.id, chip, 'resize-start')
-                            "></span>
-                    <span class="problem-timeline__chip-label">
-                      {{ timelineStatusLabel(chip.status) }}
-                    </span>
-                    <span class="problem-timeline__resize-handle problem-timeline__resize-handle--end"
-                      aria-hidden="true" (pointerdown)="
-                              startChipInteraction($event, group.id, row.id, chip, 'resize-end')
-                            "></span>
-                  </div>
-                  }
-                </div>
-              </div>
-              }
+              <button
+                class="problem-timeline__group-add"
+                type="button"
+                matTooltip="Add timeline item"
+                [attr.aria-label]="'Add timeline item to ' + group.label"
+                (click)="openTimelineItemDialog(group.id)"
+              >
+                +
+              </button>
             </div>
-          </div>
-        </article>
+
+            <div
+              class="problem-timeline__group-motion"
+              [class.problem-timeline__group-motion--open]="isTimelineGroupExpanded(group.id)"
+              [attr.aria-hidden]="!isTimelineGroupExpanded(group.id)"
+            >
+              <div
+                [id]="'timeline-group-' + group.id"
+                class="problem-timeline__group-motion-inner"
+                [attr.inert]="isTimelineGroupExpanded(group.id) ? null : ''"
+              >
+                @for (row of group.rows; track row.id) {
+                  <div class="problem-timeline__row">
+                    <div class="problem-timeline__label">{{ row.label }}</div>
+
+                    <div class="problem-timeline__track">
+                      @for (week of weekTicks; track week) {
+                        <span
+                          class="problem-timeline__grid-line"
+                          [style.left.%]="weekPercent(week)"
+                          aria-hidden="true"
+                        ></span>
+                      }
+
+                      @for (chip of row.chips; track chip.id) {
+                        <div
+                          class="problem-timeline__chip"
+                          [attr.data-status]="chip.status"
+                          [style.left.%]="weekPercent(chip.startWeek)"
+                          [style.width.%]="weekPercent(chip.endWeek - chip.startWeek)"
+                          role="button"
+                          tabindex="0"
+                          [attr.aria-describedby]="
+                            activeTimelineStatusTooltip()?.chipId === chip.id
+                              ? 'timeline-status-tooltip'
+                              : null
+                          "
+                          [attr.aria-label]="
+                            timelineChipTooltip(chip) + '. Use left and right arrow keys to move.'
+                          "
+                          (mouseenter)="showTimelineStatusTooltip(chip, $event)"
+                          (mouseleave)="scheduleTimelineStatusTooltipHide()"
+                          (focusin)="showTimelineStatusTooltip(chip, $event)"
+                          (focusout)="scheduleTimelineStatusTooltipHide()"
+                          (pointerdown)="
+                            startChipInteraction($event, group.id, row.id, chip, 'move')
+                          "
+                          (keydown)="moveChipWithKeyboard($event, group.id, row.id, chip)"
+                        >
+                          <span
+                            class="problem-timeline__resize-handle problem-timeline__resize-handle--start"
+                            aria-hidden="true"
+                            (pointerdown)="
+                              startChipInteraction($event, group.id, row.id, chip, 'resize-start')
+                            "
+                          ></span>
+                          <span class="problem-timeline__chip-label">
+                            {{ timelineStatusLabel(chip.status) }}
+                          </span>
+                          <span
+                            class="problem-timeline__resize-handle problem-timeline__resize-handle--end"
+                            aria-hidden="true"
+                            (pointerdown)="
+                              startChipInteraction($event, group.id, row.id, chip, 'resize-end')
+                            "
+                          ></span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </article>
         }
       </div>
 
       <div class="problem-timeline__add-problem-row d-flex align-items-center">
-        <button class="problem-timeline__add-problem d-flex align-items-center justify-content-center text-nowrap"
-          type="button" (click)="openAddProblemDialog()">
+        <button
+          class="problem-timeline__add-problem d-flex align-items-center justify-content-center text-nowrap"
+          type="button"
+          (click)="openAddProblemDialog()"
+        >
           <img src="assets/problem-dialog/add.svg" alt="" aria-hidden="true" />
           Add Problem
         </button>
@@ -626,142 +889,205 @@
   </section>
 
   @if (activeTimelineStatusTooltip(); as activeStatusTooltip) {
-  <aside id="timeline-status-tooltip" class="timeline-status-tooltip" role="dialog"
-    [attr.aria-label]="activeStatusTooltip.tooltip.badgeLabel + ' timeline details'"
-    [attr.data-placement]="timelineStatusTooltipPosition().placement"
-    [attr.data-status]="activeStatusTooltip.tooltip.status" [style.left.px]="timelineStatusTooltipPosition().left"
-    [style.top.px]="timelineStatusTooltipPosition().top" [style.width.px]="timelineStatusTooltipPosition().width"
-    [style.--timeline-status-tooltip-notch-left]="timelineStatusTooltipPosition().notchLeft + 'px'"
-    (mouseenter)="keepTimelineStatusTooltipOpen()" (mouseleave)="scheduleTimelineStatusTooltipHide()"
-    (focusin)="keepTimelineStatusTooltipOpen()" (focusout)="scheduleTimelineStatusTooltipHide()">
-    <div class="timeline-status-tooltip__content">
-    <header class="timeline-status-tooltip__header">
-      <h2>{{ activeStatusTooltip.tooltip.title }}</h2>
-      <p>{{ activeStatusTooltip.tooltip.subtitle }}</p>
-      <span class="timeline-status-tooltip__badge" [attr.data-status]="activeStatusTooltip.tooltip.status">
-        <span class="timeline-status-tooltip__status-icon" aria-hidden="true"></span>
-        {{ activeStatusTooltip.tooltip.badgeLabel }}
-      </span>
-    </header>
+    <aside
+      id="timeline-status-tooltip"
+      class="timeline-status-tooltip"
+      role="dialog"
+      [attr.aria-label]="activeStatusTooltip.tooltip.badgeLabel + ' timeline details'"
+      [attr.data-placement]="timelineStatusTooltipPosition().placement"
+      [attr.data-status]="activeStatusTooltip.tooltip.status"
+      [style.left.px]="timelineStatusTooltipPosition().left"
+      [style.top.px]="timelineStatusTooltipPosition().top"
+      [style.width.px]="timelineStatusTooltipPosition().width"
+      [style.max-height.px]="timelineStatusTooltipMaxHeight()"
+      [style.--timeline-status-tooltip-notch-left]="
+        timelineStatusTooltipPosition().notchLeft + 'px'
+      "
+      (mouseenter)="keepTimelineStatusTooltipOpen()"
+      (mouseleave)="scheduleTimelineStatusTooltipHide()"
+      (focusin)="keepTimelineStatusTooltipOpen()"
+      (focusout)="onTimelineStatusTooltipFocusOut($event)"
+    >
+      <div class="timeline-status-tooltip__content">
+        <header class="timeline-status-tooltip__header">
+          <h2>{{ activeStatusTooltip.tooltip.title }}</h2>
+          <p>{{ activeStatusTooltip.tooltip.subtitle }}</p>
+          <span
+            class="timeline-status-tooltip__badge"
+            [attr.data-status]="activeStatusTooltip.tooltip.status"
+          >
+            <span class="timeline-status-tooltip__status-icon" aria-hidden="true"></span>
+            {{ activeStatusTooltip.tooltip.badgeLabel }}
+          </span>
+        </header>
 
-    <div class="timeline-status-tooltip__divider"></div>
+        <div class="timeline-status-tooltip__divider"></div>
 
-    <div class="timeline-status-tooltip__schedule">
-      @for (scheduleRow of activeStatusTooltip.tooltip.schedule; track scheduleRow.label) {
-      <div class="timeline-status-tooltip__schedule-row">
-        <span class="timeline-status-tooltip__icon" [attr.data-icon]="scheduleRow.icon" aria-hidden="true"></span>
-        <span>{{ scheduleRow.label }} <strong>{{ scheduleRow.value }}</strong></span>
-      </div>
-      }
-    </div>
-
-    @if (activeStatusTooltip.tooltip.tests?.length) {
-    <div class="timeline-status-tooltip__divider"></div>
-    <section class="timeline-status-tooltip__tests" aria-label="Lab tests">
-      <h3>Lab Tests:</h3>
-      <div class="timeline-status-tooltip__test-list"
-        [class.timeline-status-tooltip__test-list--scrollable]="
-          (activeStatusTooltip.tooltip.tests?.length ?? 0) > 3
-        ">
-        @for (test of activeStatusTooltip.tooltip.tests; track test.label) {
-        <div class="timeline-status-tooltip__test" [class.timeline-status-tooltip__test--removed]="test.removed"
-          [class.timeline-status-tooltip__test--result]="test.result">
-          <span class="timeline-status-tooltip__icon" [attr.data-icon]="test.result ? 'check' : 'test-tube'"
-            aria-hidden="true"></span>
-          <div class="timeline-status-tooltip__test-content">
-            <span class="timeline-status-tooltip__test-name">{{ test.label }}</span>
-            @if (test.result) {
-            <span class="timeline-status-tooltip__result">{{ test.result }}</span>
-            }
-          </div>
-          @if (test.showActions) {
-          <div class="timeline-status-tooltip__test-actions">
-            @if (activeStatusTooltip.tooltip.status !== 'ordered') {
-            <button class="timeline-status-tooltip__order" type="button">Order</button>
-            <button class="timeline-status-tooltip__decline" type="button">Decline</button>
-            }
-            <button class="timeline-status-tooltip__remove" type="button" aria-label="Remove test">
-              <span class="timeline-status-tooltip__icon" data-icon="close" aria-hidden="true"></span>
-            </button>
-          </div>
+        <div class="timeline-status-tooltip__schedule">
+          @for (scheduleRow of activeStatusTooltip.tooltip.schedule; track scheduleRow.label) {
+            <div class="timeline-status-tooltip__schedule-row">
+              <span
+                class="timeline-status-tooltip__icon"
+                [attr.data-icon]="scheduleRow.icon"
+                aria-hidden="true"
+              ></span>
+              <span
+                >{{ scheduleRow.label }} <strong>{{ scheduleRow.value }}</strong></span
+              >
+            </div>
           }
         </div>
+
+        @if (activeStatusTooltip.tooltip.tests?.length) {
+          <div class="timeline-status-tooltip__divider"></div>
+          <section class="timeline-status-tooltip__tests" aria-label="Lab tests">
+            <h3>Lab Tests:</h3>
+            <div class="timeline-status-tooltip__test-list">
+              @for (test of activeStatusTooltip.tooltip.tests; track test.label) {
+                <div
+                  class="timeline-status-tooltip__test"
+                  [class.timeline-status-tooltip__test--removed]="test.removed"
+                  [class.timeline-status-tooltip__test--result]="test.result"
+                >
+                  <span
+                    class="timeline-status-tooltip__icon"
+                    [attr.data-icon]="test.result ? 'check' : 'test-tube'"
+                    aria-hidden="true"
+                  ></span>
+                  <div class="timeline-status-tooltip__test-content">
+                    <span class="timeline-status-tooltip__test-name">{{ test.label }}</span>
+                    @if (test.result) {
+                      <span class="timeline-status-tooltip__result">{{ test.result }}</span>
+                    }
+                  </div>
+                  @if (test.showActions) {
+                    <div class="timeline-status-tooltip__test-actions">
+                      @if (activeStatusTooltip.tooltip.status !== 'ordered') {
+                        <button class="timeline-status-tooltip__order" type="button">Order</button>
+                        <button class="timeline-status-tooltip__decline" type="button">
+                          Decline
+                        </button>
+                      }
+                      <button
+                        class="timeline-status-tooltip__remove"
+                        type="button"
+                        aria-label="Remove test"
+                      >
+                        <span
+                          class="timeline-status-tooltip__icon"
+                          data-icon="close"
+                          aria-hidden="true"
+                        ></span>
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            @if (activeStatusTooltip.tooltip.notePlaceholder) {
+              <input
+                class="timeline-status-tooltip__input"
+                type="text"
+                [placeholder]="activeStatusTooltip.tooltip.notePlaceholder"
+                aria-label="Test notes"
+              />
+            }
+          </section>
+        }
+
+        @if (activeStatusTooltip.tooltip.otherPlaceholder) {
+          <label class="timeline-status-tooltip__field">
+            <span>Other</span>
+            <input
+              class="timeline-status-tooltip__input"
+              type="text"
+              [placeholder]="activeStatusTooltip.tooltip.otherPlaceholder"
+            />
+          </label>
+        }
+
+        @if (activeStatusTooltip.tooltip.showBulkActions) {
+          <div class="timeline-status-tooltip__bulk-actions">
+            <button class="timeline-status-tooltip__order-all" type="button">Order All</button>
+            <button class="timeline-status-tooltip__decline-all" type="button">Decline All</button>
+          </div>
+        }
+
+        @if (activeStatusTooltip.tooltip.notes) {
+          <label class="timeline-status-tooltip__notes">
+            <span>Notes:</span>
+            <textarea
+              readonly
+              [attr.rows]="timelineStatusTooltipNoteRows(activeStatusTooltip.tooltip.notes)"
+              [value]="activeStatusTooltip.tooltip.notes"
+            ></textarea>
+          </label>
         }
       </div>
-
-      @if (activeStatusTooltip.tooltip.notePlaceholder) {
-      <input class="timeline-status-tooltip__input" type="text"
-        [placeholder]="activeStatusTooltip.tooltip.notePlaceholder" aria-label="Test notes" />
-      }
-    </section>
-    }
-
-    @if (activeStatusTooltip.tooltip.otherPlaceholder) {
-    <label class="timeline-status-tooltip__field">
-      <span>Other</span>
-      <input class="timeline-status-tooltip__input" type="text"
-        [placeholder]="activeStatusTooltip.tooltip.otherPlaceholder" />
-    </label>
-    }
-
-    @if (activeStatusTooltip.tooltip.showBulkActions) {
-    <div class="timeline-status-tooltip__bulk-actions">
-      <button class="timeline-status-tooltip__order-all" type="button">Order All</button>
-      <button class="timeline-status-tooltip__decline-all" type="button">Decline All</button>
-    </div>
-    }
-
-    @if (activeStatusTooltip.tooltip.notes) {
-    <label class="timeline-status-tooltip__notes">
-      <span>Notes:</span>
-      <textarea readonly [value]="activeStatusTooltip.tooltip.notes"></textarea>
-    </label>
-    }
-    </div>
-  </aside>
+    </aside>
   }
 
   @if (activeTimelineGroupTooltip(); as group) {
-  <aside id="timeline-condition-tooltip" class="timeline-condition-tooltip" role="dialog"
-    [attr.aria-label]="group.label + ' condition details'" [style.left.px]="timelineGroupTooltipPosition().left"
-    [style.top.px]="timelineGroupTooltipPosition().top" [style.width.px]="timelineGroupTooltipPosition().width"
-    [style.max-height.px]="timelineGroupTooltipMaxHeight()" (mouseenter)="keepTimelineGroupTooltipOpen()"
-    (mouseleave)="scheduleTimelineGroupTooltipHide()" (focusin)="keepTimelineGroupTooltipOpen()"
-    (focusout)="scheduleTimelineGroupTooltipHide()">
-    <header class="timeline-condition-tooltip__header">
-      <h2>{{ group.label }}</h2>
-      <button type="button" [attr.aria-label]="'Close ' + group.label + ' details'"
-        (click)="hideTimelineGroupTooltip()">
-        <img src="assets/timeline-condition-tooltip/close.svg" alt="" aria-hidden="true" />
-      </button>
-    </header>
+    <aside
+      id="timeline-condition-tooltip"
+      class="timeline-condition-tooltip"
+      role="dialog"
+      [attr.aria-label]="group.label + ' condition details'"
+      [style.left.px]="timelineGroupTooltipPosition().left"
+      [style.top.px]="timelineGroupTooltipPosition().top"
+      [style.width.px]="timelineGroupTooltipPosition().width"
+      [style.max-height.px]="timelineGroupTooltipMaxHeight()"
+      (mouseenter)="keepTimelineGroupTooltipOpen()"
+      (mouseleave)="scheduleTimelineGroupTooltipHide()"
+      (focusin)="keepTimelineGroupTooltipOpen()"
+      (focusout)="scheduleTimelineGroupTooltipHide()"
+    >
+      <header class="timeline-condition-tooltip__header">
+        <h2>{{ group.label }}</h2>
+        <button
+          type="button"
+          [attr.aria-label]="'Close ' + group.label + ' details'"
+          (click)="hideTimelineGroupTooltip()"
+        >
+          <img src="assets/timeline-condition-tooltip/close.svg" alt="" aria-hidden="true" />
+        </button>
+      </header>
 
-    <div class="timeline-condition-tooltip__body">
-      <section class="timeline-condition-tooltip__tags" aria-label="Condition tags">
-        <h3>Tags</h3>
-        <div>
-          @for (tag of group.condition.tags; track tag.label) {
-          <span [attr.data-tone]="tag.tone">{{ tag.label }}</span>
-          }
-        </div>
-      </section>
+      <div class="timeline-condition-tooltip__body">
+        <section class="timeline-condition-tooltip__tags" aria-label="Condition tags">
+          <h3>Tags</h3>
+          <div>
+            @for (tag of group.condition.tags; track tag.label) {
+              <span [attr.data-tone]="tag.tone">{{ tag.label }}</span>
+            }
+          </div>
+        </section>
 
-      <section class="timeline-condition-tooltip__description">
-        <h3>ICD - 10 Technical Description</h3>
-        <p>{{ group.condition.description }}</p>
-      </section>
-    </div>
+        <section class="timeline-condition-tooltip__description">
+          <h3>ICD - 10 Technical Description</h3>
+          <p>{{ group.condition.description }}</p>
+        </section>
+      </div>
 
-    <footer class="timeline-condition-tooltip__footer">
-      <button class="timeline-condition-tooltip__resolve" type="button" [disabled]="group.resolved"
-        (click)="resolveTimelineProblem(group.id)">
-        {{ group.resolved ? 'Resolved' : 'Resolve' }}
-      </button>
-      <button class="timeline-condition-tooltip__delete" type="button" (click)="deleteTimelineProblem(group.id)">
-        Delete
-      </button>
-    </footer>
-  </aside>
+      <footer class="timeline-condition-tooltip__footer">
+        <button
+          class="timeline-condition-tooltip__resolve"
+          type="button"
+          [disabled]="group.resolved"
+          (click)="resolveTimelineProblem(group.id)"
+        >
+          {{ group.resolved ? 'Resolved' : 'Resolve' }}
+        </button>
+        <button
+          class="timeline-condition-tooltip__delete"
+          type="button"
+          (click)="deleteTimelineProblem(group.id)"
+        >
+          Delete
+        </button>
+      </footer>
+    </aside>
   }
 
   <section class="clinical-section visit-summary" aria-labelledby="visit-summary-title">
@@ -772,20 +1098,36 @@
         </span>
         <h2 id="visit-summary-title">Visit Summary</h2>
       </div>
-      <button class="clinical-section__toggle" type="button" aria-controls="visit-summary-content"
-        [attr.aria-expanded]="visitSummaryExpanded()" (click)="toggleVisitSummary()">
+      <button
+        class="clinical-section__toggle"
+        type="button"
+        aria-controls="visit-summary-content"
+        [attr.aria-expanded]="visitSummaryExpanded()"
+        (click)="toggleVisitSummary()"
+      >
         <span class="visually-hidden">
           {{ visitSummaryExpanded() ? 'Collapse' : 'Expand' }} Visit Summary
         </span>
-        <img class="clinical-section__chevron" [class.clinical-section__chevron--collapsed]="!visitSummaryExpanded()"
-          src="assets/visit-progress/visit-02.svg" alt="" aria-hidden="true" />
+        <img
+          class="clinical-section__chevron"
+          [class.clinical-section__chevron--collapsed]="!visitSummaryExpanded()"
+          src="assets/visit-progress/visit-02.svg"
+          alt=""
+          aria-hidden="true"
+        />
       </button>
     </header>
 
-    <div id="visit-summary-content" class="clinical-section__content-motion"
+    <div
+      id="visit-summary-content"
+      class="clinical-section__content-motion"
       [class.clinical-section__content-motion--open]="visitSummaryExpanded()"
-      [attr.aria-hidden]="!visitSummaryExpanded()">
-      <div class="clinical-section__content-motion-inner" [attr.inert]="visitSummaryExpanded() ? null : ''">
+      [attr.aria-hidden]="!visitSummaryExpanded()"
+    >
+      <div
+        class="clinical-section__content-motion-inner"
+        [attr.inert]="visitSummaryExpanded() ? null : ''"
+      >
         <div class="clinical-section__body visit-summary__grid">
           <section class="visit-summary__column" aria-labelledby="results-title">
             <div class="visit-summary__column-heading">
@@ -794,11 +1136,17 @@
             </div>
 
             <div class="result-list">
-              <article class="result-card" tabindex="0" aria-haspopup="dialog"
+              <article
+                class="result-card"
+                tabindex="0"
+                aria-haspopup="dialog"
                 [attr.aria-expanded]="activeResultTooltip()?.id === 'cbc'"
-                (mouseenter)="showResultTooltip('cbc', $event)" (mouseleave)="scheduleResultTooltipHide()"
-                (focusin)="showResultTooltip('cbc', $event)" (focusout)="scheduleResultTooltipHide()"
-                (click)="showResultTooltip('cbc', $event)">
+                (mouseenter)="showResultTooltip('cbc', $event)"
+                (mouseleave)="scheduleResultTooltipHide()"
+                (focusin)="showResultTooltip('cbc', $event)"
+                (focusout)="scheduleResultTooltipHide()"
+                (click)="showResultTooltip('cbc', $event)"
+              >
                 <header>
                   <h4>CBC</h4>
                   <time datetime="2026-03-20">3/20/26</time>
@@ -815,11 +1163,17 @@
                 </button>
               </article>
 
-              <article class="result-card" tabindex="0" aria-haspopup="dialog"
+              <article
+                class="result-card"
+                tabindex="0"
+                aria-haspopup="dialog"
                 [attr.aria-expanded]="activeResultTooltip()?.id === 'home-bp'"
-                (mouseenter)="showResultTooltip('home-bp', $event)" (mouseleave)="scheduleResultTooltipHide()"
-                (focusin)="showResultTooltip('home-bp', $event)" (focusout)="scheduleResultTooltipHide()"
-                (click)="showResultTooltip('home-bp', $event)">
+                (mouseenter)="showResultTooltip('home-bp', $event)"
+                (mouseleave)="scheduleResultTooltipHide()"
+                (focusin)="showResultTooltip('home-bp', $event)"
+                (focusout)="scheduleResultTooltipHide()"
+                (click)="showResultTooltip('home-bp', $event)"
+              >
                 <header>
                   <h4>Home BP Log</h4>
                   <time datetime="2026-03-14">3/14–3/27</time>
@@ -834,11 +1188,17 @@
                 </button>
               </article>
 
-              <article class="result-card" tabindex="0" aria-haspopup="dialog"
+              <article
+                class="result-card"
+                tabindex="0"
+                aria-haspopup="dialog"
                 [attr.aria-expanded]="activeResultTooltip()?.id === 'blood-glucose'"
-                (mouseenter)="showResultTooltip('blood-glucose', $event)" (mouseleave)="scheduleResultTooltipHide()"
-                (focusin)="showResultTooltip('blood-glucose', $event)" (focusout)="scheduleResultTooltipHide()"
-                (click)="showResultTooltip('blood-glucose', $event)">
+                (mouseenter)="showResultTooltip('blood-glucose', $event)"
+                (mouseleave)="scheduleResultTooltipHide()"
+                (focusin)="showResultTooltip('blood-glucose', $event)"
+                (focusout)="scheduleResultTooltipHide()"
+                (click)="showResultTooltip('blood-glucose', $event)"
+              >
                 <header>
                   <h4>Blood Glucose Log</h4>
                   <time datetime="2026-03-14">3/14–3/27</time>
@@ -872,7 +1232,11 @@
                     <img src="assets/visit-progress/visit-06.svg" alt="" aria-hidden="true" />
                     Laboratory
                   </h4>
-                  <button class="order-card__remove" type="button" aria-label="Remove Laboratory order group">
+                  <button
+                    class="order-card__remove"
+                    type="button"
+                    aria-label="Remove Laboratory order group"
+                  >
                     <img src="assets/visit-progress/visit-03.svg" alt="" aria-hidden="true" />
                   </button>
                 </div>
@@ -897,13 +1261,21 @@
                   </li>
                   <li>
                     <span>Uric acid (STAT)</span>
-                    <button class="order-card__remove" type="button" aria-label="Remove uric acid order">
+                    <button
+                      class="order-card__remove"
+                      type="button"
+                      aria-label="Remove uric acid order"
+                    >
                       <img src="assets/visit-progress/visit-03.svg" alt="" aria-hidden="true" />
                     </button>
                   </li>
                   <li>
                     <span>Urinalysis w/ protein/Cr ratio (STAT)</span>
-                    <button class="order-card__remove" type="button" aria-label="Remove urinalysis order">
+                    <button
+                      class="order-card__remove"
+                      type="button"
+                      aria-label="Remove urinalysis order"
+                    >
                       <img src="assets/visit-progress/visit-03.svg" alt="" aria-hidden="true" />
                     </button>
                   </li>
@@ -916,14 +1288,22 @@
                     <img src="assets/visit-progress/visit-12.svg" alt="" aria-hidden="true" />
                     Imaging
                   </h4>
-                  <button class="order-card__remove" type="button" aria-label="Remove Imaging order group">
+                  <button
+                    class="order-card__remove"
+                    type="button"
+                    aria-label="Remove Imaging order group"
+                  >
                     <img src="assets/visit-progress/visit-01.svg" alt="" aria-hidden="true" />
                   </button>
                 </div>
                 <ul>
                   <li>
                     <span>Growth ultrasound (scheduled 32w)</span>
-                    <button class="order-card__remove" type="button" aria-label="Remove growth ultrasound order">
+                    <button
+                      class="order-card__remove"
+                      type="button"
+                      aria-label="Remove growth ultrasound order"
+                    >
                       <img src="assets/visit-progress/visit-01.svg" alt="" aria-hidden="true" />
                     </button>
                   </li>
@@ -936,14 +1316,22 @@
                     <img src="assets/visit-progress/visit-16.svg" alt="" aria-hidden="true" />
                     Testing
                   </h4>
-                  <button class="order-card__remove" type="button" aria-label="Remove Testing order group">
+                  <button
+                    class="order-card__remove"
+                    type="button"
+                    aria-label="Remove Testing order group"
+                  >
                     <img src="assets/visit-progress/visit-11.svg" alt="" aria-hidden="true" />
                   </button>
                 </div>
                 <ul>
                   <li>
                     <span>Biweekly NST (starts 32w)</span>
-                    <button class="order-card__remove" type="button" aria-label="Remove biweekly NST order">
+                    <button
+                      class="order-card__remove"
+                      type="button"
+                      aria-label="Remove biweekly NST order"
+                    >
                       <img src="assets/visit-progress/visit-11.svg" alt="" aria-hidden="true" />
                     </button>
                   </li>
@@ -956,15 +1344,22 @@
                     <img src="assets/visit-progress/visit-07.svg" alt="" aria-hidden="true" />
                     Medications/Vaccines
                   </h4>
-                  <button class="order-card__remove" type="button"
-                    aria-label="Remove Medications and Vaccines order group">
+                  <button
+                    class="order-card__remove"
+                    type="button"
+                    aria-label="Remove Medications and Vaccines order group"
+                  >
                     <img src="assets/visit-progress/visit-08.svg" alt="" aria-hidden="true" />
                   </button>
                 </div>
                 <ul>
                   <li>
                     <span>Tdap vaccine (administered today)</span>
-                    <button class="order-card__remove" type="button" aria-label="Remove Tdap vaccine order">
+                    <button
+                      class="order-card__remove"
+                      type="button"
+                      aria-label="Remove Tdap vaccine order"
+                    >
                       <img src="assets/visit-progress/visit-08.svg" alt="" aria-hidden="true" />
                     </button>
                   </li>
@@ -978,99 +1373,156 @@
   </section>
 
   @for (tooltip of activeResultTooltipItems(); track tooltip.id) {
-  <aside id="result-card-tooltip" class="result-tooltip" role="dialog" [attr.aria-label]="tooltip.title"
-    [attr.data-tooltip-id]="tooltip.id" (mouseenter)="keepResultTooltipOpen()"
-    (mouseleave)="scheduleResultTooltipHide()" (focusin)="keepResultTooltipOpen()"
-    (focusout)="scheduleResultTooltipHide()" [style.left.px]="resultTooltipPosition().left"
-    [style.top.px]="resultTooltipPosition().top" [style.width.px]="resultTooltipPosition().width"
-    [style.max-height.px]="resultTooltipMaxHeight()">
-    <header class="result-tooltip__header" [class.result-tooltip__header--plain]="!tooltip.closeable">
-      <div>
-        <h3>{{ tooltip.title }}</h3>
-        @if (tooltip.subtitle) {
-        <p>{{ tooltip.subtitle }}</p>
-        }
-      </div>
-      @if (tooltip.closeable) {
-      <button type="button" aria-label="Close Complete Blood Count details" (click)="hideResultTooltip()">
-        <img src="assets/result-tooltips/close.svg" alt="" aria-hidden="true" />
-      </button>
-      }
-    </header>
-
-    @if (tooltip.rows) {
-    <div class="result-tooltip__table" role="table" aria-label="Complete Blood Count results">
-      <div class="result-tooltip__table-head" role="row">
-        <span role="columnheader">Test Name</span>
-        <span role="columnheader">Value</span>
-        <span role="columnheader">Ref. Range</span>
-      </div>
-      <div class="result-tooltip__table-body" role="rowgroup">
-        @for (row of tooltip.rows; track row.name) {
-        <div class="result-tooltip__table-row" [class.result-tooltip__table-row--alert]="row.alert" role="row">
-          <span role="cell">{{ row.name }}</span>
-          <span role="cell" [class.result-tooltip__table-value--alert]="row.alert">
-            {{ row.value }}
-            @if (row.alert) {
-            <small aria-label="Low">L</small>
-            }
-          </span>
-          <span role="cell">{{ row.range }}</span>
+    <aside
+      id="result-card-tooltip"
+      class="result-tooltip"
+      role="dialog"
+      [attr.aria-label]="tooltip.title"
+      [attr.data-tooltip-id]="tooltip.id"
+      (mouseenter)="keepResultTooltipOpen()"
+      (mouseleave)="scheduleResultTooltipHide()"
+      (focusin)="keepResultTooltipOpen()"
+      (focusout)="scheduleResultTooltipHide()"
+      [style.left.px]="resultTooltipPosition().left"
+      [style.top.px]="resultTooltipPosition().top"
+      [style.width.px]="resultTooltipPosition().width"
+      [style.max-height.px]="resultTooltipMaxHeight()"
+    >
+      <header
+        class="result-tooltip__header"
+        [class.result-tooltip__header--plain]="!tooltip.closeable"
+      >
+        <div>
+          <h3>{{ tooltip.title }}</h3>
+          @if (tooltip.subtitle) {
+            <p>{{ tooltip.subtitle }}</p>
+          }
         </div>
+        @if (tooltip.closeable) {
+          <button
+            type="button"
+            aria-label="Close Complete Blood Count details"
+            (click)="hideResultTooltip()"
+          >
+            <img src="assets/result-tooltips/close.svg" alt="" aria-hidden="true" />
+          </button>
         }
-      </div>
-    </div>
-    }
+      </header>
 
-    @if (tooltip.chart; as chart) {
-    <svg class="result-tooltip__chart" viewBox="0 0 472 120" role="img" [attr.aria-label]="tooltip.title">
-      @for (tick of chart.yTicks; track tick) {
-      <line class="result-tooltip__grid-line" x1="30" x2="472" [attr.y1]="vitalChartY(tick, chart)"
-        [attr.y2]="vitalChartY(tick, chart)"></line>
-      <text class="result-tooltip__axis-label" x="24" text-anchor="end" [attr.y]="vitalChartY(tick, chart) + 3">
-        {{ tick }}
-      </text>
+      @if (tooltip.rows) {
+        <div class="result-tooltip__table" role="table" aria-label="Complete Blood Count results">
+          <div class="result-tooltip__table-head" role="row">
+            <span role="columnheader">Test Name</span>
+            <span role="columnheader">Value</span>
+            <span role="columnheader">Ref. Range</span>
+          </div>
+          <div class="result-tooltip__table-body" role="rowgroup">
+            @for (row of tooltip.rows; track row.name) {
+              <div
+                class="result-tooltip__table-row"
+                [class.result-tooltip__table-row--alert]="row.alert"
+                role="row"
+              >
+                <span role="cell">{{ row.name }}</span>
+                <span role="cell" [class.result-tooltip__table-value--alert]="row.alert">
+                  {{ row.value }}
+                  @if (row.alert) {
+                    <small aria-label="Low">L</small>
+                  }
+                </span>
+                <span role="cell">{{ row.range }}</span>
+              </div>
+            }
+          </div>
+        </div>
       }
 
-      @for (threshold of chart.thresholds ?? []; track threshold.value) {
-      <line class="result-tooltip__threshold" x1="30" x2="472" [attr.y1]="vitalChartY(threshold.value, chart)"
-        [attr.y2]="vitalChartY(threshold.value, chart)" [attr.stroke]="threshold.color"></line>
+      @if (tooltip.chart; as chart) {
+        <svg
+          class="result-tooltip__chart"
+          viewBox="0 0 472 120"
+          role="img"
+          [attr.aria-label]="tooltip.title"
+        >
+          @for (tick of chart.yTicks; track tick) {
+            <line
+              class="result-tooltip__grid-line"
+              x1="30"
+              x2="472"
+              [attr.y1]="vitalChartY(tick, chart)"
+              [attr.y2]="vitalChartY(tick, chart)"
+            ></line>
+            <text
+              class="result-tooltip__axis-label"
+              x="24"
+              text-anchor="end"
+              [attr.y]="vitalChartY(tick, chart) + 3"
+            >
+              {{ tick }}
+            </text>
+          }
+
+          @for (threshold of chart.thresholds ?? []; track threshold.value) {
+            <line
+              class="result-tooltip__threshold"
+              x1="30"
+              x2="472"
+              [attr.y1]="vitalChartY(threshold.value, chart)"
+              [attr.y2]="vitalChartY(threshold.value, chart)"
+              [attr.stroke]="threshold.color"
+            ></line>
+          }
+
+          @for (label of chart.xLabels; track label; let labelIndex = $index) {
+            <text
+              class="result-tooltip__axis-label"
+              [attr.y]="vitalChartAxisY(chart)"
+              text-anchor="middle"
+              [attr.x]="resultChartX(labelIndex, chart.xLabels.length)"
+            >
+              {{ label }}
+            </text>
+          }
+
+          @for (series of chart.series; track $index) {
+            <path
+              class="result-tooltip__series"
+              pathLength="100"
+              fill="none"
+              [attr.d]="resultChartPath(chart, series)"
+              [attr.stroke]="series.color"
+            ></path>
+            @for (value of series.values; track $index; let pointIndex = $index) {
+              <circle
+                class="result-tooltip__point"
+                r="3"
+                [attr.cx]="resultChartX(pointIndex, series.values.length)"
+                [attr.cy]="vitalChartY(value, chart)"
+                [attr.fill]="series.pointColors?.[pointIndex] || series.pointColor || series.color"
+                [style.animation-delay.ms]="180 + pointIndex * 70"
+              ></circle>
+            }
+          }
+        </svg>
+
+        <div
+          class="result-tooltip__legend"
+          [class.result-tooltip__legend--centered]="chart.series.length === 1"
+        >
+          @for (series of chart.series; track series.label) {
+            <span><i [style.background-color]="series.color"></i>{{ series.label }}</span>
+          }
+        </div>
       }
 
-      @for (label of chart.xLabels; track label; let labelIndex = $index) {
-      <text class="result-tooltip__axis-label" [attr.y]="vitalChartAxisY(chart)" text-anchor="middle"
-        [attr.x]="resultChartX(labelIndex, chart.xLabels.length)">
-        {{ label }}
-      </text>
+      @if (tooltip.footer.length) {
+        <footer class="result-tooltip__footer">
+          @for (item of tooltip.footer; track item.message) {
+            <strong [style.color]="item.color">{{ item.message }}</strong>
+          }
+        </footer>
       }
-
-      @for (series of chart.series; track $index) {
-      <path class="result-tooltip__series" pathLength="100" fill="none" [attr.d]="resultChartPath(chart, series)"
-        [attr.stroke]="series.color"></path>
-      @for (value of series.values; track $index; let pointIndex = $index) {
-      <circle class="result-tooltip__point" r="3" [attr.cx]="resultChartX(pointIndex, series.values.length)"
-        [attr.cy]="vitalChartY(value, chart)"
-        [attr.fill]="series.pointColors?.[pointIndex] || series.pointColor || series.color"
-        [style.animation-delay.ms]="180 + pointIndex * 70"></circle>
-      }
-      }
-    </svg>
-
-    <div class="result-tooltip__legend" [class.result-tooltip__legend--centered]="chart.series.length === 1">
-      @for (series of chart.series; track series.label) {
-      <span><i [style.background-color]="series.color"></i>{{ series.label }}</span>
-      }
-    </div>
-    }
-
-    @if (tooltip.footer.length) {
-    <footer class="result-tooltip__footer">
-      @for (item of tooltip.footer; track item.message) {
-      <strong [style.color]="item.color">{{ item.message }}</strong>
-      }
-    </footer>
-    }
-  </aside>
+    </aside>
   }
 
   <section class="clinical-section progress-note" aria-labelledby="progress-note-title">
@@ -1083,21 +1535,37 @@
       </div>
       <div class="progress-note__header-actions">
         <button class="review-systems-button" type="button">Review of Systems</button>
-        <button class="clinical-section__toggle" type="button" aria-controls="progress-note-content"
-          [attr.aria-expanded]="progressNoteExpanded()" (click)="toggleProgressNote()">
+        <button
+          class="clinical-section__toggle"
+          type="button"
+          aria-controls="progress-note-content"
+          [attr.aria-expanded]="progressNoteExpanded()"
+          (click)="toggleProgressNote()"
+        >
           <span class="visually-hidden">
             {{ progressNoteExpanded() ? 'Collapse' : 'Expand' }} Progress Note
           </span>
-          <img class="clinical-section__chevron" [class.clinical-section__chevron--collapsed]="!progressNoteExpanded()"
-            src="assets/visit-progress/progress-01.svg" alt="" aria-hidden="true" />
+          <img
+            class="clinical-section__chevron"
+            [class.clinical-section__chevron--collapsed]="!progressNoteExpanded()"
+            src="assets/visit-progress/progress-01.svg"
+            alt=""
+            aria-hidden="true"
+          />
         </button>
       </div>
     </header>
 
-    <div id="progress-note-content" class="clinical-section__content-motion"
+    <div
+      id="progress-note-content"
+      class="clinical-section__content-motion"
       [class.clinical-section__content-motion--open]="progressNoteExpanded()"
-      [attr.aria-hidden]="!progressNoteExpanded()">
-      <div class="clinical-section__content-motion-inner" [attr.inert]="progressNoteExpanded() ? null : ''">
+      [attr.aria-hidden]="!progressNoteExpanded()"
+    >
+      <div
+        class="clinical-section__content-motion-inner"
+        [attr.inert]="progressNoteExpanded() ? null : ''"
+      >
         <div class="clinical-section__body progress-note__body">
           <div class="progress-note__toolbar">
             <p>
