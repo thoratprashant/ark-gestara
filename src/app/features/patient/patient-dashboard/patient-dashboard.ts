@@ -115,6 +115,43 @@ interface VitalCountValues {
 
 type TimelineStatus = 'completed' | 'not-reviewed' | 'ordered' | 'late' | 'abnormal' | 'future';
 type ChipInteractionMode = 'move' | 'resize-start' | 'resize-end';
+type TimelineStatusTooltipIcon = 'calendar' | 'clock';
+
+interface TimelineStatusTooltipScheduleRow {
+  icon: TimelineStatusTooltipIcon;
+  label: string;
+  value: string;
+}
+
+interface TimelineStatusTooltipTest {
+  label: string;
+  result?: string;
+  removed?: boolean;
+  showActions?: boolean;
+}
+
+interface TimelineStatusTooltip {
+  badgeLabel: string;
+  notes?: string;
+  notePlaceholder?: string;
+  otherPlaceholder?: string;
+  schedule: TimelineStatusTooltipScheduleRow[];
+  showBulkActions?: boolean;
+  status: TimelineStatus;
+  subtitle: string;
+  tests?: TimelineStatusTooltipTest[];
+  title: string;
+}
+
+interface ActiveTimelineStatusTooltip {
+  chipId: string;
+  tooltip: TimelineStatusTooltip;
+}
+
+interface TimelineStatusTooltipPosition extends VitalTooltipPosition {
+  notchLeft: number;
+  placement: 'above' | 'below';
+}
 
 interface TimelineChip {
   id: string;
@@ -541,6 +578,93 @@ const ADDITIONAL_TIMELINE_GROUPS: TimelineGroup[] = [
   };
 });
 
+const TIMELINE_STATUS_TOOLTIPS: Record<TimelineStatus, TimelineStatusTooltip> = {
+  ordered: {
+    badgeLabel: 'Ordered',
+    notes:
+      'Patient scheduled but did not complete collection. Rescheduled for next week. Emphasized importance of test.',
+    notePlaceholder: 'Add notes...',
+    schedule: [{ icon: 'calendar', label: 'Scheduled:', value: 'Week 24-26' }],
+    status: 'ordered',
+    subtitle: 'Gestational Hypertension',
+    tests: [{ label: '24-hour Urine Protein', showActions: true }],
+    title: '24-hour urine protein (Baseline)',
+  },
+  abnormal: {
+    badgeLabel: 'Abnormal Finding',
+    notes:
+      'Patient referred for 3-hour glucose tolerance test. Advised on dietary modifications pending confirmatory testing.',
+    schedule: [
+      { icon: 'calendar', label: 'Scheduled:', value: 'Week 24-28' },
+      { icon: 'clock', label: 'Completed:', value: 'Week 26' },
+      { icon: 'calendar', label: 'Date:', value: '2026-01-15' },
+    ],
+    status: 'abnormal',
+    subtitle: 'Insulin Dependent Gestational Diabetes Mellitus',
+    tests: [{ label: '1-hour Glucose', result: '185 mg/dL (abnormal, >140)' }],
+    title: '1-hour glucose screening (Baseline)',
+  },
+  late: {
+    badgeLabel: 'Late',
+    notes:
+      'Carrier screening for common genetic conditions. Discuss results and partner testing if indicated.',
+    otherPlaceholder: 'Enter test name...',
+    schedule: [
+      { icon: 'calendar', label: 'Scheduled:', value: 'Week 0-13' },
+      { icon: 'calendar', label: 'Date:', value: '2025-10-15' },
+    ],
+    showBulkActions: true,
+    status: 'late',
+    subtitle: 'Routine Prenatal Care',
+    tests: [
+      { label: 'Hemoglobin Electro...', showActions: true },
+      { label: 'Cystic Fibrosis', showActions: true },
+      { label: 'Spinal Muscular Atr...', showActions: true },
+      { label: 'Fragile X', showActions: true },
+    ],
+    title: 'Genetic screening (Baseline)',
+  },
+  completed: {
+    badgeLabel: 'Completed/Reviewed',
+    notes:
+      'Combined NT measurement and serum markers indicate low risk. Detailed results reviewed with patient.',
+    schedule: [
+      { icon: 'calendar', label: 'Scheduled:', value: 'Week 11-14' },
+      { icon: 'clock', label: 'Completed:', value: 'Week 12' },
+      { icon: 'calendar', label: 'Date:', value: '2025-09-05' },
+    ],
+    status: 'completed',
+    subtitle: 'Routine Prenatal Care',
+    title: 'Aneuploidy screening',
+  },
+  'not-reviewed': {
+    badgeLabel: 'Completed/Not Reviewed',
+    notes:
+      'Combined NT measurement and serum markers indicate low risk. Detailed results are pending clinical review.',
+    schedule: [
+      { icon: 'calendar', label: 'Scheduled:', value: 'Week 11-14' },
+      { icon: 'clock', label: 'Completed:', value: 'Week 12' },
+      { icon: 'calendar', label: 'Date:', value: '2025-09-05' },
+    ],
+    status: 'not-reviewed',
+    subtitle: 'Routine Prenatal Care',
+    title: 'Aneuploidy screening',
+  },
+  future: {
+    badgeLabel: 'Future',
+    schedule: [{ icon: 'calendar', label: 'Scheduled:', value: 'Week 28-32' }],
+    showBulkActions: true,
+    status: 'future',
+    subtitle: 'Routine Prenatal Care',
+    tests: [
+      { label: 'CBC', showActions: true },
+      { label: 'Antibody Screen (Repeat)', showActions: true },
+      { label: '1-hour Glucose (if not done)', removed: true },
+    ],
+    title: 'Labs (Repeat)',
+  },
+};
+
 const INITIAL_TIMELINE: PregnancyTimeline = {
   currentWeek: 28,
   maxWeek: 40,
@@ -730,6 +854,14 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     width: 350,
   });
   readonly timelineGroupTooltipMaxHeight = signal(320);
+  readonly activeTimelineStatusTooltip = signal<ActiveTimelineStatusTooltip | null>(null);
+  readonly timelineStatusTooltipPosition = signal<TimelineStatusTooltipPosition>({
+    left: 0,
+    notchLeft: 160,
+    placement: 'below',
+    top: 0,
+    width: 320,
+  });
   readonly tooltipGlassFocusRect = signal<TooltipGlassFocusRect>({
     bottom: 0,
     left: 0,
@@ -790,6 +922,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   private riskAssessmentHideTimer: number | null = null;
   private deliveryWindowTooltipHideTimer: number | null = null;
   private timelineGroupTooltipHideTimer: number | null = null;
+  private timelineStatusTooltipHideTimer: number | null = null;
   private timelineItemSequence = 0;
   private timelineProblemSequence = 0;
 
@@ -809,6 +942,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.cancelRiskAssessmentHide();
     this.cancelDeliveryWindowTooltipHide();
     this.cancelTimelineGroupTooltipHide();
+    this.cancelTimelineStatusTooltipHide();
   }
 
   toggleVisitSummary(): void {
@@ -1054,6 +1188,73 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.cancelTimelineGroupTooltipHide();
   }
 
+  showTimelineStatusTooltip(chip: TimelineChip, event: Event): void {
+    this.cancelTimelineStatusTooltipHide();
+    this.hideVitalTooltip();
+    this.hideResultTooltip();
+    this.hideTimelineGroupTooltip();
+    const trigger = event.currentTarget as HTMLElement | null;
+
+    if (!trigger) {
+      return;
+    }
+
+    const tooltip = TIMELINE_STATUS_TOOLTIPS[chip.status];
+    const triggerBounds = trigger.getBoundingClientRect();
+    const width = Math.min(320, Math.max(260, window.innerWidth - 24));
+    const preferredHeight: Record<TimelineStatus, number> = {
+      abnormal: 414,
+      completed: 312,
+      future: 348,
+      late: 584,
+      'not-reviewed': 312,
+      ordered: 370,
+    };
+    const spaceBelow = window.innerHeight - triggerBounds.bottom - 12;
+    const spaceAbove = triggerBounds.top - 12;
+    const placement =
+      spaceBelow >= Math.min(preferredHeight[chip.status], 300) || spaceBelow >= spaceAbove
+        ? 'below'
+        : 'above';
+    const availableHeight = placement === 'below' ? spaceBelow : spaceAbove;
+    const maxHeight = Math.min(preferredHeight[chip.status], Math.max(180, availableHeight - 10));
+    const left = this.clamp(
+      triggerBounds.left + triggerBounds.width / 2 - width / 2,
+      12,
+      Math.max(12, window.innerWidth - width - 12),
+    );
+    const top =
+      placement === 'below'
+        ? triggerBounds.bottom + 10
+        : Math.max(12, triggerBounds.top - maxHeight - 10);
+
+    this.timelineStatusTooltipPosition.set({
+      left,
+      notchLeft: this.clamp(triggerBounds.left + triggerBounds.width / 2 - left, 18, width - 18),
+      placement,
+      top,
+      width,
+    });
+    this.activeTimelineStatusTooltip.set({ chipId: chip.id, tooltip });
+  }
+
+  hideTimelineStatusTooltip(): void {
+    this.cancelTimelineStatusTooltipHide();
+    this.activeTimelineStatusTooltip.set(null);
+  }
+
+  scheduleTimelineStatusTooltipHide(): void {
+    this.cancelTimelineStatusTooltipHide();
+    this.timelineStatusTooltipHideTimer = window.setTimeout(() => {
+      this.activeTimelineStatusTooltip.set(null);
+      this.timelineStatusTooltipHideTimer = null;
+    }, 180);
+  }
+
+  keepTimelineStatusTooltipOpen(): void {
+    this.cancelTimelineStatusTooltipHide();
+  }
+
   resolveTimelineProblem(groupId: string): void {
     this.rememberTimeline();
     this.pregnancyTimeline.update((timeline) => ({
@@ -1283,6 +1484,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       return;
     }
 
+    this.hideTimelineStatusTooltip();
     event.preventDefault();
     event.stopPropagation();
     this.rememberTimeline();
@@ -1362,6 +1564,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     }
 
     event.preventDefault();
+    this.hideTimelineStatusTooltip();
     this.rememberTimeline();
     const maxWeek = this.pregnancyTimeline().maxWeek;
     const duration = chip.endWeek - chip.startWeek;
@@ -1421,6 +1624,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
     if (this.activeTimelineGroupTooltip()) {
       this.hideTimelineGroupTooltip();
+    }
+
+    if (this.activeTimelineStatusTooltip()) {
+      this.hideTimelineStatusTooltip();
     }
 
     const summary = this.patientSummary?.nativeElement;
@@ -1520,6 +1727,13 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     if (this.timelineGroupTooltipHideTimer !== null) {
       window.clearTimeout(this.timelineGroupTooltipHideTimer);
       this.timelineGroupTooltipHideTimer = null;
+    }
+  }
+
+  private cancelTimelineStatusTooltipHide(): void {
+    if (this.timelineStatusTooltipHideTimer !== null) {
+      window.clearTimeout(this.timelineStatusTooltipHideTimer);
+      this.timelineStatusTooltipHideTimer = null;
     }
   }
 

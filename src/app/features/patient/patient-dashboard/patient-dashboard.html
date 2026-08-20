@@ -520,7 +520,7 @@
       </div>
     </header>
 
-    <div class="problem-timeline__scroller" tabindex="0">
+    <div class="problem-timeline__scroller" tabindex="0" (scroll)="hideTimelineStatusTooltip()">
       <div class="problem-timeline__canvas">
         <span class="problem-timeline__current-line problem-timeline__current-line--full"
           [style.left]="timelineLinePosition()"
@@ -580,10 +580,17 @@
                   <div class="problem-timeline__chip" [attr.data-status]="chip.status"
                     [style.left.%]="weekPercent(chip.startWeek)"
                     [style.width.%]="weekPercent(chip.endWeek - chip.startWeek)"
-                    [matTooltip]="timelineChipTooltip(chip)" matTooltipPosition="above" role="button" tabindex="0"
+                    role="button" tabindex="0" [attr.aria-describedby]="
+                          activeTimelineStatusTooltip()?.chipId === chip.id
+                            ? 'timeline-status-tooltip'
+                            : null
+                        "
                     [attr.aria-label]="
                             timelineChipTooltip(chip) + '. Use left and right arrow keys to move.'
-                          " (pointerdown)="
+                          " (mouseenter)="showTimelineStatusTooltip(chip, $event)"
+                    (mouseleave)="scheduleTimelineStatusTooltipHide()"
+                    (focusin)="showTimelineStatusTooltip(chip, $event)"
+                    (focusout)="scheduleTimelineStatusTooltipHide()" (pointerdown)="
                             startChipInteraction($event, group.id, row.id, chip, 'move')
                           " (keydown)="moveChipWithKeyboard($event, group.id, row.id, chip)">
                     <span class="problem-timeline__resize-handle problem-timeline__resize-handle--start"
@@ -617,6 +624,102 @@
       </div>
     </div>
   </section>
+
+  @if (activeTimelineStatusTooltip(); as activeStatusTooltip) {
+  <aside id="timeline-status-tooltip" class="timeline-status-tooltip" role="dialog"
+    [attr.aria-label]="activeStatusTooltip.tooltip.badgeLabel + ' timeline details'"
+    [attr.data-placement]="timelineStatusTooltipPosition().placement"
+    [attr.data-status]="activeStatusTooltip.tooltip.status" [style.left.px]="timelineStatusTooltipPosition().left"
+    [style.top.px]="timelineStatusTooltipPosition().top" [style.width.px]="timelineStatusTooltipPosition().width"
+    [style.--timeline-status-tooltip-notch-left]="timelineStatusTooltipPosition().notchLeft + 'px'"
+    (mouseenter)="keepTimelineStatusTooltipOpen()" (mouseleave)="scheduleTimelineStatusTooltipHide()"
+    (focusin)="keepTimelineStatusTooltipOpen()" (focusout)="scheduleTimelineStatusTooltipHide()">
+    <div class="timeline-status-tooltip__content">
+    <header class="timeline-status-tooltip__header">
+      <h2>{{ activeStatusTooltip.tooltip.title }}</h2>
+      <p>{{ activeStatusTooltip.tooltip.subtitle }}</p>
+      <span class="timeline-status-tooltip__badge" [attr.data-status]="activeStatusTooltip.tooltip.status">
+        <span class="timeline-status-tooltip__status-icon" aria-hidden="true"></span>
+        {{ activeStatusTooltip.tooltip.badgeLabel }}
+      </span>
+    </header>
+
+    <div class="timeline-status-tooltip__divider"></div>
+
+    <div class="timeline-status-tooltip__schedule">
+      @for (scheduleRow of activeStatusTooltip.tooltip.schedule; track scheduleRow.label) {
+      <div class="timeline-status-tooltip__schedule-row">
+        <span class="timeline-status-tooltip__icon" [attr.data-icon]="scheduleRow.icon" aria-hidden="true"></span>
+        <span>{{ scheduleRow.label }} <strong>{{ scheduleRow.value }}</strong></span>
+      </div>
+      }
+    </div>
+
+    @if (activeStatusTooltip.tooltip.tests?.length) {
+    <div class="timeline-status-tooltip__divider"></div>
+    <section class="timeline-status-tooltip__tests" aria-label="Lab tests">
+      <h3>Lab Tests:</h3>
+      <div class="timeline-status-tooltip__test-list"
+        [class.timeline-status-tooltip__test-list--scrollable]="
+          (activeStatusTooltip.tooltip.tests?.length ?? 0) > 3
+        ">
+        @for (test of activeStatusTooltip.tooltip.tests; track test.label) {
+        <div class="timeline-status-tooltip__test" [class.timeline-status-tooltip__test--removed]="test.removed"
+          [class.timeline-status-tooltip__test--result]="test.result">
+          <span class="timeline-status-tooltip__icon" [attr.data-icon]="test.result ? 'check' : 'test-tube'"
+            aria-hidden="true"></span>
+          <div class="timeline-status-tooltip__test-content">
+            <span class="timeline-status-tooltip__test-name">{{ test.label }}</span>
+            @if (test.result) {
+            <span class="timeline-status-tooltip__result">{{ test.result }}</span>
+            }
+          </div>
+          @if (test.showActions) {
+          <div class="timeline-status-tooltip__test-actions">
+            @if (activeStatusTooltip.tooltip.status !== 'ordered') {
+            <button class="timeline-status-tooltip__order" type="button">Order</button>
+            <button class="timeline-status-tooltip__decline" type="button">Decline</button>
+            }
+            <button class="timeline-status-tooltip__remove" type="button" aria-label="Remove test">
+              <span class="timeline-status-tooltip__icon" data-icon="close" aria-hidden="true"></span>
+            </button>
+          </div>
+          }
+        </div>
+        }
+      </div>
+
+      @if (activeStatusTooltip.tooltip.notePlaceholder) {
+      <input class="timeline-status-tooltip__input" type="text"
+        [placeholder]="activeStatusTooltip.tooltip.notePlaceholder" aria-label="Test notes" />
+      }
+    </section>
+    }
+
+    @if (activeStatusTooltip.tooltip.otherPlaceholder) {
+    <label class="timeline-status-tooltip__field">
+      <span>Other</span>
+      <input class="timeline-status-tooltip__input" type="text"
+        [placeholder]="activeStatusTooltip.tooltip.otherPlaceholder" />
+    </label>
+    }
+
+    @if (activeStatusTooltip.tooltip.showBulkActions) {
+    <div class="timeline-status-tooltip__bulk-actions">
+      <button class="timeline-status-tooltip__order-all" type="button">Order All</button>
+      <button class="timeline-status-tooltip__decline-all" type="button">Decline All</button>
+    </div>
+    }
+
+    @if (activeStatusTooltip.tooltip.notes) {
+    <label class="timeline-status-tooltip__notes">
+      <span>Notes:</span>
+      <textarea readonly [value]="activeStatusTooltip.tooltip.notes"></textarea>
+    </label>
+    }
+    </div>
+  </aside>
+  }
 
   @if (activeTimelineGroupTooltip(); as group) {
   <aside id="timeline-condition-tooltip" class="timeline-condition-tooltip" role="dialog"

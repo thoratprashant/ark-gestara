@@ -254,6 +254,41 @@ describe('PatientDashboard timeline', () => {
     });
   });
 
+  it('shows the matching custom status tooltip when each chip status is hovered', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    fixture.detectChanges();
+    const expectedBadges: Record<string, string> = {
+      abnormal: 'Abnormal Finding',
+      completed: 'Completed/Reviewed',
+      future: 'Future',
+      late: 'Late',
+      'not-reviewed': 'Completed/Not Reviewed',
+      ordered: 'Ordered',
+    };
+
+    Object.entries(expectedBadges).forEach(([status, badge]) => {
+      const chip = fixture.nativeElement.querySelector(
+        `.problem-timeline__chip[data-status="${status}"]`,
+      ) as HTMLElement;
+
+      expect(chip).toBeTruthy();
+      chip.dispatchEvent(new MouseEvent('mouseenter'));
+      fixture.detectChanges();
+
+      const tooltip = fixture.nativeElement.querySelector(
+        '.timeline-status-tooltip',
+      ) as HTMLElement;
+      expect(tooltip.dataset['status']).toBe(status);
+      expect(tooltip.querySelector('.timeline-status-tooltip__badge')?.textContent?.trim()).toBe(
+        badge,
+      );
+      const recordList = tooltip.querySelector('.timeline-status-tooltip__test-list');
+      expect(
+        recordList?.classList.contains('timeline-status-tooltip__test-list--scrollable') ?? false,
+      ).toBe(status === 'late');
+    });
+  });
+
   it('detects when a chip crosses the JSON current-week line without changing its status', () => {
     const dashboard = new PatientDashboard();
     const chip = dashboard.pregnancyTimeline().groups[0].rows[0].chips[1];
