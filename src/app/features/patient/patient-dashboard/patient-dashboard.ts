@@ -210,10 +210,10 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
     id: 'blood-pressure',
     title: 'Blood Pressure Trend',
     width: 520,
-    footer: {
-      color: '#ff595f',
-      message: 'Elevated BP readings: 33%',
-    },
+    // footer: {
+    //   color: '#ff595f',
+    //   message: 'Elevated BP readings: 33%',
+    // },
     charts: [
       {
         compact: true,
@@ -244,10 +244,10 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
     title: 'Fetal Heart Rate Trend',
     subtitle: 'Normal Range: 110-160 bpm',
     width: 520,
-    footer: {
-      color: '#0d9488',
-      message: 'Fetal heart rate is stable and within normal limits',
-    },
+    // footer: {
+    //   color: '#0d9488',
+    //   message: 'Fetal heart rate is stable and within normal limits',
+    // },
     charts: [
       {
         min: 100,
@@ -268,11 +268,11 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
     title: 'Fundal Height Trend',
     subtitle: 'Expected: Fundal height (cm) ≈ Gestational age (weeks)',
     width: 520,
-    footer: {
-      color: '#10b981',
-      message: 'Consistent with gestational age (98th percentile)',
-      status: 'Normal Growth',
-    },
+    // footer: {
+    //   color: '#10b981',
+    //   message: 'Consistent with gestational age (98th percentile)',
+    //   status: 'Normal Growth',
+    // },
     charts: [
       {
         min: 10,
