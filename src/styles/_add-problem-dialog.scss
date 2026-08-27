@@ -1,12 +1,13 @@
 .add-problem-dialog-panel {
-  --mat-dialog-container-max-width: 31.125rem;
+  --mat-dialog-container-max-width: 36rem;
   --mat-dialog-container-min-width: 0;
-  --mat-dialog-container-shape: 18.675px;
+  --mat-dialog-container-shape: 16px;
 
   .mat-mdc-dialog-surface {
+    max-height: calc(100dvh - 1.5rem);
     overflow: hidden;
     background: #fff;
-    border: 0.778px solid #e3ded9;
-    box-shadow: 0 9.338px 24.9px rgba(0, 0, 0, 0.1);
+    border: 0;
+    box-shadow: 0 12px 16px rgba(0, 0, 0, 0.1);
   }
 }

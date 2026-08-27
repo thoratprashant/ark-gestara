@@ -1436,7 +1436,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
         maxWidth: 'calc(100vw - 1.5rem)',
         panelClass: 'add-problem-dialog-panel',
         restoreFocus: false,
-        width: '498px',
+        width: '576px',
       })
       .afterClosed()
       .subscribe((result) => {

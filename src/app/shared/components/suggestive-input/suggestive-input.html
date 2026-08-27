@@ -1,0 +1,38 @@
+<div class="suggestive-input">
+  <input
+    [id]="inputId"
+    type="text"
+    role="combobox"
+    autocomplete="off"
+    [value]="value"
+    [disabled]="disabled"
+    [placeholder]="placeholder"
+    [attr.aria-expanded]="isOpen"
+    [attr.aria-controls]="inputId + '-suggestions'"
+    [attr.aria-activedescendant]="activeIndex >= 0 ? optionId(activeIndex) : null"
+    (input)="handleInput($event)"
+    (focus)="handleFocus()"
+    (blur)="handleBlur()"
+    (keydown)="handleKeydown($event)"
+  />
+
+  @if (isOpen) {
+    <div class="suggestive-input__dropdown" [id]="inputId + '-suggestions'" role="listbox">
+      @for (option of filteredOptions; track option.value; let index = $index) {
+        <button
+          class="suggestive-input__option"
+          type="button"
+          role="option"
+          [id]="optionId(index)"
+          [class.suggestive-input__option--active]="activeIndex === index"
+          [attr.aria-selected]="activeIndex === index"
+          (mousedown)="$event.preventDefault()"
+          (click)="selectOption(option)"
+        >
+          <strong>{{ option.value }}</strong>
+          <span> - {{ option.label }}</span>
+        </button>
+      }
+    </div>
+  }
+</div>
