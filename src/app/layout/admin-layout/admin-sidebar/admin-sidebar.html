@@ -1,0 +1,91 @@
+<aside
+  class="admin-sidebar"
+  [class.admin-sidebar--collapsed]="collapsed()"
+  [class.admin-sidebar--mobile-open]="mobileOpen()"
+  aria-label="Admin navigation"
+>
+  <div class="admin-sidebar__logo">
+    <div class="admin-sidebar__logo-crop">
+      <img src="assets/admin/logo.png" alt="Gestara" />
+    </div>
+  </div>
+
+  <nav class="admin-sidebar__nav">
+    <a
+      class="admin-sidebar__link"
+      [routerLink]="['/admin', 'dashboard']"
+      routerLinkActive="admin-sidebar__link--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      title="Dashboard"
+      (click)="navigationSelected.emit()"
+    >
+      <img
+        class="admin-sidebar__icon admin-sidebar__icon--dashboard"
+        src="assets/admin/dashboard.svg"
+        alt=""
+      />
+      <span class="admin-sidebar__label">Dashboard</span>
+    </a>
+
+    @for (group of groups; track group.id) {
+      <section
+        class="admin-sidebar__group"
+        [class.admin-sidebar__group--institution]="group.id === 'institution'"
+        [class.admin-sidebar__group--open]="openGroups()[group.id]"
+      >
+        <button
+          class="admin-sidebar__link admin-sidebar__group-trigger"
+          type="button"
+          [attr.aria-expanded]="openGroups()[group.id]"
+          [attr.aria-controls]="'admin-' + group.id + '-menu'"
+          [title]="group.label"
+          (click)="toggleGroup(group.id)"
+        >
+          <span
+            class="admin-sidebar__icon-box"
+            [class.admin-sidebar__icon-box--institution]="group.id === 'institution'"
+          >
+            <img [src]="group.icon" alt="" />
+          </span>
+          <span class="admin-sidebar__label">{{ group.label }}</span>
+          <span class="admin-sidebar__arrow">
+            <img src="assets/admin/submenu-chevron.svg" alt="" />
+          </span>
+        </button>
+
+        <div class="admin-sidebar__submenu" [id]="'admin-' + group.id + '-menu'">
+          <div class="admin-sidebar__submenu-inner">
+            @for (child of group.children; track child.label) {
+              <a
+                class="admin-sidebar__link admin-sidebar__sublink"
+                [routerLink]="child.route"
+                routerLinkActive="admin-sidebar__link--active"
+                [title]="child.label"
+                (click)="navigationSelected.emit()"
+              >
+                <img
+                  class="admin-sidebar__icon admin-sidebar__icon--child"
+                  [class.admin-sidebar__icon--child-small]="child.iconSize === 18"
+                  [src]="child.icon"
+                  alt=""
+                />
+                <span class="admin-sidebar__label">{{ child.label }}</span>
+              </a>
+            }
+          </div>
+        </div>
+      </section>
+    }
+  </nav>
+
+  <button
+    class="admin-sidebar__collapse"
+    type="button"
+    [attr.aria-label]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+    [title]="collapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+    (click)="collapseChange.emit()"
+  >
+    <img src="assets/admin/collapse.svg" alt="" />
+    <span class="admin-sidebar__collapse-label">Collapse</span>
+  </button>
+</aside>

@@ -1,0 +1,296 @@
+<main class="add-institution-page">
+  <div class="add-institution-page__topbar">
+    <nav class="admin-breadcrumb" aria-label="Breadcrumb">
+      <a [routerLink]="['/admin', 'institution', 'institutions']">Institution Management</a>
+      <span class="admin-breadcrumb__separator" aria-hidden="true">&gt;</span>
+      <span class="admin-breadcrumb__current" aria-current="page">Add New Institution</span>
+    </nav>
+
+    <button class="add-institution-page__admin-button" type="button">
+      <img src="assets/admin/add-institution/add-admin.svg" alt="" />
+      <span>Add Admin</span>
+    </button>
+  </div>
+
+  <form [formGroup]="institutionForm" (ngSubmit)="submitInstitution()">
+    <section class="institution-form-card" aria-labelledby="institution-information-title">
+      <header class="institution-form-card__header">
+        <span class="institution-form-card__icon">
+          <img src="assets/admin/add-institution/section-building.svg" alt="" />
+        </span>
+        <div>
+          <h1 id="institution-information-title">Institution Information</h1>
+          <p>Basic details about the institution</p>
+        </div>
+      </header>
+
+      <div class="institution-form-grid institution-form-grid--two-columns">
+        <div class="admin-field">
+          <label class="admin-field__label" for="institution-name">
+            Institution Name <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field" appearance="outline">
+            <img
+              class="admin-form-field__prefix"
+              matPrefix
+              src="assets/admin/add-institution/institution-name.svg"
+              alt=""
+            />
+            <input
+              id="institution-name"
+              matInput
+              formControlName="institutionName"
+              placeholder="Enter institution name"
+            />
+          </mat-form-field>
+        </div>
+
+        <div class="admin-field">
+          <label class="admin-field__label" id="institution-type-label">
+            Institution Type <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field admin-form-field--select" appearance="outline">
+            <mat-select
+              panelClass="admin-select-panel"
+              formControlName="institutionType"
+              placeholder="Select institution type"
+              aria-labelledby="institution-type-label"
+            >
+              @for (type of institutionTypes; track type) {
+                <mat-option [value]="type">{{ type }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="admin-field">
+          <label class="admin-field__label" for="organization-identifier">
+            Organization Identifier
+          </label>
+          <mat-form-field class="admin-form-field" appearance="outline">
+            <img
+              class="admin-form-field__prefix"
+              matPrefix
+              src="assets/admin/add-institution/identifier.svg"
+              alt=""
+            />
+            <input
+              id="organization-identifier"
+              matInput
+              formControlName="organizationIdentifier"
+              placeholder="REG-XXXX-XXXX"
+            />
+          </mat-form-field>
+        </div>
+
+        <div class="admin-field">
+          <label class="admin-field__label" for="primary-contact-name">
+            Primary Contact Name <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field" appearance="outline">
+            <img
+              class="admin-form-field__prefix"
+              matPrefix
+              src="assets/admin/add-institution/identifier.svg"
+              alt=""
+            />
+            <input
+              id="primary-contact-name"
+              matInput
+              formControlName="primaryContactName"
+              placeholder="LIC-XXXX"
+            />
+          </mat-form-field>
+        </div>
+
+        <div class="admin-field">
+          <label class="admin-field__label" for="primary-contact-email">
+            Primary Contact Email <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field" appearance="outline">
+            <input
+              id="primary-contact-email"
+              matInput
+              type="email"
+              formControlName="primaryContactEmail"
+              placeholder="Enter Contact Email"
+            />
+          </mat-form-field>
+        </div>
+
+        <div class="admin-field">
+          <label class="admin-field__label" for="primary-contact-phone">
+            Primary Contact Phone <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field" appearance="outline">
+            <input
+              id="primary-contact-phone"
+              matInput
+              type="tel"
+              formControlName="primaryContactPhone"
+              placeholder="Enter Contact Phone"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+
+    <section class="institution-form-card" aria-labelledby="address-information-title">
+      <header class="institution-form-card__header">
+        <span class="institution-form-card__icon">
+          <img src="assets/admin/add-institution/section-building.svg" alt="" />
+        </span>
+        <div>
+          <h2 id="address-information-title">Address Information</h2>
+          <p>Basic details</p>
+        </div>
+      </header>
+
+      <div class="institution-form-grid">
+        <div class="admin-field institution-form-grid__full">
+          <label class="admin-field__label" id="address-line-one-label">
+            Address Line 1 <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field admin-form-field--select" appearance="outline">
+            <mat-select
+              panelClass="admin-select-panel"
+              formControlName="addressLine1"
+              placeholder="Select institution type"
+              aria-labelledby="address-line-one-label"
+            >
+              <mat-option value="100 Main Street">100 Main Street</mat-option>
+              <mat-option value="200 Park Avenue">200 Park Avenue</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="admin-field institution-form-grid__full">
+          <label class="admin-field__label" id="address-line-two-label">
+            Address Line 2 <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field admin-form-field--select" appearance="outline">
+            <mat-select
+              panelClass="admin-select-panel"
+              formControlName="addressLine2"
+              placeholder="Select institution type"
+              aria-labelledby="address-line-two-label"
+            >
+              <mat-option value="Suite 100">Suite 100</mat-option>
+              <mat-option value="Building A">Building A</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div
+          class="institution-form-grid institution-form-grid--three-columns institution-form-grid__full"
+        >
+          <div class="admin-field">
+            <label class="admin-field__label" id="city-label">
+              City <span class="admin-field__required">*</span>
+            </label>
+            <mat-form-field class="admin-form-field admin-form-field--select" appearance="outline">
+              <mat-select
+                panelClass="admin-select-panel"
+                formControlName="city"
+                placeholder="Select institution type"
+                aria-labelledby="city-label"
+              >
+                @for (city of cities; track city) {
+                  <mat-option [value]="city">{{ city }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="admin-field">
+            <label class="admin-field__label" id="state-label">
+              State <span class="admin-field__required">*</span>
+            </label>
+            <mat-form-field class="admin-form-field admin-form-field--select" appearance="outline">
+              <mat-select
+                panelClass="admin-select-panel"
+                formControlName="state"
+                placeholder="Select institution type"
+                aria-labelledby="state-label"
+              >
+                @for (state of states; track state) {
+                  <mat-option [value]="state">{{ state }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="admin-field">
+            <label class="admin-field__label" id="zip-code-label">
+              Zip Code <span class="admin-field__required">*</span>
+            </label>
+            <mat-form-field class="admin-form-field admin-form-field--select" appearance="outline">
+              <mat-select
+                panelClass="admin-select-panel"
+                formControlName="zipCode"
+                placeholder="Select institution type"
+                aria-labelledby="zip-code-label"
+              >
+                @for (zipCode of zipCodes; track zipCode) {
+                  <mat-option [value]="zipCode">{{ zipCode }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="institution-form-card institution-form-card--platform"
+      aria-labelledby="platform-setup-title"
+    >
+      <header class="institution-form-card__header">
+        <span class="institution-form-card__icon">
+          <img src="assets/admin/add-institution/section-building.svg" alt="" />
+        </span>
+        <div>
+          <h2 id="platform-setup-title">Platform Setup</h2>
+          <p>Basic details</p>
+        </div>
+      </header>
+
+      <div class="institution-form-grid institution-form-grid--platform">
+        <div class="admin-field">
+          <span class="admin-field__label">
+            Institution Status <span class="admin-field__required">*</span>
+          </span>
+          <mat-radio-group
+            class="institution-status-options"
+            formControlName="status"
+            aria-label="Institution status"
+          >
+            <mat-radio-button value="Active">Active</mat-radio-button>
+            <mat-radio-button value="Inactive">Inactive</mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+        <div class="admin-field">
+          <label class="admin-field__label" for="internal-notes">Internal Notes</label>
+          <mat-form-field class="admin-form-field admin-form-field--textarea" appearance="outline">
+            <textarea
+              id="internal-notes"
+              matInput
+              rows="3"
+              formControlName="internalNotes"
+              placeholder="Enter administrative notes regarding this institution..."
+            ></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+
+    <footer class="add-institution-page__actions">
+      <button class="add-institution-page__cancel" type="button" (click)="cancel()">Cancel</button>
+      <button class="add-institution-page__submit" type="submit">
+        <img src="assets/admin/add-institution/submit.svg" alt="" />
+        <span>Submit Institution</span>
+      </button>
+    </footer>
+  </form>
+</main>

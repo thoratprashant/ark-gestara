@@ -1,0 +1,483 @@
+:host {
+  display: block;
+  font-family: Inter, Arial, sans-serif;
+}
+
+.institutions-page {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 32px;
+  color: #1f2933;
+}
+
+.institutions-page__heading {
+  h1 {
+    margin: 0;
+    color: #20292e;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 32px;
+    letter-spacing: -0.48px;
+  }
+  p {
+    margin: 4px 0 0;
+    color: #7d7467;
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+
+.institutions-overview h2 {
+  margin: 0 0 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e8e2d9;
+  color: #2f3538;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.institutions-overview__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  min-width: 0;
+  min-height: 112px;
+  padding: 20px;
+  border: 1px solid #e8e2d9;
+  border-radius: 16px;
+  background: #fff;
+
+  strong,
+  span {
+    display: block;
+  }
+  strong {
+    color: #20292e;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 38px;
+    letter-spacing: -0.6px;
+  }
+  span {
+    margin-top: 8px;
+    color: #7d7467;
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+
+.institutions-page__add {
+  display: inline-flex;
+  width: fit-content;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #034e58;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+  font:
+    600 14px/20px Inter,
+    Arial,
+    sans-serif;
+  transition: background-color 160ms ease;
+
+  img {
+    width: 14px;
+    height: 14px;
+  }
+  &:hover {
+    background: #023e46;
+  }
+  &:focus-visible {
+    outline: 3px solid rgb(3 78 88 / 20%);
+    outline-offset: 2px;
+  }
+}
+
+.institution-list {
+  overflow: hidden;
+  min-height: 768px;
+  border: 1px solid #e8e2d9;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.institution-list__toolbar {
+  display: grid;
+  box-sizing: border-box;
+  height: 62px;
+  align-items: center;
+  grid-template-columns: 320px 128px 1fr auto;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e8e2d9;
+  background: #fff;
+}
+
+.institution-list__search {
+  position: relative;
+  display: block;
+
+  > img {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 12px;
+    width: 14px;
+    height: 14px;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  input {
+    box-sizing: border-box;
+    width: 100%;
+    height: 30px;
+    padding: 0 12px 0 36px;
+    border: 1px solid #e8e2d9;
+    border-radius: 8px;
+    outline: 0;
+    background: #f5f2ec;
+    color: #332f2a;
+    font:
+      400 12px/18px Inter,
+      Arial,
+      sans-serif;
+    &::placeholder {
+      color: #a89880;
+    }
+    &:focus {
+      border-color: #4ecdc4;
+      box-shadow: 0 0 0 3px rgb(78 205 196 / 12%);
+    }
+  }
+}
+
+.institution-list__filter {
+  display: flex;
+  box-sizing: border-box;
+  width: 128px;
+  height: 30px;
+  align-items: center;
+  border: 1px solid #e8e2d9;
+  border-radius: 8px;
+  background: #f5f2ec;
+
+  mat-select {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    color: #514a40;
+    font:
+      500 12px/18px Inter,
+      Arial,
+      sans-serif;
+  }
+}
+
+.institution-list__add {
+  grid-column: 4;
+  height: 30px;
+  padding-inline: 12px;
+  font-size: 12px;
+  line-height: 18px;
+}
+.institution-list__table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 1080px;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.institution-column {
+  width: 21%;
+}
+.type-column {
+  width: 11.5%;
+}
+.location-column {
+  width: 14.2%;
+}
+.status-column {
+  width: 9.6%;
+}
+.admin-column {
+  width: 11.5%;
+}
+.date-column {
+  width: 9.4%;
+}
+.providers-column {
+  width: 10%;
+}
+.actions-column {
+  width: 12.8%;
+}
+
+th,
+td {
+  padding: 0 16px;
+  border-bottom: 1px solid #f0ede6;
+  color: #554e44;
+  font-size: 12px;
+  line-height: 18px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  height: 44px;
+  background: #faf9f7;
+  color: #7d7467;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+td {
+  height: 57px;
+  font-weight: 400;
+}
+
+.institution-list__name {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  > span {
+    display: grid;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    border-radius: 8px;
+    background: #eaf9f8;
+  }
+  img {
+    width: 14px;
+    height: 14px;
+  }
+  strong {
+    overflow: hidden;
+    color: #332f2a;
+    font-size: 12px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+  }
+}
+
+.status-pill {
+  display: inline-flex;
+  min-height: 22px;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 18px;
+
+  i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+  }
+}
+
+.status-pill--pending {
+  background: #fffbeb;
+  color: #d97706;
+  i {
+    background: #f59e0b;
+  }
+}
+
+.institution-list__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  button {
+    display: grid;
+    box-sizing: border-box;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    place-items: center;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    &:hover {
+      background: #f5f2ec;
+    }
+    &:focus-visible {
+      outline: 2px solid #4ecdc4;
+      outline-offset: 1px;
+    }
+  }
+  img {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.institution-list__empty {
+  height: 120px;
+  color: #7d7467;
+  text-align: center;
+}
+
+.institution-list__footer {
+  display: flex;
+  min-height: 62px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  color: #7d7467;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.institution-list__pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  button {
+    display: grid;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 7px;
+    place-items: center;
+    border: 1px solid #e8e2d9;
+    border-radius: 6px;
+    background: #fff;
+    color: #62594d;
+    font:
+      500 11px/16px Inter,
+      Arial,
+      sans-serif;
+    &.is-current {
+      border-color: #034e58;
+      background: #034e58;
+      color: #fff;
+    }
+    &:disabled {
+      opacity: 0.45;
+    }
+  }
+  img {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+@media (max-width: 1100px) {
+  .institutions-overview__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .institution-list__toolbar {
+    grid-template-columns: minmax(240px, 1fr) 128px auto;
+  }
+  .institution-list__add {
+    grid-column: 3;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .institutions-page {
+    gap: 24px;
+  }
+  .institution-list {
+    min-height: 0;
+  }
+  .institution-list__toolbar {
+    height: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .institution-list__filter {
+    width: 100%;
+  }
+  .institution-list__add {
+    width: 100%;
+    grid-column: 1;
+  }
+  .institution-list__footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .institution-list__pagination {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .institutions-overview__stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+:host ::ng-deep .institution-list__filter {
+  .mat-mdc-select-trigger {
+    height: 28px;
+    align-items: center;
+    padding: 0 12px;
+  }
+  .mat-mdc-select-value {
+    color: #514a40;
+  }
+  .mat-mdc-select-arrow {
+    width: 8px;
+    height: 8px;
+    border: solid #7d7467;
+    border-width: 0 1.5px 1.5px 0;
+    transform: translateY(-2px) rotate(45deg);
+    svg {
+      display: none;
+    }
+  }
+}
+
+::ng-deep .institution-status-panel.mat-mdc-select-panel {
+  border: 1px solid #e8e2d9;
+  border-radius: 8px;
+  background: #fff;
+  .mat-mdc-option {
+    min-height: 40px;
+    font:
+      400 14px/20px Inter,
+      Arial,
+      sans-serif;
+  }
+}

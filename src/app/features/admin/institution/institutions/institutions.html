@@ -1,0 +1,141 @@
+<main class="institutions-page">
+  <header class="institutions-page__heading">
+    <h1>Institution Management</h1>
+    <p>Manage healthcare organizations onboarded to the Gestara Platform</p>
+  </header>
+
+  <section class="institutions-overview" aria-labelledby="institution-overview-title">
+    <h2 id="institution-overview-title">Institution Overview</h2>
+    <div class="institutions-overview__stats">
+      <article class="stat-card"><strong>124</strong><span>Total Institutions</span></article>
+      <article class="stat-card"><strong>86</strong><span>Active Institutions</span></article>
+      <article class="stat-card"><strong>18</strong><span>Pending Activation</span></article>
+      <article class="stat-card"><strong>1,207</strong><span>Total Providers</span></article>
+    </div>
+  </section>
+
+  <a
+    class="institutions-page__add"
+    [routerLink]="['/admin', 'institution', 'institutions', 'add-institution']"
+  >
+    <img src="assets/admin/add.svg" alt="" /><span>Add Institution</span>
+  </a>
+
+  <section class="institution-list" aria-label="Institutions">
+    <div class="institution-list__toolbar">
+      <label class="institution-list__search">
+        <img src="assets/admin/search.svg" alt="" />
+        <input
+          type="search"
+          placeholder="Search institutions..."
+          aria-label="Search institutions"
+          [value]="query()"
+          (input)="updateQuery($event)"
+        />
+      </label>
+
+      <div class="institution-list__filter">
+        <span class="visually-hidden" id="institution-status-label">Filter by status</span>
+        <mat-select
+          aria-labelledby="institution-status-label"
+          panelClass="institution-status-panel"
+          panelWidth="auto"
+          [value]="status()"
+          (selectionChange)="updateStatus($event)"
+        >
+          <mat-option value="All Status">All Status</mat-option>
+          <mat-option value="Active">Active</mat-option>
+          <mat-option value="Pending">Pending</mat-option>
+        </mat-select>
+      </div>
+
+      <a
+        class="institutions-page__add institution-list__add"
+        [routerLink]="['/admin', 'institution', 'institutions', 'add-institution']"
+      >
+        <img src="assets/admin/add.svg" alt="" /><span>Add Institution</span>
+      </a>
+    </div>
+
+    <div class="institution-list__table-wrap">
+      <table>
+        <colgroup>
+          <col class="institution-column" />
+          <col class="type-column" />
+          <col class="location-column" />
+          <col class="status-column" />
+          <col class="admin-column" />
+          <col class="date-column" />
+          <col class="providers-column" />
+          <col class="actions-column" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Institution</th>
+            <th>Type</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>Admin Status</th>
+            <th>Created Date</th>
+            <th>Total Providers</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (institution of filteredInstitutions(); track institution.name) {
+            <tr>
+              <td>
+                <div class="institution-list__name">
+                  <span><img src="assets/admin/institution-row.svg" alt="" /></span
+                  ><strong>{{ institution.name }}</strong>
+                </div>
+              </td>
+              <td>{{ institution.type }}</td>
+              <td>{{ institution.location }}</td>
+              <td>
+                <span
+                  class="status-pill"
+                  [class.status-pill--pending]="institution.status === 'Pending'"
+                  ><i aria-hidden="true"></i>{{ institution.status }}</span
+                >
+              </td>
+              <td>{{ institution.adminStatus }}</td>
+              <td>{{ institution.createdDate }}</td>
+              <td>{{ institution.providers }}</td>
+              <td>
+                <div class="institution-list__actions">
+                  <button type="button" aria-label="View {{ institution.name }}">
+                    <img src="assets/admin/view.svg" alt="" />
+                  </button>
+                  <button type="button" aria-label="Edit {{ institution.name }}">
+                    <img src="assets/admin/edit.svg" alt="" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="institution-list__empty" colspan="8">
+                No institutions match your search.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="institution-list__footer">
+      <span>Showing 8 of 8 institutions</span>
+      <nav class="institution-list__pagination" aria-label="Institution table pages">
+        <button type="button" aria-label="Previous page" disabled>
+          <img src="assets/admin/previous.svg" alt="" />
+        </button>
+        <button class="is-current" type="button" aria-current="page">1</button
+        ><button type="button">2</button><button type="button">3</button>
+        <button type="button" aria-label="Next page">
+          <img src="assets/admin/next.svg" alt="" />
+        </button>
+      </nav>
+    </footer>
+  </section>
+</main>

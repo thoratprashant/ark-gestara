@@ -26,3 +26,26 @@ select,
 textarea {
   font: inherit;
 }
+
+textarea {
+  resize: none;
+}
+
+.mat-mdc-form-field {
+  --mdc-filled-text-field-input-text-placeholder-color: #9ca3af;
+  --mdc-outlined-text-field-input-text-placeholder-color: #9ca3af;
+  --mat-select-placeholder-text-color: #9ca3af;
+
+  .mat-mdc-input-element::placeholder,
+  .mat-mdc-select-placeholder {
+    color: #9ca3af;
+    opacity: 1;
+  }
+}
+
+input.mat-mdc-input-element::placeholder,
+textarea.mat-mdc-input-element::placeholder {
+  color: #9ca3af !important;
+  opacity: 1 !important;
+  -webkit-text-fill-color: #9ca3af !important;
+}

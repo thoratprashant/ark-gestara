@@ -1,0 +1,392 @@
+:host {
+  position: fixed;
+  z-index: 40;
+  inset: 0 auto 0 0;
+  width: var(--admin-sidebar-width);
+  transition: width 240ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #034e58;
+  box-shadow: 2px 0 12px rgb(0 35 40 / 8%);
+  color: #fff;
+}
+
+.admin-sidebar__logo {
+  flex: 0 0 123px;
+  display: flex;
+  align-items: center;
+  padding: 24px 20px 25px;
+  overflow: hidden;
+  border-bottom: 1px solid rgb(255 255 255 / 10%);
+}
+
+.admin-sidebar__logo-crop {
+  position: relative;
+  width: 100%;
+  height: 73px;
+  overflow: hidden;
+
+  img {
+    position: absolute;
+    top: -325.94%;
+    left: -3.97%;
+    width: 215.57%;
+    height: 466.11%;
+    max-width: none;
+    transition:
+      width 240ms ease,
+      left 240ms ease;
+  }
+}
+
+.admin-sidebar__nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 16px 12px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.admin-sidebar__nav::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-sidebar__group {
+  margin-top: 4px;
+}
+
+.admin-sidebar__link {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 12px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: rgb(255 255 255 / 72%);
+  font:
+    500 14px/20px Inter,
+    Arial,
+    sans-serif;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease;
+
+  &:hover,
+  &:focus-visible {
+    background: rgb(255 255 255 / 10%);
+    color: #fff;
+    outline: none;
+  }
+}
+
+.admin-sidebar__icon--dashboard,
+.admin-sidebar__icon--child {
+  width: 18px;
+  height: 18px;
+  object-fit: fill;
+}
+
+.admin-sidebar__icon--child:not(.admin-sidebar__icon--child-small) {
+  width: 20px;
+  height: 20px;
+}
+
+.admin-sidebar__icon-box {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+
+  img {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.admin-sidebar__icon-box--institution,
+.admin-sidebar__icon-box--institution img {
+  width: 20.667px;
+  height: 20.667px;
+}
+
+.admin-sidebar__link--active {
+  background: rgb(255 255 255 / 20%);
+  color: #fff;
+}
+
+.admin-sidebar__group-trigger {
+  grid-template-columns: 18px minmax(0, 1fr) 10px;
+}
+
+.admin-sidebar__arrow {
+  display: grid;
+  width: 10px;
+  height: 10px;
+  place-items: center;
+
+  img {
+    width: 10px;
+    height: 10px;
+    transform: rotate(0deg);
+    transition: transform 220ms ease;
+  }
+}
+
+.admin-sidebar__group--open .admin-sidebar__arrow img {
+  transform: rotate(180deg);
+}
+
+.admin-sidebar__submenu {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition:
+    grid-template-rows 240ms ease,
+    opacity 180ms ease;
+}
+
+.admin-sidebar__submenu-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding-inline: 20px 0;
+}
+
+.admin-sidebar__group--open .admin-sidebar__submenu {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.admin-sidebar__sublink {
+  margin-top: 4px;
+}
+
+.admin-sidebar__collapse {
+  flex: 0 0 48px;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  margin: 0 12px 16px;
+  padding: 8px 12px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: rgb(255 255 255 / 76%);
+  font:
+    500 14px/20px Inter,
+    Arial,
+    sans-serif;
+  white-space: nowrap;
+  cursor: pointer;
+
+  img {
+    width: 16px;
+    height: 16px;
+    transition: transform 240ms ease;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background: rgb(255 255 255 / 10%);
+    color: #fff;
+    outline: none;
+  }
+}
+
+.admin-sidebar--collapsed {
+  .admin-sidebar__logo {
+    padding: 24px 20px 25px;
+  }
+
+  .admin-sidebar__logo-crop {
+    width: 72px;
+    height: 74px;
+
+    img {
+      top: -325.94%;
+      left: -11.25%;
+      width: 610.79%;
+      height: 466.11%;
+    }
+  }
+
+  .admin-sidebar__nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 12px;
+  }
+
+  .admin-sidebar__link {
+    grid-template-columns: 20px;
+    justify-content: center;
+    gap: 0;
+    width: 40px;
+    padding: 10px;
+  }
+
+  .admin-sidebar__label,
+  .admin-sidebar__collapse-label {
+    display: none;
+  }
+
+  .admin-sidebar__group {
+    width: 100%;
+  }
+
+  .admin-sidebar__group-trigger {
+    grid-template-columns: 20px 10px;
+    gap: 12px;
+    width: 66px;
+    margin-inline: auto;
+    padding-inline: 12px;
+  }
+
+  .admin-sidebar__group-trigger .admin-sidebar__arrow {
+    display: grid;
+  }
+
+  .admin-sidebar__group--institution .admin-sidebar__group-trigger {
+    grid-template-columns: 20.667px 10px;
+    gap: 12px;
+    width: 67px;
+    padding-inline: 12px;
+  }
+
+  .admin-sidebar__group--institution .admin-sidebar__icon-box {
+    width: 20.667px;
+    height: 20.667px;
+  }
+
+  .admin-sidebar__submenu-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-inline: 20px;
+  }
+
+  .admin-sidebar__collapse {
+    display: flex;
+    width: 100%;
+    margin: 0 0 16px;
+    padding: 8px;
+    justify-content: center;
+
+    img {
+      transform: rotate(180deg);
+    }
+  }
+}
+
+@media (max-width: 834px) {
+  :host {
+    width: min(84vw, 240px);
+    transform: translateX(-102%);
+    transition: transform 240ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  :host:has(.admin-sidebar--mobile-open) {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar--collapsed {
+    .admin-sidebar__logo {
+      padding: 24px 20px 25px;
+    }
+
+    .admin-sidebar__logo-crop {
+      width: 100%;
+      height: 73px;
+
+      img {
+        top: -325.94%;
+        left: -3.97%;
+        width: 215.57%;
+        height: 466.11%;
+      }
+    }
+
+    .admin-sidebar__nav {
+      display: block;
+      align-items: stretch;
+      padding-inline: 12px;
+    }
+
+    .admin-sidebar__link,
+    .admin-sidebar__collapse {
+      grid-template-columns: 20px minmax(0, 1fr);
+      gap: 12px;
+      width: 100%;
+      padding-inline: 12px;
+    }
+
+    .admin-sidebar__group-trigger {
+      grid-template-columns: 18px minmax(0, 1fr) 10px;
+      margin-inline: 0;
+      padding-inline: 12px;
+      width: 100%;
+    }
+
+    .admin-sidebar__group-trigger .admin-sidebar__arrow {
+      display: block;
+    }
+
+    .admin-sidebar__group--institution .admin-sidebar__icon-box {
+      width: 20.667px;
+      height: 20.667px;
+    }
+
+    .admin-sidebar__group--institution .admin-sidebar__group-trigger {
+      width: 100%;
+    }
+
+    .admin-sidebar__label,
+    .admin-sidebar__collapse-label {
+      display: initial;
+    }
+
+    .admin-sidebar__arrow {
+      display: grid;
+    }
+
+    .admin-sidebar__submenu-inner {
+      display: block;
+      padding-inline: 20px 0;
+    }
+
+    .admin-sidebar__collapse {
+      margin-inline: 12px;
+      width: auto;
+      justify-content: initial;
+
+      img {
+        transform: none;
+      }
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host,
+  .admin-sidebar__submenu,
+  .admin-sidebar__arrow img,
+  .admin-sidebar__collapse img {
+    transition-duration: 0.01ms !important;
+  }
+}

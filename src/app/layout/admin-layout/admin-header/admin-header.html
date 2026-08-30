@@ -1,0 +1,20 @@
+<header class="admin-header">
+  <button
+    class="admin-header__menu"
+    type="button"
+    aria-label="Open navigation"
+    (click)="menuClick.emit()"
+  >
+    <span></span><span></span><span></span>
+  </button>
+
+  <div class="admin-header__account">
+    <span class="admin-header__avatar">
+      <img src="assets/admin/user.svg" alt="" width="16" height="16" />
+    </span>
+    <div class="admin-header__identity">
+      <strong>Dr. Admin</strong>
+      <span>Administrator</span>
+    </div>
+  </div>
+</header>

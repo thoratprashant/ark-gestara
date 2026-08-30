@@ -1,0 +1,220 @@
+.admin-breadcrumb {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+  color: #6b7280;
+  font:
+    400 14px/20px Inter,
+    Arial,
+    sans-serif;
+
+  a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      color: #034e58;
+      outline: none;
+      text-decoration: underline;
+    }
+  }
+
+  &__separator {
+    color: #9ca3af;
+  }
+
+  &__current {
+    color: #4b5563;
+    font-weight: 700;
+  }
+}
+
+.admin-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+
+  &__label {
+    margin: 0;
+    color: #4b5563;
+    font:
+      600 11.3px/16px Inter,
+      Arial,
+      sans-serif;
+  }
+
+  &__required {
+    color: #be123c;
+  }
+}
+
+.admin-form-field.mat-mdc-form-field {
+  width: 100%;
+  --mdc-outlined-text-field-container-shape: 8px;
+  --mdc-outlined-text-field-outline-color: #e5e7eb;
+  --mdc-outlined-text-field-hover-outline-color: #cbd5e1;
+  --mdc-outlined-text-field-focus-outline-color: #034e58;
+  --mdc-outlined-text-field-error-focus-outline-color: #034e58;
+  --mdc-outlined-text-field-input-text-color: #374151;
+  --mdc-outlined-text-field-input-text-placeholder-color: #9ca3af;
+  --mat-select-enabled-trigger-text-color: #374151;
+  --mat-select-placeholder-text-color: #9ca3af;
+  --mat-select-trigger-text-font: Inter, Arial, sans-serif;
+  --mat-select-trigger-text-size: 14px;
+  --mat-select-trigger-text-line-height: 20px;
+  --mat-select-trigger-text-weight: 400;
+  --mat-form-field-container-text-font: Inter, Arial, sans-serif;
+  --mat-form-field-container-text-size: 14px;
+  --mat-form-field-container-text-line-height: 20px;
+
+  .mat-mdc-text-field-wrapper {
+    height: 42px;
+    padding-inline: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #f9fafb;
+  }
+
+  .mdc-notched-outline {
+    display: none;
+  }
+
+  &.mat-focused {
+    .mat-mdc-text-field-wrapper {
+      border-color: #034e58;
+    }
+  }
+
+  .mat-mdc-form-field-flex {
+    height: 42px;
+    align-items: center;
+  }
+
+  .mat-mdc-form-field-infix {
+    min-height: 42px;
+    padding-block: 11px;
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+
+  .mat-mdc-select-trigger {
+    height: 20px;
+  }
+
+  .mat-mdc-select-placeholder {
+    color: #9ca3af;
+  }
+
+  .mat-mdc-select,
+  .mat-mdc-select-value,
+  .mat-mdc-select-value-text,
+  .mat-mdc-select-placeholder,
+  .mat-mdc-select-min-line {
+    font-family: Inter, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  input::placeholder,
+  textarea::placeholder,
+  .mat-mdc-select-placeholder {
+    color: #9ca3af;
+    font-family: Inter, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    opacity: 1;
+  }
+
+  .admin-form-field__prefix {
+    width: 16px;
+    height: 16px;
+    margin-right: 12px;
+  }
+}
+
+.admin-select-panel.mat-mdc-select-panel {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgb(17 24 39 / 10%);
+
+  .mat-mdc-option {
+    min-height: 40px;
+    color: #374151;
+    font:
+      400 14px/20px Inter,
+      Arial,
+      sans-serif;
+  }
+
+  .mdc-list-item__primary-text {
+    font-family: Inter, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+
+.institution-status-options {
+  .mat-mdc-radio-button {
+    --mat-radio-selected-icon-color: #034e58;
+    --mat-radio-selected-focus-icon-color: #034e58;
+    --mat-radio-selected-hover-icon-color: #034e58;
+    --mat-radio-selected-pressed-icon-color: #034e58;
+    --mat-radio-checked-ripple-color: #034e58;
+  }
+
+  .mdc-label {
+    padding-left: 6px;
+    color: #4b5563;
+    font:
+      400 11.1px/16px Inter,
+      Arial,
+      sans-serif;
+  }
+}
+
+.admin-form-field--select.mat-mdc-form-field {
+  .mat-mdc-select-arrow {
+    width: 16px;
+    height: 16px;
+    background: url('../../public/assets/admin/add-institution/select-chevron.svg') center / 16px
+      16px no-repeat;
+
+    svg {
+      display: none;
+    }
+  }
+}
+
+.admin-form-field--textarea.mat-mdc-form-field {
+  .mat-mdc-text-field-wrapper,
+  .mat-mdc-form-field-flex {
+    height: 82px;
+    align-items: flex-start;
+  }
+
+  .mat-mdc-form-field-infix {
+    min-height: 82px;
+    padding-block: 11px;
+  }
+
+  textarea.mat-mdc-input-element {
+    min-height: 58px;
+    resize: none;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .admin-breadcrumb {
+    min-height: 32px;
+    font-size: 12px;
+  }
+}

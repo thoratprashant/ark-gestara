@@ -6,6 +6,10 @@ export const routes: Routes = [
     loadChildren: () => import('./features/patient/patient.routes').then((m) => m.PATIENT_ROUTES),
   },
   {
+    path: 'admin',
+    loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
+  },
+  {
     path: '',
     pathMatch: 'full',
     redirectTo: 'patient/dashboard',
