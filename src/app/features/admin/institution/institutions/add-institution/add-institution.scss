@@ -17,35 +17,11 @@
 }
 
 .add-institution-page__admin-button {
-  display: inline-flex;
-  height: 40px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 24px;
-  border: 1px solid #034e58;
-  border-radius: 8px;
-  background: transparent;
   box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
-  color: #034e58;
-  cursor: pointer;
-  font:
-    600 13.5px/20px Inter,
-    Arial,
-    sans-serif;
 
   img {
     width: 16px;
     height: 16px;
-  }
-
-  &:hover {
-    background: rgb(3 78 88 / 5%);
-  }
-
-  &:focus-visible {
-    outline: 3px solid rgb(3 78 88 / 16%);
-    outline-offset: 2px;
   }
 }
 
@@ -168,53 +144,17 @@ form {
 
 .add-institution-page__cancel,
 .add-institution-page__submit {
-  display: inline-flex;
   min-width: 94px;
-  height: 42px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 24px;
-  border-radius: 8px;
-  cursor: pointer;
-  font:
-    600 13px/20px Inter,
-    Arial,
-    sans-serif;
-}
-
-.add-institution-page__cancel {
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  color: #6b7280;
 }
 
 .add-institution-page__submit {
   min-width: 189px;
-  height: 40px;
-  border: 0;
-  background: #034e58;
   box-shadow: 0 1px 1px rgb(0 0 0 / 5%);
-  color: #fff;
 
   img {
     width: 16px;
     height: 16px;
   }
-}
-
-.add-institution-page__cancel:hover {
-  background: #f9fafb;
-}
-
-.add-institution-page__submit:hover {
-  background: #023e46;
-}
-
-.add-institution-page__cancel:focus-visible,
-.add-institution-page__submit:focus-visible {
-  outline: 3px solid rgb(3 78 88 / 16%);
-  outline-offset: 2px;
 }
 
 @media (max-width: 900px) {

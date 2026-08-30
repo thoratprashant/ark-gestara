@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatButton } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
@@ -11,6 +12,7 @@ import { Router, RouterLink } from '@angular/router';
   imports: [
     ReactiveFormsModule,
     RouterLink,
+    MatButton,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,

@@ -10,10 +10,17 @@ import { AdminSidebar } from './admin-sidebar/admin-sidebar';
   styleUrl: './admin-layout.scss',
 })
 export class AdminLayout {
+  private readonly mobileSidebarQuery = '(max-width: 834px)';
+
   protected readonly sidebarCollapsed = signal(false);
   protected readonly mobileSidebarOpen = signal(false);
 
-  protected toggleSidebar(): void {
+  protected handleSidebarCollapse(): void {
+    if (window.matchMedia(this.mobileSidebarQuery).matches) {
+      this.closeMobileSidebar();
+      return;
+    }
+
     this.sidebarCollapsed.update((collapsed) => !collapsed);
   }
 

@@ -1,0 +1,100 @@
+.app-button {
+  --app-button-focus-ring: rgb(3 78 88 / 20%);
+  --mat-button-filled-container-height: 40px;
+  --mat-button-filled-container-shape: 8px;
+  --mat-button-filled-horizontal-padding: 24px;
+  --mat-button-filled-label-text-font: Inter, Arial, sans-serif;
+  --mat-button-filled-label-text-size: 14px;
+  --mat-button-filled-label-text-weight: 600;
+  --mat-button-filled-label-text-tracking: 0;
+  --mat-button-outlined-container-height: 40px;
+  --mat-button-outlined-container-shape: 8px;
+  --mat-button-outlined-horizontal-padding: 24px;
+  --mat-button-outlined-label-text-font: Inter, Arial, sans-serif;
+  --mat-button-outlined-label-text-size: 14px;
+  --mat-button-outlined-label-text-weight: 600;
+  --mat-button-outlined-label-text-tracking: 0;
+  gap: 8px;
+  line-height: 20px;
+
+  .mdc-button__label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--app-button-focus-ring);
+    outline-offset: 2px;
+  }
+
+  &[aria-busy='true'] {
+    cursor: wait;
+    pointer-events: none;
+  }
+}
+
+.app-button--primary {
+  --mat-button-filled-container-color: #034e58;
+  --mat-button-filled-label-text-color: #fff;
+  --mat-button-filled-state-layer-color: #fff;
+  --mat-button-filled-disabled-container-color: rgb(3 78 88 / 38%);
+  --mat-button-filled-disabled-label-text-color: rgb(255 255 255 / 72%);
+
+  &:not(:disabled):hover {
+    --mat-button-filled-container-color: #023e46;
+  }
+
+  &:not(:disabled):active {
+    --mat-button-filled-container-color: #012f35;
+  }
+}
+
+.app-button.app-button--secondary {
+  --mat-button-filled-container-color: #fff;
+  --mat-button-filled-label-text-color: #6b7280;
+  --mat-button-filled-state-layer-color: #6b7280;
+  --mat-button-filled-disabled-container-color: #f3f4f6;
+  --mat-button-filled-disabled-label-text-color: #9ca3af;
+  border: 1px solid #e5e7eb;
+
+  &:not(:disabled):hover {
+    --mat-button-filled-container-color: #f9fafb;
+  }
+
+  &:not(:disabled):active {
+    --mat-button-filled-container-color: #f3f4f6;
+  }
+}
+
+.app-button--outline-primary {
+  --mat-button-outlined-label-text-color: #034e58;
+  --mat-button-outlined-outline-color: #034e58;
+  --mat-button-outlined-state-layer-color: #034e58;
+  --mat-button-outlined-disabled-label-text-color: rgb(3 78 88 / 38%);
+  --mat-button-outlined-disabled-outline-color: rgb(3 78 88 / 24%);
+
+  &:not(:disabled):hover {
+    background: rgb(3 78 88 / 5%);
+  }
+
+  &:not(:disabled):active {
+    background: rgb(3 78 88 / 10%);
+  }
+}
+
+.app-button--large {
+  --mat-button-filled-container-height: 42px;
+  --mat-button-outlined-container-height: 42px;
+}
+
+.app-button--small {
+  --mat-button-filled-container-height: 30px;
+  --mat-button-filled-horizontal-padding: 12px;
+  --mat-button-filled-label-text-size: 12px;
+  --mat-button-outlined-container-height: 30px;
+  --mat-button-outlined-horizontal-padding: 12px;
+  --mat-button-outlined-label-text-size: 12px;
+  line-height: 18px;
+}

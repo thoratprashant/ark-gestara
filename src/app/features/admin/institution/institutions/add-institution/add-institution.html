@@ -6,7 +6,11 @@
       <span class="admin-breadcrumb__current" aria-current="page">Add New Institution</span>
     </nav>
 
-    <button class="add-institution-page__admin-button" type="button">
+    <button
+      matButton="outlined"
+      class="app-button app-button--outline-primary add-institution-page__admin-button"
+      type="button"
+    >
       <img src="assets/admin/add-institution/add-admin.svg" alt="" />
       <span>Add Admin</span>
     </button>
@@ -286,8 +290,19 @@
     </section>
 
     <footer class="add-institution-page__actions">
-      <button class="add-institution-page__cancel" type="button" (click)="cancel()">Cancel</button>
-      <button class="add-institution-page__submit" type="submit">
+      <button
+        matButton="filled"
+        class="app-button app-button--secondary app-button--large add-institution-page__cancel"
+        type="button"
+        (click)="cancel()"
+      >
+        Cancel
+      </button>
+      <button
+        matButton="filled"
+        class="app-button app-button--primary add-institution-page__submit"
+        type="submit"
+      >
         <img src="assets/admin/add-institution/submit.svg" alt="" />
         <span>Submit Institution</span>
       </button>

@@ -6,7 +6,7 @@
   <app-admin-sidebar
     [collapsed]="sidebarCollapsed()"
     [mobileOpen]="mobileSidebarOpen()"
-    (collapseChange)="toggleSidebar()"
+    (collapseChange)="handleSidebarCollapse()"
     (navigationSelected)="closeMobileSidebar()"
   />
 

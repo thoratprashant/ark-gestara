@@ -5,6 +5,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   selector: 'app-patient-layout',
   imports: [RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './patient-layout.html',
+  styleUrl: './patient-layout.scss',
 })
 export class PatientLayout {
   protected readonly sidebarOpen = signal(false);
