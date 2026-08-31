@@ -162,6 +162,92 @@
   }
 }
 
+.admin-account-menu.mat-mdc-menu-panel {
+  --mat-menu-container-color: #fff;
+  --mat-menu-container-shape: 8px;
+  --mat-menu-container-elevation-shadow: none;
+  --mat-menu-item-label-text-color: #0a0a0a;
+  --mat-menu-item-label-text-font: Inter, Arial, sans-serif;
+  --mat-menu-item-label-text-size: 15px;
+  --mat-menu-item-label-text-line-height: normal;
+  --mat-menu-item-label-text-weight: 400;
+  --mat-menu-item-label-text-tracking: 0;
+  --mat-menu-item-hover-state-layer-color: #fff;
+  --mat-menu-item-focus-state-layer-color: #fff;
+  width: 155px;
+  min-width: 155px;
+  max-width: 155px;
+  margin-top: 8px;
+  overflow: hidden;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background: #fff;
+  background-color: #fff !important;
+  box-shadow: none !important;
+
+  .mat-mdc-menu-content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-sizing: border-box;
+    padding: 14px 0;
+    background: #fff !important;
+  }
+
+  .mat-mdc-menu-item {
+    width: 155px;
+    min-height: 32px;
+    height: 32px;
+    padding: 0 16px;
+    border-radius: 0;
+    background: #fff !important;
+    color: #0a0a0a;
+    font:
+      400 15px/normal Inter,
+      Arial,
+      sans-serif;
+
+    .mat-mdc-menu-item-text {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      gap: 0;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #dbeafe;
+      outline-offset: -2px;
+    }
+  }
+
+  .admin-account-menu__icon {
+    display: grid;
+    box-sizing: border-box;
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    place-items: center;
+    border-radius: 4px;
+    margin-right: 10px;
+
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .admin-account-menu__icon .admin-account-menu__sign-out-icon {
+    width: 16.5px;
+    height: 17.5px;
+    transform: scaleX(-1);
+  }
+
+  .mat-mdc-menu-ripple {
+    display: none;
+  }
+}
+
 .institution-status-options {
   .mat-mdc-radio-button {
     --mat-radio-selected-icon-color: #034e58;

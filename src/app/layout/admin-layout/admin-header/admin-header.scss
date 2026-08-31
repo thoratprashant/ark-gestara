@@ -18,7 +18,15 @@
   background: rgb(255 255 255 / 84%);
   backdrop-filter: blur(14px);
 }
-
+::ng-deep .mat-mdc-menu-panel {
+  background: #ffffff !important;
+  .mat-mdc-menu-content{
+    padding: 0 !important;
+    .admin-account-menu__icon{
+      margin-right: 8px;
+    }
+  }
+}
 .admin-header__menu {
   display: none;
   width: 40px;
@@ -101,46 +109,6 @@
 
 .admin-header__account[aria-expanded='true'] .admin-header__account-chevron {
   transform: rotate(180deg);
-}
-
-::ng-deep .admin-account-menu.mat-mdc-menu-panel {
-  min-width: 176px;
-  margin-top: 8px;
-  overflow: hidden;
-  border: 1px solid #f1eeea;
-  border-radius: 8px;
-  background: #fff;
-
-  .mat-mdc-menu-content {
-    padding: 0;
-  }
-
-  .mat-mdc-menu-item {
-    min-height: 40px;
-    border-radius: 0;
-    color: #2c4a52;
-    font:
-      400 14px/20px Inter,
-      Arial,
-      sans-serif;
-
-    &:hover,
-    &:focus-visible {
-      background: #f5f2ec;
-    }
-
-    .mat-icon {
-      width: 18px;
-      height: 18px;
-      margin-right: 12px;
-      color: #537078;
-      font-size: 18px;
-    }
-  }
-
-  .mat-mdc-menu-item + .mat-mdc-menu-item {
-    border-top: 1px solid #f1eeea;
-  }
 }
 
 @media (max-width: 834px) {
