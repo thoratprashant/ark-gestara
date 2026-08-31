@@ -128,17 +128,26 @@
       </table>
     </div>
 
-    <footer class="institution-list__footer">
+    <footer class="admin--table__footer">
       <span>Showing 8 of 8 institutions</span>
-      <nav class="institution-list__pagination" aria-label="Institution table pages">
-        <button type="button" aria-label="Previous page" disabled>
-          <img src="assets/admin/previous.svg" alt="" />
-        </button>
-        <button class="is-current" type="button" aria-current="page">1</button
-        ><button type="button">2</button><button type="button">3</button>
-        <button type="button" aria-label="Next page">
-          <img src="assets/admin/next.svg" alt="" />
-        </button>
+      <nav aria-label="Institution table pages">
+        <ul class="pagination admin--table__pagination">
+          <li class="page-item disabled">
+            <button class="page-link" type="button" aria-label="Previous page" disabled>
+              <img src="assets/admin/previous.svg" alt="" />
+            </button>
+          </li>
+          <li class="page-item active">
+            <button class="page-link" type="button" aria-current="page">1</button>
+          </li>
+          <li class="page-item"><button class="page-link" type="button">2</button></li>
+          <li class="page-item"><button class="page-link" type="button">3</button></li>
+          <li class="page-item">
+            <button class="page-link" type="button" aria-label="Next page">
+              <img src="assets/admin/next.svg" alt="" />
+            </button>
+          </li>
+        </ul>
       </nav>
     </footer>
   </section>

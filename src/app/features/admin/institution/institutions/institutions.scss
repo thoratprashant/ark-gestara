@@ -182,7 +182,7 @@
 .date-column {
   width: 8%;
 }
-.status-column{
+.status-column {
   width: 120px;
 }
 .type-column,
@@ -292,51 +292,6 @@
   text-align: center;
 }
 
-.institution-list__footer {
-  display: flex;
-  min-height: 62px;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 20px;
-  color: #7d7467;
-  font-size: 12px;
-  line-height: 18px;
-}
-
-.institution-list__pagination {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  button {
-    display: grid;
-    min-width: 28px;
-    height: 28px;
-    padding: 0 7px;
-    place-items: center;
-    border: 1px solid #e8e2d9;
-    border-radius: 6px;
-    background: #fff;
-    color: #62594d;
-    font:
-      500 11px/16px Inter,
-      Arial,
-      sans-serif;
-    &.is-current {
-      border-color: #034e58;
-      background: #034e58;
-      color: #fff;
-    }
-    &:disabled {
-      opacity: 0.45;
-    }
-  }
-  img {
-    width: 14px;
-    height: 14px;
-  }
-}
-
 .visually-hidden {
   position: absolute !important;
   width: 1px !important;
@@ -378,13 +333,6 @@
   .institution-list__add {
     width: 100%;
     grid-column: 1;
-  }
-  .institution-list__footer {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-  .institution-list__pagination {
-    align-self: flex-end;
   }
 }
 
