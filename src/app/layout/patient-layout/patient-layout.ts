@@ -1,5 +1,5 @@
 import { Component, HostListener, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-patient-layout',
@@ -8,8 +8,16 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
   styleUrl: './patient-layout.scss',
 })
 export class PatientLayout {
+  constructor(private readonly router: Router) {}
+
   protected readonly sidebarOpen = signal(false);
   protected readonly headerCompact = signal(false);
+
+  protected dashboardNavigationActive(): boolean {
+    const path = this.router.url.split(/[?#]/, 1)[0];
+
+    return path === '/patient/patient-listing' || path.startsWith('/patient/dashboard');
+  }
 
   protected toggleSidebar(): void {
     this.sidebarOpen.update((isOpen) => !isOpen);

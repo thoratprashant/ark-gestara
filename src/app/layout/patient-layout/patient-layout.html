@@ -18,10 +18,9 @@
       <nav class="primary-nav" aria-label="Patient navigation">
         <a
           class="nav-link"
+          [class.active]="dashboardNavigationActive()"
           routerLink="/patient/dashboard"
-          routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: true }"
-          ariaCurrentWhenActive="page"
+          [attr.aria-current]="dashboardNavigationActive() ? 'page' : null"
         >
           <img src="assets/header/home.svg" alt="" />
           <span>Dashboard</span>
@@ -145,10 +144,9 @@
     <nav class="mobile-nav" aria-label="Mobile patient navigation">
       <a
         class="nav-link"
+        [class.active]="dashboardNavigationActive()"
         routerLink="/patient/dashboard"
-        routerLinkActive="active"
-        [routerLinkActiveOptions]="{ exact: true }"
-        ariaCurrentWhenActive="page"
+        [attr.aria-current]="dashboardNavigationActive() ? 'page' : null"
         (click)="closeSidebar()"
       >
         <img src="assets/header/home.svg" alt="" />
