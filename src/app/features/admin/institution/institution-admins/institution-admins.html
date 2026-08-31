@@ -133,7 +133,15 @@
               <td>{{ admin.adminName }}</td>
               <td>{{ admin.email }}</td>
               <td>{{ admin.invitationSentDate }}</td>
-              <td>{{ admin.status }}</td>
+              <td>
+                <span
+                  class="status-pill"
+                  [class.status-pill--inactive]="admin.status === 'Inactive'"
+                  [class.status-pill--failed]="admin.status === 'Failed'"
+                >
+                  <i aria-hidden="true"></i>{{ admin.status }}
+                </span>
+              </td>
               <td>{{ admin.lastActivity }}</td>
               <td>
                 <div class="institution-admin-list__actions">

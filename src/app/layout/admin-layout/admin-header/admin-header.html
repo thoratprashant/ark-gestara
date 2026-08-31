@@ -8,7 +8,12 @@
     <span></span><span></span><span></span>
   </button>
 
-  <div class="admin-header__account">
+  <button
+    class="admin-header__account"
+    type="button"
+    aria-label="Open account menu"
+    [matMenuTriggerFor]="accountMenu"
+  >
     <span class="admin-header__avatar">
       <img src="assets/admin/user.svg" alt="" width="16" height="16" />
     </span>
@@ -16,5 +21,19 @@
       <strong>Dr. Admin</strong>
       <span>Administrator</span>
     </div>
-  </div>
+    <mat-icon class="admin-header__account-chevron" aria-hidden="true">
+      keyboard_arrow_down
+    </mat-icon>
+  </button>
+
+  <mat-menu #accountMenu="matMenu" panelClass="admin-account-menu" xPosition="before">
+    <button mat-menu-item type="button" (click)="profileClick.emit()">
+      <mat-icon aria-hidden="true">person</mat-icon>
+      <span>Profile</span>
+    </button>
+    <button mat-menu-item type="button" (click)="logoutClick.emit()">
+      <mat-icon aria-hidden="true">logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-menu>
 </header>

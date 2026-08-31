@@ -32,6 +32,55 @@
   }
 }
 
+.status-pill {
+  display: inline-flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 16px;
+
+  i {
+    flex: 0 0 6px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+  }
+}
+
+.status-pill--pending {
+  background: #fffbeb;
+  color: #d97706;
+
+  i {
+    background: #f59e0b;
+  }
+}
+
+.status-pill--inactive {
+  background: #f3f4f6;
+  color: #6b7280;
+
+  i {
+    background: #9ca3af;
+  }
+}
+
+.status-pill--failed {
+  background: #fef2f2;
+  color: #dc2626;
+
+  i {
+    background: #ef4444;
+  }
+}
+
 .admin--table__footer {
   display: flex;
   min-height: 62px;
