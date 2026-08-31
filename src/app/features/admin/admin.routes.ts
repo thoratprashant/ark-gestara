@@ -12,6 +12,10 @@ export const ADMIN_ROUTES: Routes = [
         loadComponent: () => import('./dashboard/dashboard').then((m) => m.Dashboard),
       },
       {
+        path: 'profile',
+        loadComponent: () => import('./profile/profile').then((m) => m.AdminProfile),
+      },
+      {
         path: 'institution/institutions/add-institution',
         loadComponent: () =>
           import('./institution/institutions/add-institution/add-institution').then(

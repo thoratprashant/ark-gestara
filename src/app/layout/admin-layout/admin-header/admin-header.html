@@ -27,7 +27,7 @@
   </button>
 
   <mat-menu #accountMenu="matMenu" panelClass="admin-account-menu" xPosition="before">
-    <button mat-menu-item type="button" disableRipple (click)="profileClick.emit()">
+    <button mat-menu-item type="button" disableRipple routerLink="/admin/profile">
       <span class="admin-account-menu__icon">
         <img src="assets/admin/profile.svg" alt="" />
       </span>
