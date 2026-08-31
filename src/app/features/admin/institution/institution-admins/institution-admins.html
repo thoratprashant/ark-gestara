@@ -145,10 +145,42 @@
               <td>{{ admin.lastActivity }}</td>
               <td>
                 <div class="institution-admin-list__actions">
-                  <button type="button" aria-label="View {{ admin.institution }} invitation">
+                  <button
+                    type="button"
+                    aria-label="View {{ admin.institution }} invitation"
+                    [routerLink]="[
+                      '/admin',
+                      'institution',
+                      'institution-admins',
+                      'provision-institution-admin',
+                      'view',
+                    ]"
+                    [state]="{
+                      institution: admin.institution,
+                      adminName: admin.adminName,
+                      email: admin.email,
+                      status: admin.status,
+                    }"
+                  >
                     <img src="assets/admin/view.svg" alt="" />
                   </button>
-                  <button type="button" aria-label="Edit {{ admin.institution }} invitation">
+                  <button
+                    type="button"
+                    aria-label="Edit {{ admin.institution }} invitation"
+                    [routerLink]="[
+                      '/admin',
+                      'institution',
+                      'institution-admins',
+                      'provision-institution-admin',
+                      'edit',
+                    ]"
+                    [state]="{
+                      institution: admin.institution,
+                      adminName: admin.adminName,
+                      email: admin.email,
+                      status: admin.status,
+                    }"
+                  >
                     <img src="assets/admin/edit.svg" alt="" />
                   </button>
                 </div>

@@ -4,6 +4,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { RouterLink } from '@angular/router';
 
 type InvitationStatus = 'Active' | 'Inactive' | 'Failed';
 
@@ -19,7 +20,7 @@ interface InstitutionAdminRow {
 
 @Component({
   selector: 'app-institution-admins',
-  imports: [MatDatepickerModule, MatFormFieldModule, MatInputModule, MatSelectModule],
+  imports: [MatDatepickerModule, MatFormFieldModule, MatInputModule, MatSelectModule, RouterLink],
   providers: [provideNativeDateAdapter()],
   templateUrl: './institution-admins.html',
   styleUrl: './institution-admins.scss',

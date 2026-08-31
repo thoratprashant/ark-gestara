@@ -1,0 +1,166 @@
+<main class="provision-admin-page">
+  <header class="provision-admin-page__heading">
+    <h1>Provision Institution Admin</h1>
+    <p>Configure and send an invitation to new administration user</p>
+  </header>
+
+  <form [formGroup]="adminForm" (ngSubmit)="submit()">
+    <section class="provision-admin-card" aria-labelledby="institution-information-title">
+      <header class="provision-admin-card__header">
+        <span class="provision-admin-card__icon">
+          <img src="assets/admin/provision-institution-admin/institution-section.svg" alt="" />
+        </span>
+        <h2 id="institution-information-title">Institution Information</h2>
+      </header>
+
+      <div class="provision-admin-grid">
+        <div class="admin-field">
+          <label class="admin-field__label" for="provision-institution-name">
+            Institution Name <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field" appearance="outline">
+            <img
+              class="admin-form-field__prefix"
+              matPrefix
+              src="assets/admin/provision-institution-admin/institution-name.svg"
+              alt=""
+            />
+            <input id="provision-institution-name" matInput formControlName="institutionName" />
+          </mat-form-field>
+        </div>
+
+        <div class="admin-field">
+          <label class="admin-field__label" id="provision-institution-id-label">
+            Institution ID <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field admin-form-field--select" appearance="outline">
+            <mat-select
+              panelClass="admin-select-panel"
+              formControlName="institutionId"
+              aria-labelledby="provision-institution-id-label"
+            >
+              @for (institutionId of institutionIds; track institutionId) {
+                <mat-option [value]="institutionId">{{ institutionId }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="admin-field">
+          <label class="admin-field__label" id="provision-institution-type-label">
+            Institution Type <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field admin-form-field--select" appearance="outline">
+            <mat-select
+              panelClass="admin-select-panel"
+              formControlName="institutionType"
+              aria-labelledby="provision-institution-type-label"
+            >
+              @for (institutionType of institutionTypes; track institutionType) {
+                <mat-option [value]="institutionType">{{ institutionType }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="admin-field provision-admin-grid__status">
+          <label class="admin-field__label" id="provision-institution-status-label">
+            Institution Status
+          </label>
+          <span
+            class="provision-admin-status"
+            [class.provision-admin-status--inactive]="
+              adminForm.controls.status.value === 'Inactive'
+            "
+            [class.provision-admin-status--failed]="adminForm.controls.status.value === 'Failed'"
+            aria-labelledby="provision-institution-status-label"
+          >
+            {{ adminForm.controls.status.value }}
+          </span>
+        </div>
+
+        <div class="admin-field">
+          <label class="admin-field__label" for="provision-created-date">Date Created</label>
+          <mat-form-field class="admin-form-field" appearance="outline">
+            <img
+              class="admin-form-field__prefix"
+              matPrefix
+              src="assets/admin/provision-institution-admin/calendar.svg"
+              alt=""
+            />
+            <input id="provision-created-date" matInput formControlName="dateCreated" />
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+
+    <section class="provision-admin-card" aria-labelledby="admin-information-title">
+      <header class="provision-admin-card__header">
+        <span class="provision-admin-card__icon">
+          <img src="assets/admin/provision-institution-admin/admin-section.svg" alt="" />
+        </span>
+        <h2 id="admin-information-title">Institution Admin Information</h2>
+      </header>
+
+      <div class="provision-admin-grid">
+        <div class="admin-field">
+          <label class="admin-field__label" for="provision-first-name">
+            First Name <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field" appearance="outline">
+            <input id="provision-first-name" matInput formControlName="firstName" />
+          </mat-form-field>
+        </div>
+
+        <div class="admin-field">
+          <label class="admin-field__label" for="provision-last-name">
+            Last Name <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field" appearance="outline">
+            <input id="provision-last-name" matInput formControlName="lastName" />
+          </mat-form-field>
+        </div>
+
+        <div class="admin-field">
+          <label class="admin-field__label" for="provision-email">
+            Email <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field" appearance="outline">
+            <input id="provision-email" matInput type="email" formControlName="email" />
+          </mat-form-field>
+        </div>
+
+        <div class="admin-field">
+          <label class="admin-field__label" for="provision-contact-number">
+            Contact Number <span class="admin-field__required">*</span>
+          </label>
+          <mat-form-field class="admin-form-field" appearance="outline">
+            <input
+              id="provision-contact-number"
+              matInput
+              type="tel"
+              formControlName="contactNumber"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+
+    <footer class="provision-admin-page__actions">
+      <button
+        matButton="filled"
+        class="app-button app-button--secondary app-button--large"
+        type="button"
+        (click)="cancel()"
+      >
+        {{ isViewMode ? 'Back' : 'Cancel' }}
+      </button>
+      @if (!isViewMode) {
+        <button matButton="filled" class="app-button app-button--primary" type="submit">
+          <img src="assets/admin/provision-institution-admin/send-invitation.svg" alt="" />
+          <span>Send Invitation</span>
+        </button>
+      }
+    </footer>
+  </form>
+</main>
