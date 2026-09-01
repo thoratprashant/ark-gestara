@@ -3,16 +3,11 @@
   font-family: Inter, Arial, sans-serif;
 }
 
-.admin-profile-page,
-.admin-profile-form {
+.admin-profile-page {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: var(--app-space-24px);
-}
-
-.admin-profile-page {
-  gap: var(--app-space-32px);
+  gap: 32px;
   color: #111827;
 }
 
@@ -20,8 +15,8 @@
   display: flex;
   min-width: 0;
   align-items: center;
-  gap: var(--app-space-24px);
-  padding: var(--app-space-32px);
+  gap: 24px;
+  padding: 32px;
   border: 1px solid #f3f4f6;
   border-radius: 24px;
   background: #fff;
@@ -60,11 +55,9 @@
     margin-top: 8px;
     color: #6b7280;
   }
-
   i {
     font-style: normal;
   }
-
   a {
     margin-top: 4px;
     color: #9ca3af;
@@ -96,80 +89,159 @@
   }
 }
 
-.admin-profile-hero__edit-button.app-button {
-  --mat-button-filled-container-color: #0d9488;
-  --mat-button-filled-label-text-color: #fff;
-  --mat-button-filled-state-layer-color: #fff;
-  --mat-button-filled-container-height: 40px;
-  --mat-button-filled-container-shape: 12px;
-  --mat-button-filled-horizontal-padding: 16px;
-  flex: 0 0 auto;
+.admin-profile-card {
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid #f3f4f6;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 6px rgb(0 0 0 / 2%);
+}
 
-  &:not(:disabled):hover {
-    --mat-button-filled-container-color: #0f766e;
+.admin-profile-form {
+  padding-top: 20px;
+}
+
+.admin-profile-fields,
+.admin-profile-password__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin-profile-field__icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
+}
+
+.admin-profile-field__visibility {
+  width: 32px;
+  height: 32px;
+  padding: 8px;
+
+  img {
+    display: block;
+    width: 16px;
+    height: 16px;
   }
+}
 
+.admin-profile-password {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.admin-profile-password__current {
+  width: calc(50% - 8px);
+}
+
+.admin-profile-password__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 8px;
+
+  .app-button {
+    min-width: 92px;
+  }
+  .app-button--primary {
+    min-width: 156px;
+  }
   img {
     width: 16px;
     height: 16px;
   }
 }
 
-.admin-profile-card {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: var(--app-space-20px);
-  padding: var(--app-space-24px);
-  border: 1px solid #f3f4f6;
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 4px 6px rgb(0 0 0 / 2%);
+:host ::ng-deep {
+  .admin-profile-tabs {
+    .mat-mdc-tab-header {
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .mat-mdc-tab-label-container,
+    .mat-mdc-tab-list {
+      flex-grow: 0;
+    }
 
-  h2 {
-    margin: 0;
-    color: #111827;
-    font-size: var(--app-font-size-18px);
-    font-weight: 600;
-    line-height: 28px;
+    .mat-mdc-tab {
+      min-width: auto;
+      height: 40px;
+      padding: 0 8px;
+
+      &:first-child {
+        margin-right: 24px;
+      }
+    }
+
+    .mdc-tab__text-label {
+      color: #73808c;
+      font-family: Inter, Arial, sans-serif;
+      font-size: var(--app-font-size-18px);
+      font-weight: 600;
+      line-height: 28px;
+    }
+
+    .mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+      color: #111827;
+    }
+    .mdc-tab-indicator__content--underline {
+      border-color: #0d9488;
+      border-top-width: 2px;
+    }
+    .mat-mdc-tab-body-content {
+      overflow: hidden;
+    }
   }
-}
 
-.admin-profile-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+  .admin-profile-field {
+    --mdc-outlined-text-field-container-shape: 8px;
+    --mdc-outlined-text-field-outline-color: #e5e7eb;
+    --mdc-outlined-text-field-hover-outline-color: #d1d5db;
+    --mdc-outlined-text-field-focus-outline-color: #0d9488;
+    --mdc-outlined-text-field-input-text-color: #111827;
+    --mat-form-field-container-height: 42px;
+    --mat-form-field-container-vertical-padding: 10px;
 
-.admin-profile-card--settings {
-  min-height: 102px;
-}
+    .mat-mdc-text-field-wrapper {
+      height: 42px;
+      padding: 0 14px;
+      background: #faf9f7;
+    }
+    .mat-mdc-form-field-flex {
+      height: 42px;
+      align-items: center;
+    }
+    .mat-mdc-form-field-infix {
+      min-height: 42px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
 
-.admin-profile-card__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding-top: 8px;
-}
+    input.mat-mdc-input-element,
+    .mat-mdc-select-value-text {
+      color: #111827;
+      font-size: 14px;
+      line-height: 20px;
+    }
 
-.admin-profile-card__action.app-button {
-  --mat-button-outlined-container-height: 40px;
-  --mat-button-outlined-container-shape: 8px;
-  --mat-button-outlined-horizontal-padding: 16px;
-  --mat-button-outlined-label-text-color: #111827;
-  --mat-button-outlined-outline-color: #e3ded9;
+    .mat-mdc-form-field-icon-prefix,
+    .mat-mdc-form-field-icon-suffix {
+      display: flex;
+      align-items: center;
+      padding: 0;
+    }
+  }
 }
 
 @media (max-width: 767.98px) {
   .admin-profile-page {
-    gap: var(--app-space-24px);
+    gap: 24px;
   }
-
   .admin-profile-hero {
     align-items: flex-start;
-    flex-wrap: wrap;
     gap: 16px;
-    padding: var(--app-space-24px) var(--app-space-20px);
+    padding: 24px 20px;
   }
 
   .admin-profile-hero__avatar {
@@ -183,10 +255,6 @@
     }
   }
 
-  .admin-profile-hero__identity {
-    flex-basis: calc(100% - 88px);
-  }
-
   .admin-profile-hero__title {
     align-items: flex-start;
     flex-direction: column;
@@ -198,20 +266,35 @@
     }
   }
 
-  .admin-profile-hero__edit-button.app-button {
+  .admin-profile-card {
+    padding: 20px 16px;
+  }
+  .admin-profile-fields,
+  .admin-profile-password__grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-profile-password__current {
     width: 100%;
   }
 
-  .admin-profile-card {
-    padding: var(--app-space-20px) 16px;
-  }
-
-  .admin-profile-card__actions {
+  .admin-profile-password__actions {
     align-items: stretch;
-    flex-direction: column;
+    flex-direction: column-reverse;
 
     .app-button {
       width: 100%;
+    }
+  }
+
+  :host ::ng-deep .admin-profile-tabs {
+    .mat-mdc-tab {
+      padding: 0 4px;
+      &:first-child {
+        margin-right: 12px;
+      }
+    }
+    .mdc-tab__text-label {
+      font-size: 15px;
     }
   }
 }

@@ -35,20 +35,6 @@ export const ADMIN_ROUTES: Routes = [
           import('./institution/institutions/institutions').then((m) => m.Institutions),
       },
       {
-        path: 'institution/institution-admins/provision-institution-admin/:mode',
-        loadComponent: () =>
-          import('./institution/institution-admins/provision-institution-admin/provision-institution-admin').then(
-            (m) => m.ProvisionInstitutionAdmin,
-          ),
-      },
-      {
-        path: 'institution/institution-admins',
-        loadComponent: () =>
-          import('./institution/institution-admins/institution-admins').then(
-            (m) => m.InstitutionAdmins,
-          ),
-      },
-      {
         path: 'institution/providers',
         loadComponent: () => import('./institution/providers/providers').then((m) => m.Providers),
       },

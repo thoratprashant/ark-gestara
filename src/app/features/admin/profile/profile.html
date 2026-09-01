@@ -1,114 +1,290 @@
 <main class="admin-profile-page">
   <section class="admin-profile-hero" aria-labelledby="admin-profile-name">
     <span class="admin-profile-hero__avatar">
-      <img src="assets/admin/profile/profile-user.svg" alt="" />
+      <img src="assets/admin/profile/profile-user.svg" alt="" width="44" height="44" />
     </span>
 
     <div class="admin-profile-hero__identity">
       <div class="admin-profile-hero__title">
-        <h1 id="admin-profile-name">{{ profileForm.controls.fullName.value }}</h1>
+        <h1 id="admin-profile-name">
+          Dr. {{ profileForm.controls.firstName.value }} {{ profileForm.controls.lastName.value }}
+        </h1>
         <span>Super Admin</span>
       </div>
-      <p>Administrator <i aria-hidden="true">•</i> Gestara Healthcare Platform</p>
+      <p>Administrator <i aria-hidden="true">&bull;</i> Gestara Healthcare Platform</p>
       <a href="mailto:{{ profileForm.controls.email.value }}">
         {{ profileForm.controls.email.value }}
       </a>
     </div>
-
-    <button
-      matButton="filled"
-      class="app-button admin-profile-hero__edit-button"
-      type="button"
-      (click)="handleProfileAction()"
-    >
-      <img src="assets/admin/profile/edit-profile.svg" alt="" />
-      <span>{{ isEditing() ? 'Save' : 'Edit Profile' }}</span>
-    </button>
   </section>
 
-  <form class="admin-profile-form" [formGroup]="profileForm">
-    <section class="admin-profile-card" aria-labelledby="personal-information-title">
-      <h2 id="personal-information-title">Personal Information</h2>
+  <section class="admin-profile-card" aria-label="Profile settings">
+    <mat-tab-group class="admin-profile-tabs" animationDuration="200ms" preserveContent>
+      <mat-tab label="Personal Information">
+        <form class="admin-profile-form" [formGroup]="profileForm">
+          <div class="admin-profile-fields">
+            <div class="admin-field">
+              <label class="admin-field__label" for="admin-profile-first-name">First Name</label>
+              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+                <input
+                  id="admin-profile-first-name"
+                  matInput
+                  formControlName="firstName"
+                  autocomplete="given-name"
+                />
+              </mat-form-field>
+            </div>
 
-      <div class="admin-profile-fields">
-        <div class="admin-field">
-          <label class="admin-field__label" for="admin-profile-full-name">Full Name</label>
-          <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
-            <input
-              id="admin-profile-full-name"
-              matInput
-              formControlName="fullName"
-              autocomplete="name"
-            />
-          </mat-form-field>
-        </div>
+            <div class="admin-field">
+              <label class="admin-field__label" for="admin-profile-last-name">Last Name</label>
+              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+                <input
+                  id="admin-profile-last-name"
+                  matInput
+                  formControlName="lastName"
+                  autocomplete="family-name"
+                />
+              </mat-form-field>
+            </div>
 
-        <div class="admin-field">
-          <label class="admin-field__label" for="admin-profile-email">Email Address</label>
-          <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
-            <input
-              id="admin-profile-email"
-              matInput
-              type="email"
-              formControlName="email"
-              autocomplete="email"
-            />
-          </mat-form-field>
-        </div>
+            <div class="admin-field">
+              <label class="admin-field__label" for="admin-profile-email">Email Address</label>
+              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+                <input
+                  id="admin-profile-email"
+                  matInput
+                  type="email"
+                  formControlName="email"
+                  autocomplete="email"
+                />
+              </mat-form-field>
+            </div>
 
-        <div class="admin-field">
-          <label class="admin-field__label" for="admin-profile-phone">Phone Number</label>
-          <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
-            <input
-              id="admin-profile-phone"
-              matInput
-              type="tel"
-              formControlName="phoneNumber"
-              autocomplete="tel"
-            />
-          </mat-form-field>
-        </div>
+            <div class="admin-field">
+              <label class="admin-field__label" for="admin-profile-phone">Phone Number</label>
+              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+                <input
+                  id="admin-profile-phone"
+                  matInput
+                  type="tel"
+                  formControlName="phoneNumber"
+                  autocomplete="tel"
+                />
+              </mat-form-field>
+            </div>
 
-        <div class="admin-field">
-          <label class="admin-field__label" for="admin-profile-department">Department</label>
-          <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
-            <input id="admin-profile-department" matInput formControlName="department" />
-          </mat-form-field>
-        </div>
+            <div class="admin-field">
+              <label class="admin-field__label" for="admin-profile-department">Department</label>
+              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+                <input id="admin-profile-department" matInput formControlName="department" />
+              </mat-form-field>
+            </div>
 
-        <div class="admin-field">
-          <label class="admin-field__label" id="admin-profile-role-label">System Role</label>
-          <mat-form-field
-            class="admin-form-field admin-form-field--select admin-profile-field"
-            appearance="outline"
-          >
-            <mat-select
-              formControlName="systemRole"
-              panelClass="admin-select-panel"
-              aria-labelledby="admin-profile-role-label"
+            <div class="admin-field">
+              <label class="admin-field__label" id="admin-profile-role-label">System Role</label>
+              <mat-form-field
+                class="admin-form-field admin-form-field--select admin-profile-field"
+                appearance="outline"
+              >
+                <mat-select
+                  formControlName="systemRole"
+                  panelClass="admin-select-panel"
+                  aria-labelledby="admin-profile-role-label"
+                >
+                  @for (role of systemRoles; track role) {
+                    <mat-option [value]="role">{{ role }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </form>
+      </mat-tab>
+
+      <mat-tab label="Change Password">
+        <form class="admin-profile-form admin-profile-password" [formGroup]="passwordForm">
+          <div class="admin-profile-password__current">
+            <div class="admin-field">
+              <label class="admin-field__label" for="admin-profile-current-password"
+                >Current Password</label
+              >
+              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+                <img
+                  matPrefix
+                  class="admin-profile-field__icon"
+                  src="assets/auth/password.svg"
+                  alt=""
+                  width="16"
+                  height="16"
+                />
+                <input
+                  id="admin-profile-current-password"
+                  matInput
+                  [type]="currentPasswordVisible() ? 'text' : 'password'"
+                  formControlName="currentPassword"
+                  placeholder="Enter current password"
+                  autocomplete="current-password"
+                />
+                <button
+                  matIconButton
+                  matSuffix
+                  class="admin-profile-field__visibility"
+                  type="button"
+                  aria-label="Show or hide current password"
+                  (click)="currentPasswordVisible.set(!currentPasswordVisible())"
+                >
+                  <img
+                    [src]="
+                      currentPasswordVisible()
+                        ? 'assets/auth/visibility-off.svg'
+                        : 'assets/auth/visibility.svg'
+                    "
+                    alt=""
+                    width="16"
+                    height="16"
+                  />
+                </button>
+                @if (
+                  passwordForm.controls.currentPassword.touched &&
+                  passwordForm.controls.currentPassword.hasError('required')
+                ) {
+                  <mat-error>Current password is required.</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="admin-profile-password__grid">
+            <div class="admin-field">
+              <label class="admin-field__label" for="admin-profile-new-password"
+                >New Password</label
+              >
+              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+                <img
+                  matPrefix
+                  class="admin-profile-field__icon"
+                  src="assets/auth/password.svg"
+                  alt=""
+                  width="16"
+                  height="16"
+                />
+                <input
+                  id="admin-profile-new-password"
+                  matInput
+                  [type]="newPasswordVisible() ? 'text' : 'password'"
+                  formControlName="newPassword"
+                  placeholder="Enter new password"
+                  autocomplete="new-password"
+                />
+                <button
+                  matIconButton
+                  matSuffix
+                  class="admin-profile-field__visibility"
+                  type="button"
+                  aria-label="Show or hide new password"
+                  (click)="newPasswordVisible.set(!newPasswordVisible())"
+                >
+                  <img
+                    [src]="
+                      newPasswordVisible()
+                        ? 'assets/auth/visibility-off.svg'
+                        : 'assets/auth/visibility.svg'
+                    "
+                    alt=""
+                    width="16"
+                    height="16"
+                  />
+                </button>
+                @if (
+                  passwordForm.controls.newPassword.touched &&
+                  passwordForm.controls.newPassword.hasError('required')
+                ) {
+                  <mat-error>New password is required.</mat-error>
+                } @else if (
+                  passwordForm.controls.newPassword.touched &&
+                  passwordForm.controls.newPassword.hasError('minlength')
+                ) {
+                  <mat-error>Use at least 8 characters.</mat-error>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="admin-field">
+              <label class="admin-field__label" for="admin-profile-confirm-password"
+                >Confirm New Password</label
+              >
+              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+                <img
+                  matPrefix
+                  class="admin-profile-field__icon"
+                  src="assets/auth/password.svg"
+                  alt=""
+                  width="16"
+                  height="16"
+                />
+                <input
+                  id="admin-profile-confirm-password"
+                  matInput
+                  [type]="confirmPasswordVisible() ? 'text' : 'password'"
+                  formControlName="confirmPassword"
+                  placeholder="Confirm new password"
+                  autocomplete="new-password"
+                />
+                <button
+                  matIconButton
+                  matSuffix
+                  class="admin-profile-field__visibility"
+                  type="button"
+                  aria-label="Show or hide confirmed password"
+                  (click)="confirmPasswordVisible.set(!confirmPasswordVisible())"
+                >
+                  <img
+                    [src]="
+                      confirmPasswordVisible()
+                        ? 'assets/auth/visibility-off.svg'
+                        : 'assets/auth/visibility.svg'
+                    "
+                    alt=""
+                    width="16"
+                    height="16"
+                  />
+                </button>
+                @if (
+                  passwordForm.controls.confirmPassword.touched &&
+                  passwordForm.controls.confirmPassword.hasError('required')
+                ) {
+                  <mat-error>Please confirm the new password.</mat-error>
+                } @else if (
+                  passwordForm.controls.confirmPassword.touched &&
+                  passwordForm.hasError('passwordsDoNotMatch')
+                ) {
+                  <mat-error>Passwords do not match.</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="admin-profile-password__actions">
+            <button
+              matButton="filled"
+              class="app-button app-button--secondary"
+              type="button"
+              (click)="cancelPasswordChange()"
             >
-              @for (role of systemRoles; track role) {
-                <mat-option [value]="role">{{ role }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </div>
-    </section>
-
-    <section
-      class="admin-profile-card admin-profile-card--settings"
-      aria-labelledby="account-settings-title"
-    >
-      <h2 id="account-settings-title">Account Settings</h2>
-      <div class="admin-profile-card__actions">
-        <button matButton="outlined" class="app-button admin-profile-card__action" type="button">
-          Change Password
-        </button>
-        <button matButton="outlined" class="app-button admin-profile-card__action" type="button">
-          Manage API Keys
-        </button>
-      </div>
-    </section>
-  </form>
+              Cancel
+            </button>
+            <button
+              matButton="filled"
+              class="app-button app-button--primary"
+              type="button"
+              (click)="savePassword()"
+            >
+              <img src="assets/admin/add-institution/submit.svg" alt="" width="16" height="16" />
+              <span>Save Password</span>
+            </button>
+          </div>
+        </form>
+      </mat-tab>
+    </mat-tab-group>
+  </section>
 </main>

@@ -48,12 +48,6 @@ export class AdminSidebar {
           iconSize: 20,
         },
         {
-          label: 'Institution Admins',
-          route: ['/admin', 'institution', 'institution-admins'],
-          icon: 'assets/admin/institution-users.svg',
-          iconSize: 20,
-        },
-        {
           label: 'Providers',
           route: ['/admin', 'institution', 'providers'],
           icon: 'assets/admin/institution-users.svg',
