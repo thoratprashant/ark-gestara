@@ -7,8 +7,9 @@ interface InstitutionRow {
   readonly name: string;
   readonly type: string;
   readonly location: string;
-  readonly status: 'Active' | 'Pending';
-  readonly adminStatus: string;
+  readonly status: 'Active' | 'Inactive' | 'Invitation Sent' | 'Profile Incomplete';
+  readonly adminName: string;
+  readonly adminEmail: string;
   readonly createdDate: string;
   readonly providers: number;
 }
@@ -28,8 +29,9 @@ export class Institutions {
       name: 'City General Hospital',
       type: 'Hospital',
       location: 'New York, NY',
-      status: 'Active',
-      adminStatus: 'Active',
+      status: 'Invitation Sent',
+      adminName: 'John Smith',
+      adminEmail: 'john.smith@citygeneral.com',
       createdDate: '10 Jan 2025',
       providers: 47,
     },
@@ -37,8 +39,9 @@ export class Institutions {
       name: 'Sunrise Family Clinic',
       type: 'Clinic',
       location: 'Chicago, IL',
-      status: 'Pending',
-      adminStatus: 'Active',
+      status: 'Inactive',
+      adminName: 'Sarah Johnson',
+      adminEmail: 'sarah.j@sunriseclinic.com',
       createdDate: '22 Feb 2025',
       providers: 0,
     },
@@ -47,7 +50,8 @@ export class Institutions {
       type: 'Hospital',
       location: 'Houston, TX',
       status: 'Active',
-      adminStatus: 'Invitation sent',
+      adminName: 'Michael Chen',
+      adminEmail: 'mchen@greenvalley.org',
       createdDate: '03 Mar 2025',
       providers: 28,
     },
@@ -55,8 +59,9 @@ export class Institutions {
       name: 'Harbor Health Center',
       type: 'Health Center',
       location: 'Miami, FL',
-      status: 'Active',
-      adminStatus: 'Not Provisioned',
+      status: 'Profile Incomplete',
+      adminName: 'Emily Davis',
+      adminEmail: 'edavis@harborhealth.com',
       createdDate: '14 Mar 2025',
       providers: 5,
     },
@@ -64,8 +69,9 @@ export class Institutions {
       name: 'Mountain Peak Hospital',
       type: 'Hospital',
       location: 'Denver, CO',
-      status: 'Pending',
-      adminStatus: 'Inactive',
+      status: 'Inactive',
+      adminName: 'Robert Wilson',
+      adminEmail: 'rwilson@mountainpeak.com',
       createdDate: '01 Apr 2025',
       providers: 0,
     },
@@ -74,7 +80,8 @@ export class Institutions {
       type: 'Clinic',
       location: 'Portland, OR',
       status: 'Active',
-      adminStatus: 'Not sent',
+      adminName: 'Lisa Anderson',
+      adminEmail: 'landerson@riverside.com',
       createdDate: '05 Apr 2025',
       providers: 18,
     },
@@ -82,8 +89,9 @@ export class Institutions {
       name: 'Pacific Health Institute',
       type: 'Institute',
       location: 'San Francisco, CA',
-      status: 'Pending',
-      adminStatus: 'Active',
+      status: 'Inactive',
+      adminName: 'David Martinez',
+      adminEmail: 'dmartinez@pacifichealth.org',
       createdDate: '19 Apr 2025',
       providers: 5,
     },

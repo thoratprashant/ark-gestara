@@ -5,7 +5,7 @@
   </header>
 
   <section class="institutions-overview" aria-labelledby="institution-overview-title">
-    <h2 id="institution-overview-title">Institution Overview</h2>
+    <h2 class="visually-hidden" id="institution-overview-title">Institution Overview</h2>
     <div class="institutions-overview__stats">
       <article class="stat-card"><strong>124</strong><span>Total Institutions</span></article>
       <article class="stat-card"><strong>86</strong><span>Active Institutions</span></article>
@@ -13,15 +13,6 @@
       <article class="stat-card"><strong>1,207</strong><span>Total Providers</span></article>
     </div>
   </section>
-
-  <button
-    matButton="filled"
-    class="app-button app-button--primary app-button--large institutions-page__add"
-    type="button"
-    [routerLink]="['/admin', 'institution', 'institutions', 'add-institution']"
-  >
-    <img src="assets/admin/add.svg" alt="" /><span>Add Institution</span>
-  </button>
 
   <section class="institution-list" aria-label="Institutions">
     <div class="institution-list__toolbar">
@@ -47,7 +38,9 @@
         >
           <mat-option value="All Status">All Status</mat-option>
           <mat-option value="Active">Active</mat-option>
-          <mat-option value="Pending">Pending</mat-option>
+          <mat-option value="Inactive">Inactive</mat-option>
+          <mat-option value="Invitation Sent">Invitation Sent</mat-option>
+          <mat-option value="Profile Incomplete">Profile Incomplete</mat-option>
         </mat-select>
       </div>
 
@@ -69,6 +62,7 @@
           <col class="location-column" />
           <col class="status-column" />
           <col class="admin-column" />
+          <col class="email-column" />
           <col class="date-column" />
           <col class="providers-column" />
           <col class="actions-column" />
@@ -78,8 +72,9 @@
             <th>Institution</th>
             <th>Type</th>
             <th>Location</th>
-            <th>Status</th>
-            <th>Admin Status</th>
+            <th>Institution Status</th>
+            <th>Admin Name</th>
+            <th>Admin Email</th>
             <th>Created Date</th>
             <th>Total Providers</th>
             <th>Actions</th>
@@ -90,28 +85,56 @@
             <tr>
               <td>
                 <div class="institution-list__name">
-                  <span><img src="assets/admin/institution-row.svg" alt="" /></span
-                  ><strong>{{ institution.name }}</strong>
+                  <strong>{{ institution.name }}</strong>
                 </div>
               </td>
               <td>{{ institution.type }}</td>
               <td>{{ institution.location }}</td>
               <td>
                 <span
-                  class="status-pill"
-                  [class.status-pill--pending]="institution.status === 'Pending'"
-                  ><i aria-hidden="true"></i>{{ institution.status }}</span
+                  class="institution-status-pill"
+                  [class.institution-status-pill--inactive]="institution.status === 'Inactive'"
+                  [class.institution-status-pill--invitation]="
+                    institution.status === 'Invitation Sent'
+                  "
+                  [class.institution-status-pill--incomplete]="
+                    institution.status === 'Profile Incomplete'
+                  "
+                  >{{ institution.status }}</span
                 >
               </td>
-              <td>{{ institution.adminStatus }}</td>
+              <td>{{ institution.adminName }}</td>
+              <td>{{ institution.adminEmail }}</td>
               <td>{{ institution.createdDate }}</td>
-              <td>{{ institution.providers }}</td>
+              <td>
+                <a class="institution-list__providers" href="#">{{ institution.providers }}</a>
+              </td>
               <td>
                 <div class="institution-list__actions">
-                  <button type="button" aria-label="View {{ institution.name }}">
+                  <button
+                    type="button"
+                    aria-label="View {{ institution.name }}"
+                    [routerLink]="[
+                      '/admin',
+                      'institution',
+                      'institutions',
+                      'add-institution',
+                      'view',
+                    ]"
+                  >
                     <img src="assets/admin/view.svg" alt="" />
                   </button>
-                  <button type="button" aria-label="Edit {{ institution.name }}">
+                  <button
+                    type="button"
+                    aria-label="Edit {{ institution.name }}"
+                    [routerLink]="[
+                      '/admin',
+                      'institution',
+                      'institutions',
+                      'add-institution',
+                      'edit',
+                    ]"
+                  >
                     <img src="assets/admin/edit.svg" alt="" />
                   </button>
                 </div>
@@ -119,7 +142,7 @@
             </tr>
           } @empty {
             <tr>
-              <td class="institution-list__empty" colspan="8">
+              <td class="institution-list__empty" colspan="9">
                 No institutions match your search.
               </td>
             </tr>

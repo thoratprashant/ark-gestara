@@ -18,15 +18,6 @@
   background: rgb(255 255 255 / 84%);
   backdrop-filter: blur(14px);
 }
-::ng-deep .mat-mdc-menu-panel {
-  background: #ffffff !important;
-  .mat-mdc-menu-content {
-    padding: 0 !important;
-    .admin-account-menu__icon {
-      margin-right: 8px;
-    }
-  }
-}
 .admin-header__menu {
   display: none;
   width: 40px;

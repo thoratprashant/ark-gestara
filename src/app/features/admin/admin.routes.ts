@@ -16,6 +16,13 @@ export const ADMIN_ROUTES: Routes = [
         loadComponent: () => import('./profile/profile').then((m) => m.AdminProfile),
       },
       {
+        path: 'institution/institutions/add-institution/:mode',
+        loadComponent: () =>
+          import('./institution/institutions/add-institution/add-institution').then(
+            (m) => m.AddInstitution,
+          ),
+      },
+      {
         path: 'institution/institutions/add-institution',
         loadComponent: () =>
           import('./institution/institutions/add-institution/add-institution').then(

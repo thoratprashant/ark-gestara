@@ -29,7 +29,13 @@
   <mat-menu #accountMenu="matMenu" panelClass="admin-account-menu" xPosition="before">
     <button mat-menu-item type="button" disableRipple routerLink="/admin/profile">
       <span class="admin-account-menu__icon">
-        <img src="assets/admin/profile.svg" alt="" />
+        <img
+          class="admin-account-menu__profile-icon"
+          src="assets/admin/account-profile.svg"
+          alt=""
+          width="24"
+          height="24"
+        />
       </span>
       <span>Profile</span>
     </button>
@@ -41,9 +47,15 @@
       (click)="logoutClick.emit()"
     >
       <span class="admin-account-menu__icon">
-        <img class="admin-account-menu__sign-out-icon" src="assets/admin/sign-out.svg" alt="" />
+        <img
+          class="admin-account-menu__logout-icon"
+          src="assets/admin/account-logout.svg"
+          alt=""
+          width="24"
+          height="22"
+        />
       </span>
-      <span>Sign Out</span>
+      <span>Log Out</span>
     </button>
   </mat-menu>
 </header>

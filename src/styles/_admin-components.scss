@@ -180,47 +180,47 @@
 }
 
 .admin-account-menu.mat-mdc-menu-panel {
-  --mat-menu-container-color: #fff;
-  --mat-menu-container-shape: 8px;
-  --mat-menu-container-elevation-shadow: none;
-  --mat-menu-item-label-text-color: #0a0a0a;
+  --mat-menu-container-color: #faf9f7;
+  --mat-menu-container-shape: 12px;
+  --mat-menu-container-elevation-shadow: 0 4px 2px rgb(0 0 0 / 25%);
+  --mat-menu-item-label-text-color: #1f2921;
   --mat-menu-item-label-text-font: Inter, Arial, sans-serif;
-  --mat-menu-item-label-text-size: 15px;
+  --mat-menu-item-label-text-size: 14px;
   --mat-menu-item-label-text-line-height: normal;
-  --mat-menu-item-label-text-weight: 400;
+  --mat-menu-item-label-text-weight: 700;
   --mat-menu-item-label-text-tracking: 0;
-  --mat-menu-item-hover-state-layer-color: #fff;
-  --mat-menu-item-focus-state-layer-color: #fff;
-  width: 155px;
-  min-width: 155px;
-  max-width: 155px;
+  --mat-menu-item-hover-state-layer-color: rgb(3 78 88 / 6%);
+  --mat-menu-item-focus-state-layer-color: rgb(3 78 88 / 8%);
+  width: 146px;
+  min-width: 146px;
+  max-width: 146px;
   margin-top: 8px;
   overflow: hidden;
-  border: 1px solid #dbeafe;
-  border-radius: 8px;
-  background: #fff;
-  background-color: #fff !important;
-  box-shadow: none !important;
+  border: 0;
+  border-radius: 12px;
+  background: #faf9f7;
+  background-color: #faf9f7 !important;
+  box-shadow: 0 4px 2px rgb(0 0 0 / 25%) !important;
 
   .mat-mdc-menu-content {
     display: flex;
     flex-direction: column;
-    gap: 18px;
     box-sizing: border-box;
-    padding: 14px 0;
-    background: #fff !important;
+    gap: 0;
+    padding: 10px 16px;
+    background: #faf9f7 !important;
   }
 
   .mat-mdc-menu-item {
-    width: 155px;
-    min-height: 32px;
-    height: 32px;
-    padding: 0 16px;
+    width: 114px;
+    min-height: 36px;
+    height: 36px;
+    padding: 6px 0;
     border-radius: 0;
-    background: #fff !important;
-    color: #0a0a0a;
+    background: #faf9f7;
+    color: #1f2921;
     font:
-      400 15px/normal Inter,
+      700 14px/normal Inter,
       Arial,
       sans-serif;
 
@@ -228,7 +228,7 @@
       display: flex;
       width: 100%;
       align-items: center;
-      gap: 0;
+      gap: 10px;
     }
 
     &:focus-visible {
@@ -240,24 +240,24 @@
   .admin-account-menu__icon {
     display: grid;
     box-sizing: border-box;
-    flex: 0 0 32px;
-    width: 32px;
-    height: 32px;
-    padding: 4px;
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
     place-items: center;
-    border-radius: 4px;
-    margin-right: 10px;
-
-    img {
-      width: 24px;
-      height: 24px;
-    }
   }
 
-  .admin-account-menu__icon .admin-account-menu__sign-out-icon {
-    width: 16.5px;
-    height: 17.5px;
-    transform: scaleX(-1);
+  .admin-account-menu__profile-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .admin-account-menu__logout-icon {
+    width: 24px;
+    height: 22px;
+  }
+
+  .mat-mdc-menu-item:last-child {
+    color: #c4351f;
   }
 
   .mat-mdc-menu-ripple {

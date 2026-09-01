@@ -28,20 +28,10 @@
   }
 }
 
-.institutions-overview h2 {
-  margin: 0 0 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #f3f4f6;
-  color: #2f3538;
-  font-size: var(--app-font-size-18px);
-  font-weight: 600;
-  line-height: 24px;
-}
-
 .institutions-overview__stats {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  gap: var(--app-space-20px);
 }
 
 .stat-card {
@@ -91,7 +81,7 @@
   box-sizing: border-box;
   height: 62px;
   align-items: center;
-  grid-template-columns: 320px 128px 1fr auto;
+  grid-template-columns: 320px 141px 1fr auto;
   gap: 12px;
   padding: 16px var(--app-space-20px);
   border-bottom: 1px solid #e8e2d9;
@@ -139,7 +129,7 @@
 .institution-list__filter {
   display: flex;
   box-sizing: border-box;
-  width: 128px;
+  width: 141px;
   height: 30px;
   align-items: center;
   border: 1px solid #e8e2d9;
@@ -168,27 +158,34 @@
 }
 
 .admin--table {
-  min-width: 1099px;
+  min-width: 1000px;
 }
 .institution-column {
-  width: auto;
+  width: 14.13%;
 }
 .location-column {
-  width: 14.29%;
+  width: 11.85%;
 }
 .admin-column {
-  width: 11%;
+  width: 10.94%;
+}
+.email-column {
+  width: 18.69%;
 }
 .date-column {
-  width: 8%;
+  width: 10.76%;
 }
 .status-column {
-  width: 120px;
+  width: 8.2%;
 }
-.type-column,
-.providers-column,
+.type-column {
+  width: 9.12%;
+}
+.providers-column {
+  width: 8.66%;
+}
 .actions-column {
-  width: 100px;
+  width: 7.65%;
 }
 
 .admin--table th:first-child {
@@ -203,28 +200,47 @@
   display: flex;
   min-width: 0;
   align-items: center;
-  gap: 10px;
-  > span {
-    display: grid;
-    flex: 0 0 28px;
-    width: 28px;
-    height: 28px;
-    place-items: center;
-    border-radius: 8px;
-    background: #eaf9f8;
-  }
-  img {
-    width: 14px;
-    height: 14px;
-  }
   strong {
-    overflow: hidden;
     color: #1e3a42;
     font-size: 13px;
     font-weight: 600;
     line-height: 20px;
-    text-overflow: ellipsis;
   }
+}
+
+.institution-status-pill {
+  display: inline-flex;
+  min-height: 20px;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #059669;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+}
+
+.institution-status-pill--inactive {
+  background: #fff0f0;
+  color: #f00;
+}
+
+.institution-status-pill--invitation {
+  background: #ecf9ff;
+  color: #0ea5e9;
+}
+
+.institution-status-pill--incomplete {
+  background: #fff8e6;
+  color: #e68a00;
+}
+
+.institution-list__providers {
+  color: #0d9488;
+  font-weight: 600;
+  text-underline-offset: 2px;
 }
 
 .institution-list__actions {
@@ -263,7 +279,7 @@
   text-align: center;
 }
 
-@media (min-width: 835px) and (max-width: 1366px) {
+@media (min-width: 1280px) {
   .institution-list__table-wrap {
     overflow-x: hidden;
   }
@@ -275,35 +291,6 @@
     td {
       padding-inline: 12px;
     }
-  }
-
-  .institution-column {
-    width: 22%;
-  }
-
-  .type-column {
-    width: 9%;
-  }
-
-  .location-column {
-    width: 13%;
-  }
-
-  .status-column {
-    width: 10%;
-  }
-
-  .admin-column,
-  .date-column {
-    width: 11%;
-  }
-
-  .providers-column {
-    width: 9%;
-  }
-
-  .actions-column {
-    width: 10%;
   }
 }
 
