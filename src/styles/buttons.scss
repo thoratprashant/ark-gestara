@@ -51,6 +51,37 @@
   }
 }
 
+.app-button--auth-primary {
+  --mat-button-filled-container-height: 48px;
+  --mat-button-filled-container-shape: 12px;
+  --mat-button-filled-container-color: #0d9488;
+  --mat-button-filled-horizontal-padding: 16px;
+  --mat-button-filled-label-text-color: #fff;
+  --mat-button-filled-label-text-font: 'DM Sans', Inter, Arial, sans-serif;
+  --mat-button-filled-label-text-size: 14px;
+  --mat-button-filled-label-text-weight: 500;
+  --mat-button-filled-state-layer-color: #fff;
+  --mat-button-filled-disabled-container-color: rgb(13 148 136 / 38%);
+  --mat-button-filled-disabled-label-text-color: rgb(255 255 255 / 72%);
+  box-shadow:
+    0 1px 3px rgb(0 0 0 / 10%),
+    0 1px 2px -1px rgb(0 0 0 / 10%);
+
+  .mdc-button__label {
+    font-family: 'DM Sans', Inter, Arial, sans-serif;
+    font-weight: 500;
+    line-height: 20px;
+  }
+
+  &:not(:disabled):hover {
+    --mat-button-filled-container-color: #0b8278;
+  }
+
+  &:not(:disabled):active {
+    --mat-button-filled-container-color: #096f67;
+  }
+}
+
 .app-button.app-button--secondary {
   --mat-button-filled-container-color: #fff;
   --mat-button-filled-label-text-color: #6b7280;

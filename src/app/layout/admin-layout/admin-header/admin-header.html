@@ -33,7 +33,13 @@
       </span>
       <span>Profile</span>
     </button>
-    <button mat-menu-item type="button" disableRipple (click)="logoutClick.emit()">
+    <button
+      mat-menu-item
+      type="button"
+      disableRipple
+      routerLink="/auth/login"
+      (click)="logoutClick.emit()"
+    >
       <span class="admin-account-menu__icon">
         <img class="admin-account-menu__sign-out-icon" src="assets/admin/sign-out.svg" alt="" />
       </span>

@@ -1,0 +1,85 @@
+<div class="auth-page">
+  <div class="auth-page__stage">
+    <div class="auth-page__content">
+      <header class="auth-page__heading">
+        <h1>Welcome Back</h1>
+        <p>Sign in to your patient portal</p>
+      </header>
+
+      <section class="auth-page__card" aria-label="Sign in">
+        <form class="auth-page__form" [formGroup]="loginForm" (ngSubmit)="submit()" novalidate>
+          <div class="auth-page__field">
+            <label for="login-email">Email</label>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <img matPrefix src="assets/auth/email.svg" alt="" width="16" height="16" />
+              <input
+                matInput
+                id="login-email"
+                type="email"
+                formControlName="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+              />
+              @if (loginForm.controls.email.hasError('required')) {
+                <mat-error>Email is required.</mat-error>
+              } @else if (loginForm.controls.email.hasError('email')) {
+                <mat-error>Enter a valid email address.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="auth-page__field auth-page__field--password">
+            <label for="login-password">Password</label>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <img matPrefix src="assets/auth/password.svg" alt="" width="16" height="16" />
+              <input
+                matInput
+                id="login-password"
+                [type]="passwordVisible() ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="••••••••"
+                autocomplete="current-password"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                class="auth-page__visibility"
+                [attr.aria-label]="passwordVisible() ? 'Hide password' : 'Show password'"
+                [attr.aria-pressed]="passwordVisible()"
+                (click)="togglePasswordVisibility()"
+              >
+                <img
+                  [src]="
+                    passwordVisible()
+                      ? 'assets/auth/visibility-off.svg'
+                      : 'assets/auth/visibility.svg'
+                  "
+                  alt=""
+                  width="16"
+                  height="16"
+                />
+              </button>
+              @if (loginForm.controls.password.hasError('required')) {
+                <mat-error>Password is required.</mat-error>
+              } @else if (loginForm.controls.password.hasError('minlength')) {
+                <mat-error>Password must contain at least 8 characters.</mat-error>
+              }
+            </mat-form-field>
+            <a class="auth-page__forgot" routerLink="/auth/forgot-password">Forgot password?</a>
+          </div>
+
+          <button
+            matButton="filled"
+            type="submit"
+            class="app-button app-button--auth-primary auth-page__submit"
+          >
+            Sign in
+          </button>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <p class="auth-page__security">Protected by HIPAA-compliant security</p>
+</div>
