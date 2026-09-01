@@ -1,0 +1,62 @@
+// Shared desktop typography and spacing values.
+:root {
+  --app-font-size-0-5625rem: 0.5625rem;
+  --app-font-size-0-625rem: 0.625rem;
+  --app-font-size-0-6875rem: 0.6875rem;
+  --app-font-size-0-75rem: 0.75rem;
+  --app-font-size-0-8125rem: 0.8125rem;
+  --app-font-size-0-875rem: 0.875rem;
+  --app-font-size-0-9375rem: 0.9375rem;
+  --app-font-size-1rem: 1rem;
+  --app-font-size-1-125rem: 1.125rem;
+  --app-font-size-8px: 8px;
+  --app-font-size-9px: 9px;
+  --app-font-size-9-564px: 9.564px;
+  --app-font-size-9-9px: 9.9px;
+  --app-font-size-10px: 10px;
+  --app-font-size-11px: 11px;
+  --app-font-size-11-1px: 11.1px;
+  --app-font-size-11-158px: 11.158px;
+  --app-font-size-11-3px: 11.3px;
+  --app-font-size-12px: 12px;
+  --app-font-size-13px: 13px;
+  --app-font-size-14px: 14px;
+  --app-font-size-14-346px: 14.346px;
+  --app-font-size-15px: 15px;
+  --app-font-size-15-6px: 15.6px;
+  --app-font-size-18px: 18px;
+  --app-font-size-20px: 20px;
+  --app-font-size-23px: 23px;
+  --app-font-size-24px: 24px;
+  --app-font-size-28px: 28px;
+  --app-font-size-30px: 30px;
+  --app-font-size-fluid-0625-06875: clamp(0.625rem, 0.764vw, 0.6875rem);
+  --app-font-size-fluid-06875-075: clamp(0.6875rem, 0.833vw, 0.75rem);
+  --app-font-size-fluid-075-0875: clamp(0.75rem, 0.972vw, 0.875rem);
+  --app-font-size-fluid-08125-0875: clamp(0.8125rem, 0.972vw, 0.875rem);
+  --app-font-size-fluid-12px-14px: clamp(12px, 0.9722vw, 14px);
+  --app-font-size-fluid-22px-28px: clamp(22px, 1.15rem + 0.7vw, 28px);
+  --app-font-size-fluid-3rem-6rem: clamp(3rem, 8vw, 6rem);
+  --app-font-size-fluid-9px-10px: clamp(9px, 0.6944vw, 10px);
+  --app-space-20px: 20px;
+  --app-space-24px: 24px;
+  --app-space-32px: 32px;
+}
+
+// Keep body and supporting text unchanged; compact headings and large whitespace.
+@media (max-width: 1366px) {
+  :root {
+    --app-font-size-1-125rem: 1rem;
+    --app-font-size-18px: 16px;
+    --app-font-size-20px: 18px;
+    --app-font-size-23px: 20px;
+    --app-font-size-24px: 20px;
+    --app-font-size-28px: 22px;
+    --app-font-size-30px: 24px;
+    --app-font-size-fluid-22px-28px: clamp(18px, 1rem + 0.44vw, 22px);
+    --app-font-size-fluid-3rem-6rem: clamp(2.4rem, 6.4vw, 4.8rem);
+    --app-space-20px: 16px;
+    --app-space-24px: 20px;
+    --app-space-32px: 24px;
+  }
+}

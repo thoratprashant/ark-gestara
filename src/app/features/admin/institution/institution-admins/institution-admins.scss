@@ -7,7 +7,7 @@
   display: flex;
   width: 100%;
   flex-direction: column;
-  gap: 32px;
+  gap: var(--app-space-32px);
   color: #1f2933;
 }
 
@@ -15,7 +15,7 @@
   h1 {
     margin: 0;
     color: #20292e;
-    font-size: 24px;
+    font-size: var(--app-font-size-24px);
     font-weight: 700;
     line-height: 32px;
     letter-spacing: -0.6px;
@@ -34,7 +34,7 @@
   padding: 10px 0 11px;
   border-bottom: 1px solid #f3f4f6;
   color: #20292e;
-  font-size: 18px;
+  font-size: var(--app-font-size-18px);
   font-weight: 600;
   line-height: 28px;
 }
@@ -42,13 +42,13 @@
 .institution-admins-overview__stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: var(--app-space-20px);
 }
 
 .institution-admins-stat {
   min-width: 0;
   min-height: 112px;
-  padding: 20px;
+  padding: var(--app-space-20px);
   border: 1px solid #f3f4f6;
   border-radius: 16px;
   background: #fff;
@@ -62,7 +62,7 @@
   strong {
     margin-top: 12px;
     color: #20292e;
-    font-size: 30px;
+    font-size: var(--app-font-size-30px);
     font-weight: 700;
     line-height: 36px;
     letter-spacing: -0.75px;
@@ -113,7 +113,7 @@
     box-sizing: border-box;
     width: 100%;
     height: 30px;
-    padding: 0 16px 0 32px;
+    padding: 0 16px 0 var(--app-space-32px);
     border: 1px solid #e8e2d9;
     border-radius: 8px;
     outline: 0;
@@ -212,7 +212,7 @@
   }
 
   th:first-child {
-    padding-left: 32px;
+    padding-left: var(--app-space-32px);
   }
 
   th:last-child {
@@ -286,6 +286,49 @@
   padding-block: 48px !important;
   color: #7d7467;
   text-align: center !important;
+}
+
+@media (min-width: 835px) and (max-width: 1366px) {
+  .institution-admin-list__table-wrap {
+    overflow-x: hidden;
+  }
+
+  .institution-admin-list__table {
+    min-width: 0;
+
+    th,
+    td {
+      padding-inline: 12px;
+    }
+
+    .institution-column {
+      width: 20%;
+    }
+
+    .admin-name-column {
+      width: 12%;
+    }
+
+    .email-column {
+      width: 20%;
+    }
+
+    .sent-date-column {
+      width: 15%;
+    }
+
+    .invitation-status-column {
+      width: 14%;
+    }
+
+    .activity-column {
+      width: 11%;
+    }
+
+    .actions-column {
+      width: 8%;
+    }
+  }
 }
 
 .visually-hidden {
@@ -403,8 +446,8 @@
       sans-serif;
   }
 }
-::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece{
-      border-color: #E8E2D9 !important;
+::ng-deep .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece {
+  border-color: #e8e2d9 !important;
 }
 
 @media (max-width: 1100px) {
@@ -415,7 +458,7 @@
 
 @media (max-width: 767.98px) {
   .institution-admins-page {
-    gap: 24px;
+    gap: var(--app-space-24px);
   }
 
   .institution-admins-overview__stats,

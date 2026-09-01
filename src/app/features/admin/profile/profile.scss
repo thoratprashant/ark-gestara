@@ -8,11 +8,11 @@
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--app-space-24px);
 }
 
 .admin-profile-page {
-  gap: 32px;
+  gap: var(--app-space-32px);
   color: #111827;
 }
 
@@ -20,8 +20,8 @@
   display: flex;
   min-width: 0;
   align-items: center;
-  gap: 24px;
-  padding: 32px;
+  gap: var(--app-space-24px);
+  padding: var(--app-space-32px);
   border: 1px solid #f3f4f6;
   border-radius: 24px;
   background: #fff;
@@ -80,7 +80,7 @@
   h1 {
     margin: 0;
     color: #111827;
-    font-size: 28px;
+    font-size: var(--app-font-size-28px);
     font-weight: 700;
     line-height: 36px;
   }
@@ -119,8 +119,8 @@
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: 20px;
-  padding: 24px;
+  gap: var(--app-space-20px);
+  padding: var(--app-space-24px);
   border: 1px solid #f3f4f6;
   border-radius: 16px;
   background: #fff;
@@ -129,7 +129,7 @@
   h2 {
     margin: 0;
     color: #111827;
-    font-size: 18px;
+    font-size: var(--app-font-size-18px);
     font-weight: 600;
     line-height: 28px;
   }
@@ -162,14 +162,14 @@
 
 @media (max-width: 767.98px) {
   .admin-profile-page {
-    gap: 24px;
+    gap: var(--app-space-24px);
   }
 
   .admin-profile-hero {
     align-items: flex-start;
     flex-wrap: wrap;
     gap: 16px;
-    padding: 24px 20px;
+    padding: var(--app-space-24px) var(--app-space-20px);
   }
 
   .admin-profile-hero__avatar {
@@ -193,7 +193,7 @@
     gap: 4px;
 
     h1 {
-      font-size: 23px;
+      font-size: var(--app-font-size-23px);
       line-height: 30px;
     }
   }
@@ -203,7 +203,7 @@
   }
 
   .admin-profile-card {
-    padding: 20px 16px;
+    padding: var(--app-space-20px) 16px;
   }
 
   .admin-profile-card__actions {

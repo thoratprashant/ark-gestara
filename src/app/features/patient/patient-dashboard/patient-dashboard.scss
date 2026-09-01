@@ -74,7 +74,7 @@
   margin: 0;
   color: #171f26;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  font-size: 20px;
+  font-size: var(--app-font-size-20px);
   font-weight: 700;
   line-height: 1.05;
   text-transform: uppercase;
@@ -249,9 +249,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  width: calc(
-    100% + var(--patient-summary-inline-padding) + var(--patient-summary-inline-padding)
-  );
+  width: calc(100% + var(--patient-summary-inline-padding) + var(--patient-summary-inline-padding));
   min-height: 2.625rem;
   margin-right: calc(0px - var(--patient-summary-inline-padding));
   margin-bottom: calc(0px - var(--patient-summary-block-padding));
@@ -494,7 +492,7 @@
 .vital-card--alert .vital-card__top i {
   background: #ff6569;
 }
-.text-green{
+.text-green {
   color: #0d9488 !important;
 }
 .vital-card__icon {
@@ -543,10 +541,10 @@
 }
 
 .vital-card__value {
-  display: inline-block; 
+  display: inline-block;
   font-variant-numeric: tabular-nums;
   text-align: right;
-} 
+}
 
 .vital-card--alert p strong {
   color: #f06a6a;

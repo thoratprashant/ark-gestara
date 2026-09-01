@@ -13,16 +13,16 @@
   align-items: center;
   justify-content: flex-end;
   height: 100%;
-  padding: 0 32px;
+  padding: 0 var(--app-space-32px);
   border-bottom: 1px solid #eef0f1;
   background: rgb(255 255 255 / 84%);
   backdrop-filter: blur(14px);
 }
 ::ng-deep .mat-mdc-menu-panel {
   background: #ffffff !important;
-  .mat-mdc-menu-content{
+  .mat-mdc-menu-content {
     padding: 0 !important;
-    .admin-account-menu__icon{
+    .admin-account-menu__icon {
       margin-right: 8px;
     }
   }
@@ -103,7 +103,7 @@
   width: 18px;
   height: 18px;
   color: #7b8e95;
-  font-size: 18px;
+  font-size: var(--app-font-size-18px);
   transition: transform 160ms ease;
 }
 

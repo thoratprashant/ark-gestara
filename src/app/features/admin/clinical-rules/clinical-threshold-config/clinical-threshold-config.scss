@@ -5,7 +5,7 @@
   h1 {
     margin: 0;
     color: #111827;
-    font-size: 24px;
+    font-size: var(--app-font-size-24px);
     font-weight: 700;
     line-height: 32px;
     letter-spacing: -0.025em;
@@ -18,7 +18,7 @@
   }
   article {
     min-height: 240px;
-    padding: 24px;
+    padding: var(--app-space-24px);
     border: 1px solid #e8e2d9;
     border-radius: 16px;
     background: #fff;
@@ -27,7 +27,7 @@
   h2 {
     margin: 0 0 8px;
     color: #111827;
-    font-size: 18px;
+    font-size: var(--app-font-size-18px);
     font-weight: 600;
     line-height: 24px;
   }

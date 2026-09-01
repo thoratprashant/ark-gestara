@@ -10,7 +10,7 @@
 
 .page-not-found__code {
   color: #0d9488;
-  font-size: clamp(3rem, 8vw, 6rem);
+  font-size: var(--app-font-size-fluid-3rem-6rem);
   font-weight: 700;
   line-height: 1;
 }

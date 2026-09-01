@@ -20,7 +20,7 @@
 .add-problem-dialog__header {
   flex: 0 0 auto;
   min-height: 61px;
-  padding: 20px 24px 18px;
+  padding: var(--app-space-20px) var(--app-space-24px) 18px;
   border-bottom: 1px solid #e5e7eb;
 }
 
@@ -32,7 +32,7 @@
 .add-problem-dialog__header h2 {
   color: #111827;
   font:
-    700 18px/normal 'Plus Jakarta Sans',
+    700 var(--app-font-size-18px)/normal 'Plus Jakarta Sans',
     sans-serif;
 }
 
@@ -62,11 +62,11 @@
 }
 
 .add-problem-dialog__body {
-  gap: 20px;
+  gap: var(--app-space-20px);
   min-height: 0;
   max-height: none;
   flex: 1 1 auto;
-  padding: 20px 24px 24px;
+  padding: var(--app-space-20px) var(--app-space-24px) var(--app-space-24px);
   overflow-y: auto;
   color: #111827;
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -329,7 +329,7 @@
 .add-problem-dialog__footer {
   flex: 0 0 auto;
   min-height: 65px;
-  padding: 16px 24px;
+  padding: 16px var(--app-space-24px);
   background: #f9fafb;
   border-top: 1px solid #e5e7eb;
 }
