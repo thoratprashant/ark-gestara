@@ -1,0 +1,149 @@
+<div class="auth-page">
+  <div class="auth-page__stage">
+    <div class="auth-page__content">
+      <header class="auth-page__heading">
+        <h1>Create Account</h1>
+        <p>Sign in to your Institution Admin portal</p>
+      </header>
+
+      <section class="auth-page__card" aria-label="Create institution administrator account">
+        <form class="auth-page__form" [formGroup]="signupForm" (ngSubmit)="submit()" novalidate>
+          <div class="auth-page__field">
+            <label for="ia-signup-email">Email</label>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <img matPrefix src="assets/auth/ia-signup-email.svg" alt="" width="16" height="16" />
+              <input
+                matInput
+                id="ia-signup-email"
+                type="email"
+                formControlName="email"
+                placeholder="you@example.com"
+                autocomplete="email"
+              />
+              @if (signupForm.controls.email.hasError('required')) {
+                <mat-error>Email is required.</mat-error>
+              } @else if (signupForm.controls.email.hasError('email')) {
+                <mat-error>Enter a valid email address.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="auth-page__field auth-page__field--password">
+            <label for="ia-signup-password">Password</label>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <img
+                matPrefix
+                src="assets/auth/ia-signup-password.svg"
+                alt=""
+                width="16"
+                height="16"
+              />
+              <input
+                matInput
+                id="ia-signup-password"
+                [type]="passwordVisibility().password ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="••••••••"
+                autocomplete="new-password"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                class="auth-page__visibility"
+                [attr.aria-label]="
+                  passwordVisibility().password ? 'Hide password' : 'Show password'
+                "
+                [attr.aria-pressed]="passwordVisibility().password"
+                (click)="togglePasswordVisibility('password')"
+              >
+                <img
+                  [src]="
+                    passwordVisibility().password
+                      ? 'assets/auth/visibility-off.svg'
+                      : 'assets/auth/ia-signup-visibility.svg'
+                  "
+                  alt=""
+                  width="16"
+                  height="16"
+                />
+              </button>
+              @if (signupForm.controls.password.hasError('required')) {
+                <mat-error>Password is required.</mat-error>
+              } @else if (signupForm.controls.password.hasError('minlength')) {
+                <mat-error>Password must contain at least 8 characters.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+          <div class="auth-page__field auth-page__field--password">
+            <label for="ia-signup-confirm-password">Confirm Password</label>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <img
+                matPrefix
+                src="assets/auth/ia-signup-password.svg"
+                alt=""
+                width="16"
+                height="16"
+              />
+              <input
+                matInput
+                id="ia-signup-confirm-password"
+                [type]="passwordVisibility().confirm ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                placeholder="••••••••"
+                autocomplete="new-password"
+              />
+              <button
+                mat-icon-button
+                matSuffix
+                type="button"
+                class="auth-page__visibility"
+                [attr.aria-label]="
+                  passwordVisibility().confirm
+                    ? 'Hide confirmation password'
+                    : 'Show confirmation password'
+                "
+                [attr.aria-pressed]="passwordVisibility().confirm"
+                (click)="togglePasswordVisibility('confirm')"
+              >
+                <img
+                  [src]="
+                    passwordVisibility().confirm
+                      ? 'assets/auth/visibility-off.svg'
+                      : 'assets/auth/ia-signup-visibility.svg'
+                  "
+                  alt=""
+                  width="16"
+                  height="16"
+                />
+              </button>
+              @if (signupForm.controls.confirmPassword.hasError('required')) {
+                <mat-error>Password confirmation is required.</mat-error>
+              } @else if (signupForm.controls.confirmPassword.hasError('minlength')) {
+                <mat-error>Password must contain at least 8 characters.</mat-error>
+              }
+            </mat-form-field>
+            @if (
+              signupForm.hasError('passwordMismatch') &&
+              signupForm.controls.confirmPassword.touched &&
+              signupForm.controls.confirmPassword.valid
+            ) {
+              <mat-error class="auth-page__standalone-error">Passwords do not match.</mat-error>
+            }
+          </div>
+
+          <button
+            matButton="filled"
+            type="submit"
+            class="app-button app-button--auth-primary auth-page__submit"
+          >
+            Sign in
+          </button>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <p class="auth-page__security">Protected by HIPAA-compliant security</p>
+</div>
