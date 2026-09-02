@@ -7,7 +7,7 @@
   position: relative;
   display: grid;
   min-height: 100dvh;
-  overflow: hidden;
+  overflow-x: hidden;
   grid-template-columns: 49.1667% minmax(0, 1fr);
   background: linear-gradient(148.052deg, #eff6f6 0%, rgb(221 237 238 / 30%) 50%, #eff6f6 100%);
 }
@@ -215,14 +215,19 @@
 }
 
 .auth-shell__brand {
+  position: sticky;
+  top: 0;
   display: flex;
-  min-height: 100dvh;
+  height: 100dvh;
+  min-height: 0;
+  align-self: start;
   align-items: center;
   justify-content: center;
   padding: 244px 147px;
 }
 
 .auth-shell__logo {
+  flex: 0 0 auto;
   width: 356.397px;
   height: 86.184px;
   object-fit: fill;
@@ -230,6 +235,23 @@
 
 .auth-shell__content {
   min-height: 100dvh;
+}
+
+.auth-shell__route {
+  min-height: 100dvh;
+}
+
+.auth-shell__security {
+  position: absolute;
+  z-index: 2;
+  bottom: 25px;
+  left: 50%;
+  width: min(100% - 48px, 448px);
+  height: auto;
+  margin: 0;
+  padding: 0;
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 .auth-shell__mobile-logo {
@@ -254,6 +276,25 @@
     width: min(280px, calc(100% - 40px));
     height: auto;
     transform: translateX(-50%);
+  }
+}
+
+@media (min-width: 1200px) {
+  :host,
+  .auth-shell,
+  .auth-shell__brand,
+  .auth-shell__content,
+  .auth-shell__route {
+    height: 100dvh;
+    min-height: 0;
+  }
+
+  .auth-shell {
+    overflow: hidden;
+  }
+
+  .auth-shell__route {
+    overflow-y: auto;
   }
 }
 

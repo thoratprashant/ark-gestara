@@ -4,14 +4,14 @@
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  padding: 48px 24px 25px 24px;
+  padding: 48px 24px 66px;
   color: #1b272d;
   font-family: 'DM Sans', Inter, Arial, sans-serif;
 }
 
 .auth-page__stage {
   display: flex;
-  width: min(100%, 448px); 
+  width: min(100%, 448px);
   align-items: center;
   justify-content: center;
   padding-block: 24px;
@@ -223,11 +223,11 @@
 .auth-page__security {
   display: flex;
   width: min(100%, 448px);
-  height: 54px;
-  align-items: flex-end;
+  min-height: 16px;
+  align-items: center;
   justify-content: center;
   margin: 0;
-  padding-top: 8px;
+  padding: 0;
   color: rgb(106 121 129 / 60%);
   font-size: 12px;
   font-weight: 400;
