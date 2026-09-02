@@ -86,6 +86,7 @@
   padding: 16px var(--app-space-20px);
   border-bottom: 1px solid #e8e2d9;
   background: #fff;
+  border-radius: 12px 12px 0 0;
 }
 
 .institution-list__search {
@@ -170,13 +171,13 @@
   width: 10.94%;
 }
 .email-column {
-  width: 18.69%;
+  width: 10%;
 }
 .date-column {
   width: 10.76%;
 }
 .status-column {
-  width: 8.2%;
+  width: 10%;
 }
 .type-column {
   width: 9.12%;
@@ -188,12 +189,15 @@
   width: 7.65%;
 }
 
-.admin--table th:first-child {
-  padding-left: var(--app-space-32px);
-}
+// .admin--table th:first-child {
+//   padding-left: var(--app-space-32px);
+// }
 
 .admin--table th:last-child {
   text-align: right;
+}
+.admin--table td:nth-child(8) {
+  text-align: center;
 }
 
 .institution-list__name {
