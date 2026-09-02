@@ -52,6 +52,10 @@
   }
 }
 
+.mat-mdc-form-field-error-wrapper {
+  padding-left: 0 !important;
+}
+
 .admin-form-field.mat-mdc-form-field {
   --admin-form-disabled-text-color: #9ca3af;
   width: 100%;
