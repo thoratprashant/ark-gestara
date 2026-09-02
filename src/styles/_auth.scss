@@ -4,15 +4,14 @@
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  padding: 48px 24px;
+  padding: 48px 24px 25px 24px;
   color: #1b272d;
   font-family: 'DM Sans', Inter, Arial, sans-serif;
 }
 
 .auth-page__stage {
   display: flex;
-  width: min(100%, 448px);
-  height: 735px;
+  width: min(100%, 448px); 
   align-items: center;
   justify-content: center;
   padding-block: 24px;

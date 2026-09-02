@@ -1,0 +1,306 @@
+<div class="profile-setup-page">
+  <section class="profile-setup-hero" aria-labelledby="profile-setup-title">
+    <div class="profile-setup-progress" aria-label="Profile setup 65 percent complete">
+      <img
+        class="profile-setup-progress__track"
+        src="assets/institution-admin/ring-track.svg"
+        alt=""
+        width="96"
+        height="96"
+      />
+      <img
+        class="profile-setup-progress__value"
+        src="assets/institution-admin/ring-progress.svg"
+        alt=""
+        width="87"
+        height="96"
+      />
+      <strong>65%</strong>
+    </div>
+    <div>
+      <h1 id="profile-setup-title">Profile Setup Incomplete</h1>
+      <p>Complete your profile to unlock and access the principal platform dashboard.</p>
+    </div>
+  </section>
+
+  <form class="profile-setup-form" [formGroup]="profileSetupForm" (ngSubmit)="saveProfile()">
+    <section class="profile-setup-card" aria-labelledby="institution-information-title">
+      <header class="profile-setup-card__header">
+        <img src="assets/institution-admin/section-info.svg" alt="" width="32" height="32" />
+        <span>
+          <h2 id="institution-information-title">Institution Information</h2>
+          <p>Basic details about the healthcare facility</p>
+        </span>
+      </header>
+
+      <div class="profile-setup-grid profile-setup-grid--two">
+        <div class="profile-setup-field">
+          <label for="institution-name">Institution Name <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="institution-name" matInput formControlName="institutionName" />
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="legal-business-name">Legal Business Name</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="legal-business-name" matInput formControlName="legalBusinessName" />
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="institution-type">Institution Type <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="institution-type" matInput formControlName="institutionType" />
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="organization-npi">Organization NPI</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="organization-npi" matInput formControlName="organizationNpi" />
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="organization-identifier">Organization Identifier</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="organization-identifier" matInput formControlName="organizationIdentifier" />
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="institution-website">Website</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="institution-website" matInput formControlName="website" />
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+
+    <section class="profile-setup-card" aria-labelledby="organization-address-title">
+      <header class="profile-setup-card__header">
+        <span class="profile-setup-card__icon">
+          <img src="assets/institution-admin/map-pin.svg" alt="" width="16" height="16" />
+        </span>
+        <span>
+          <h2 id="organization-address-title">Organization Address</h2>
+          <p>Physical workspace details</p>
+        </span>
+      </header>
+
+      <div class="profile-setup-grid">
+        <div class="profile-setup-field">
+          <label for="address-line-1">Address Line 1 <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="address-line-1" matInput formControlName="addressLine1" />
+            @if (
+              profileSetupForm.controls.addressLine1.touched &&
+              profileSetupForm.controls.addressLine1.hasError('required')
+            ) {
+              <mat-error>Address line 1 is required.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="address-line-2">Address Line 2</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="address-line-2" matInput formControlName="addressLine2" />
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-grid profile-setup-grid--three">
+          <div class="profile-setup-field">
+            <label for="address-city">City <em>*</em></label>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <input id="address-city" matInput formControlName="city" />
+              @if (
+                profileSetupForm.controls.city.touched &&
+                profileSetupForm.controls.city.hasError('required')
+              ) {
+                <mat-error>City is required.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="profile-setup-field">
+            <label for="address-state">State <em>*</em></label>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <input id="address-state" matInput formControlName="state" />
+              @if (
+                profileSetupForm.controls.state.touched &&
+                profileSetupForm.controls.state.hasError('required')
+              ) {
+                <mat-error>State is required.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div class="profile-setup-field">
+            <label for="postal-code">ZIP / Postal Code <em>*</em></label>
+            <mat-form-field appearance="outline" subscriptSizing="dynamic">
+              <input id="postal-code" matInput formControlName="postalCode" />
+              @if (
+                profileSetupForm.controls.postalCode.touched &&
+                profileSetupForm.controls.postalCode.hasError('required')
+              ) {
+                <mat-error>ZIP or postal code is required.</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="profile-setup-field">
+          <label id="country-label">Country <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-select formControlName="country" aria-labelledby="country-label">
+              @for (country of countries; track country) {
+                <mat-option [value]="country">{{ country }}</mat-option>
+              }
+            </mat-select>
+            @if (
+              profileSetupForm.controls.country.touched &&
+              profileSetupForm.controls.country.hasError('required')
+            ) {
+              <mat-error>Country is required.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+
+    <section class="profile-setup-card" aria-labelledby="primary-contact-title">
+      <header class="profile-setup-card__header">
+        <img src="assets/institution-admin/section-info.svg" alt="" width="32" height="32" />
+        <span>
+          <h2 id="primary-contact-title">Primary Contact Information</h2>
+          <p>Designated contact person for institution</p>
+        </span>
+      </header>
+
+      <div class="profile-setup-grid profile-setup-grid--two">
+        <div class="profile-setup-field">
+          <label for="contact-first-name">First Name <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input
+              id="contact-first-name"
+              matInput
+              formControlName="contactFirstName"
+              placeholder="Enter contact first name"
+            />
+            @if (
+              profileSetupForm.controls.contactFirstName.touched &&
+              profileSetupForm.controls.contactFirstName.hasError('required')
+            ) {
+              <mat-error>First name is required.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="contact-last-name">Last Name <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input
+              id="contact-last-name"
+              matInput
+              formControlName="contactLastName"
+              placeholder="Enter contact last name"
+            />
+            @if (
+              profileSetupForm.controls.contactLastName.touched &&
+              profileSetupForm.controls.contactLastName.hasError('required')
+            ) {
+              <mat-error>Last name is required.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="contact-job-title">Job Title</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input
+              id="contact-job-title"
+              matInput
+              formControlName="contactJobTitle"
+              placeholder="e.g. Operations Coordinator"
+            />
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="contact-email">Email Address <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input
+              id="contact-email"
+              matInput
+              type="email"
+              formControlName="contactEmail"
+              placeholder="contact@institution.com"
+            />
+            @if (
+              profileSetupForm.controls.contactEmail.touched &&
+              profileSetupForm.controls.contactEmail.hasError('required')
+            ) {
+              <mat-error>Email address is required.</mat-error>
+            } @else if (
+              profileSetupForm.controls.contactEmail.touched &&
+              profileSetupForm.controls.contactEmail.hasError('email')
+            ) {
+              <mat-error>Enter a valid email address.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="contact-phone">Phone Number <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="contact-phone" matInput formControlName="contactPhone" />
+            @if (
+              profileSetupForm.controls.contactPhone.touched &&
+              profileSetupForm.controls.contactPhone.hasError('required')
+            ) {
+              <mat-error>Phone number is required.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+
+    <section class="profile-setup-card" aria-labelledby="administrator-information-title">
+      <header class="profile-setup-card__header">
+        <img src="assets/institution-admin/section-info.svg" alt="" width="32" height="32" />
+        <span>
+          <h2 id="administrator-information-title">Institution Administrator Information</h2>
+          <p>Admin account details for Gestara platform</p>
+        </span>
+      </header>
+
+      <div class="profile-setup-grid profile-setup-grid--two">
+        <div class="profile-setup-field">
+          <label for="admin-first-name">First Name <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="admin-first-name" matInput formControlName="adminFirstName" />
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="admin-last-name">Last Name <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="admin-last-name" matInput formControlName="adminLastName" />
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="admin-job-title">Job Title</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="admin-job-title" matInput formControlName="adminJobTitle" />
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="admin-email">Email Address <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="admin-email" matInput formControlName="adminEmail" />
+          </mat-form-field>
+        </div>
+        <div class="profile-setup-field">
+          <label for="admin-mobile">Mobile Number <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input id="admin-mobile" matInput formControlName="adminMobile" />
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+
+    <div class="profile-setup-form__actions">
+      <button matButton="filled" class="app-button app-button--primary" type="submit">
+        <img src="assets/institution-admin/save.svg" alt="" width="16" height="16" />
+        <span>Save your Profile</span>
+      </button>
+    </div>
+  </form>
+</div>

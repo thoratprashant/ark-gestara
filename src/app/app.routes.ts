@@ -14,6 +14,13 @@ export const routes: Routes = [
     loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
   },
   {
+    path: 'institution-admin',
+    loadChildren: () =>
+      import('./features/institution-admin/institution-admin.routes').then(
+        (m) => m.INSTITUTION_ADMIN_ROUTES,
+      ),
+  },
+  {
     path: '',
     pathMatch: 'full',
     redirectTo: 'auth/login',
