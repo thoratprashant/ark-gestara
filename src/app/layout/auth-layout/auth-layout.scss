@@ -239,6 +239,10 @@
 
 .auth-shell__route {
   min-height: 100dvh;
+
+  router-outlet {
+    display: none;
+  }
 }
 
 .auth-shell__security {
@@ -294,7 +298,7 @@
   }
 
   .auth-shell__route {
-    overflow-y: auto;
+    overflow: hidden;
   }
 }
 

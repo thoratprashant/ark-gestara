@@ -248,10 +248,19 @@
   }
 }
 
-@media (max-height: 790px) and (min-width: 901px) {
+@media (min-width: 1200px) {
+  .auth-page {
+    height: 100dvh;
+    min-height: 0;
+    padding-block:
+      clamp(24px, calc(100dvh - 736px), 48px)
+      clamp(40px, calc(100dvh - 720px), 66px);
+  }
+
   .auth-page__stage {
-    height: auto;
+    min-height: 0;
     flex: 1 1 auto;
+    padding-block: clamp(0px, calc(100dvh - 760px), 24px);
   }
 }
 
