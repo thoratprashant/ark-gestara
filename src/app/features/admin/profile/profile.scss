@@ -136,6 +136,7 @@
   width: calc(50% - 8px);
 }
 
+.admin-profile-form__actions,
 .admin-profile-password__actions {
   display: flex;
   justify-content: flex-end;
@@ -156,8 +157,13 @@
 
 :host ::ng-deep {
   .admin-profile-tabs {
+    --mat-tab-divider-height: 0;
+    --mat-tab-active-indicator-color: #0d9488;
+    --mat-tab-active-focus-indicator-color: #0d9488;
+    --mat-tab-active-hover-indicator-color: #0d9488;
+
     .mat-mdc-tab-header {
-      border-bottom: 1px solid #f3f4f6;
+      border-bottom: 0;
     }
     .mat-mdc-tab-label-container,
     .mat-mdc-tab-list {
@@ -216,6 +222,9 @@
       min-height: 42px;
       padding-top: 10px;
       padding-bottom: 10px;
+    }
+    .mat-mdc-form-field-subscript-wrapper {
+      display: block;
     }
 
     input.mat-mdc-input-element,
@@ -277,6 +286,7 @@
     width: 100%;
   }
 
+  .admin-profile-form__actions,
   .admin-profile-password__actions {
     align-items: stretch;
     flex-direction: column-reverse;

@@ -21,35 +21,59 @@
   <section class="admin-profile-card" aria-label="Profile settings">
     <mat-tab-group class="admin-profile-tabs" animationDuration="200ms" preserveContent>
       <mat-tab label="Personal Information">
-        <form class="admin-profile-form" [formGroup]="profileForm">
+        <form class="admin-profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
           <div class="admin-profile-fields">
             <div class="admin-field">
               <label class="admin-field__label" for="admin-profile-first-name">First Name</label>
-              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+              <mat-form-field
+                class="admin-form-field admin-profile-field"
+                appearance="outline"
+                subscriptSizing="dynamic"
+              >
                 <input
                   id="admin-profile-first-name"
                   matInput
                   formControlName="firstName"
                   autocomplete="given-name"
                 />
+                @if (
+                  profileForm.controls.firstName.touched &&
+                  profileForm.controls.firstName.hasError('required')
+                ) {
+                  <mat-error>First name is required.</mat-error>
+                }
               </mat-form-field>
             </div>
 
             <div class="admin-field">
               <label class="admin-field__label" for="admin-profile-last-name">Last Name</label>
-              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+              <mat-form-field
+                class="admin-form-field admin-profile-field"
+                appearance="outline"
+                subscriptSizing="dynamic"
+              >
                 <input
                   id="admin-profile-last-name"
                   matInput
                   formControlName="lastName"
                   autocomplete="family-name"
                 />
+                @if (
+                  profileForm.controls.lastName.touched &&
+                  profileForm.controls.lastName.hasError('required')
+                ) {
+                  <mat-error>Last name is required.</mat-error>
+                }
               </mat-form-field>
             </div>
 
             <div class="admin-field">
               <label class="admin-field__label" for="admin-profile-email">Email Address</label>
-              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+              <mat-form-field
+                class="admin-form-field admin-profile-field"
+                appearance="outline"
+                subscriptSizing="dynamic"
+              >
                 <input
                   id="admin-profile-email"
                   matInput
@@ -57,12 +81,26 @@
                   formControlName="email"
                   autocomplete="email"
                 />
+                @if (
+                  profileForm.controls.email.touched &&
+                  profileForm.controls.email.hasError('required')
+                ) {
+                  <mat-error>Email address is required.</mat-error>
+                } @else if (
+                  profileForm.controls.email.touched && profileForm.controls.email.hasError('email')
+                ) {
+                  <mat-error>Enter a valid email address.</mat-error>
+                }
               </mat-form-field>
             </div>
 
             <div class="admin-field">
               <label class="admin-field__label" for="admin-profile-phone">Phone Number</label>
-              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+              <mat-form-field
+                class="admin-form-field admin-profile-field"
+                appearance="outline"
+                subscriptSizing="dynamic"
+              >
                 <input
                   id="admin-profile-phone"
                   matInput
@@ -70,13 +108,29 @@
                   formControlName="phoneNumber"
                   autocomplete="tel"
                 />
+                @if (
+                  profileForm.controls.phoneNumber.touched &&
+                  profileForm.controls.phoneNumber.hasError('required')
+                ) {
+                  <mat-error>Phone number is required.</mat-error>
+                }
               </mat-form-field>
             </div>
 
             <div class="admin-field">
               <label class="admin-field__label" for="admin-profile-department">Department</label>
-              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+              <mat-form-field
+                class="admin-form-field admin-profile-field"
+                appearance="outline"
+                subscriptSizing="dynamic"
+              >
                 <input id="admin-profile-department" matInput formControlName="department" />
+                @if (
+                  profileForm.controls.department.touched &&
+                  profileForm.controls.department.hasError('required')
+                ) {
+                  <mat-error>Department is required.</mat-error>
+                }
               </mat-form-field>
             </div>
 
@@ -85,6 +139,7 @@
               <mat-form-field
                 class="admin-form-field admin-form-field--select admin-profile-field"
                 appearance="outline"
+                subscriptSizing="dynamic"
               >
                 <mat-select
                   formControlName="systemRole"
@@ -95,8 +150,34 @@
                     <mat-option [value]="role">{{ role }}</mat-option>
                   }
                 </mat-select>
+                @if (
+                  profileForm.controls.systemRole.touched &&
+                  profileForm.controls.systemRole.hasError('required')
+                ) {
+                  <mat-error>System role is required.</mat-error>
+                }
               </mat-form-field>
             </div>
+          </div>
+
+          <div class="admin-profile-form__actions">
+            <button
+              matButton="filled"
+              class="app-button app-button--secondary"
+              type="button"
+              (click)="cancelProfileChanges()"
+            >
+              Cancel
+            </button>
+            <button
+              matButton="filled"
+              class="app-button app-button--primary"
+              type="submit"
+              [disabled]="profileForm.pristine"
+            >
+              <img src="assets/admin/add-institution/submit.svg" alt="" width="16" height="16" />
+              <span>Save</span>
+            </button>
           </div>
         </form>
       </mat-tab>
@@ -108,7 +189,11 @@
               <label class="admin-field__label" for="admin-profile-current-password"
                 >Current Password</label
               >
-              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+              <mat-form-field
+                class="admin-form-field admin-profile-field"
+                appearance="outline"
+                subscriptSizing="dynamic"
+              >
                 <img
                   matPrefix
                   class="admin-profile-field__icon"
@@ -159,7 +244,11 @@
               <label class="admin-field__label" for="admin-profile-new-password"
                 >New Password</label
               >
-              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+              <mat-form-field
+                class="admin-form-field admin-profile-field"
+                appearance="outline"
+                subscriptSizing="dynamic"
+              >
                 <img
                   matPrefix
                   class="admin-profile-field__icon"
@@ -213,7 +302,11 @@
               <label class="admin-field__label" for="admin-profile-confirm-password"
                 >Confirm New Password</label
               >
-              <mat-form-field class="admin-form-field admin-profile-field" appearance="outline">
+              <mat-form-field
+                class="admin-form-field admin-profile-field"
+                appearance="outline"
+                subscriptSizing="dynamic"
+              >
                 <img
                   matPrefix
                   class="admin-profile-field__icon"
@@ -278,6 +371,7 @@
               class="app-button app-button--primary"
               type="button"
               (click)="savePassword()"
+              [disabled]="passwordForm.pristine"
             >
               <img src="assets/admin/add-institution/submit.svg" alt="" width="16" height="16" />
               <span>Save Password</span>

@@ -97,6 +97,17 @@
   font-size: var(--app-font-size-18px);
   transition: transform 160ms ease;
 }
+::ng-deep .mat-mdc-menu-panel {
+      background-color: #fff !important;
+      min-width: 145px !important;
+      border-radius: 12px !important;
+      .mat-mdc-menu-content { 
+        .mat-mdc-menu-item{
+          min-height: unset;
+          padding: 7px 16px;
+        }
+    }
+}
 
 .admin-header__account[aria-expanded='true'] .admin-header__account-chevron {
   transform: rotate(180deg);

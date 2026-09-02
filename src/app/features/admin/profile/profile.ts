@@ -53,6 +53,8 @@ export class AdminProfile {
     systemRole: ['Administrator', Validators.required],
   });
 
+  private savedProfile = this.profileForm.getRawValue();
+
   protected readonly passwordForm = this.formBuilder.nonNullable.group(
     {
       currentPassword: ['', Validators.required],
@@ -61,6 +63,21 @@ export class AdminProfile {
     },
     { validators: matchingPasswords },
   );
+
+  protected cancelProfileChanges(): void {
+    this.profileForm.reset(this.savedProfile);
+  }
+
+  protected saveProfile(): void {
+    if (this.profileForm.invalid) {
+      this.profileForm.markAllAsTouched();
+      return;
+    }
+
+    this.savedProfile = this.profileForm.getRawValue();
+    this.profileForm.markAsPristine();
+    this.profileForm.markAsUntouched();
+  }
 
   protected cancelPasswordChange(): void {
     this.passwordForm.reset();

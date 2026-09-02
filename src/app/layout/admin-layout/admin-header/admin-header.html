@@ -18,7 +18,7 @@
       <img src="assets/admin/user.svg" alt="" width="16" height="16" />
     </span>
     <div class="admin-header__identity">
-      <strong>Dr. Admin</strong>
+      <strong>Dr. John Smith</strong>
       <span>Administrator</span>
     </div>
     <mat-icon class="admin-header__account-chevron" aria-hidden="true">
@@ -28,7 +28,7 @@
 
   <mat-menu #accountMenu="matMenu" panelClass="admin-account-menu" xPosition="before">
     <button mat-menu-item type="button" disableRipple routerLink="/admin/profile">
-      <span class="admin-account-menu__icon">
+      <span class="admin-account-menu__icon me-2">
         <img
           class="admin-account-menu__profile-icon"
           src="assets/admin/account-profile.svg"
@@ -46,7 +46,7 @@
       routerLink="/auth/login"
       (click)="logoutClick.emit()"
     >
-      <span class="admin-account-menu__icon">
+      <span class="admin-account-menu__icon me-2">
         <img
           class="admin-account-menu__logout-icon"
           src="assets/admin/account-logout.svg"
