@@ -26,17 +26,19 @@
           <label class="admin-field__label" for="institution-name"
             >Institution Name <span class="admin-field__required">*</span></label
           >
-          <mat-form-field class="admin-form-field" appearance="outline"
+          <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="institution-name"
               matInput
               formControlName="institutionName"
               placeholder="Enter institution name"
-          /></mat-form-field>
+            />
+            <mat-error>Institution name is required.</mat-error>
+          </mat-form-field>
         </div>
         <div class="admin-field">
           <label class="admin-field__label" for="legal-business-name">Legal Business Name</label>
-          <mat-form-field class="admin-form-field" appearance="outline"
+          <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="legal-business-name"
               matInput
@@ -48,7 +50,11 @@
           <label class="admin-field__label" id="institution-type-label"
             >Institution Type <span class="admin-field__required">*</span></label
           >
-          <mat-form-field class="admin-form-field admin-form-field--select" appearance="outline">
+          <mat-form-field
+            class="admin-form-field admin-form-field--select"
+            appearance="outline"
+            subscriptSizing="dynamic"
+          >
             <mat-select
               panelClass="admin-select-panel"
               formControlName="institutionType"
@@ -59,11 +65,12 @@
                 <mat-option [value]="type">{{ type }}</mat-option>
               }
             </mat-select>
+            <mat-error>Institution type is required.</mat-error>
           </mat-form-field>
         </div>
         <div class="admin-field">
           <label class="admin-field__label" for="organization-npi">Organization NPI</label>
-          <mat-form-field class="admin-form-field" appearance="outline"
+          <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="organization-npi"
               matInput
@@ -75,7 +82,7 @@
           <label class="admin-field__label" for="organization-identifier"
             >Organization Identifier</label
           >
-          <mat-form-field class="admin-form-field" appearance="outline"
+          <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="organization-identifier"
               matInput
@@ -85,9 +92,24 @@
         </div>
         <div class="admin-field">
           <label class="admin-field__label" for="website">Website</label>
-          <mat-form-field class="admin-form-field" appearance="outline"
+          <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input id="website" matInput formControlName="website" placeholder="www.example.com"
           /></mat-form-field>
+        </div>
+        <div class="admin-field">
+          <label class="admin-field__label" for="number-of-providers">No of Providers</label>
+          <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
+            ><input
+              id="number-of-providers"
+              matInput
+              type="number"
+              min="0"
+              inputmode="numeric"
+              formControlName="numberOfProviders"
+              placeholder="Enter no. of providers"
+            />
+            <mat-error>Enter a valid number of providers.</mat-error>
+          </mat-form-field>
         </div>
       </div>
     </section>
@@ -111,17 +133,19 @@
           <label class="admin-field__label" for="address-line-one"
             >Address Line 1 <span class="admin-field__required">*</span></label
           >
-          <mat-form-field class="admin-form-field" appearance="outline"
+          <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="address-line-one"
               matInput
               formControlName="addressLine1"
               placeholder="125 Main Street"
-          /></mat-form-field>
+            />
+            <mat-error>Address line 1 is required.</mat-error>
+          </mat-form-field>
         </div>
         <div class="admin-field institution-form-grid__full">
           <label class="admin-field__label" for="address-line-two">Address Line 2</label>
-          <mat-form-field class="admin-form-field" appearance="outline"
+          <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="address-line-two"
               matInput
@@ -136,7 +160,11 @@
             <label class="admin-field__label" id="state-label"
               >State <span class="admin-field__required">*</span></label
             >
-            <mat-form-field class="admin-form-field admin-form-field--select" appearance="outline">
+            <mat-form-field
+              class="admin-form-field admin-form-field--select"
+              appearance="outline"
+              subscriptSizing="dynamic"
+            >
               <mat-select
                 panelClass="admin-select-panel"
                 formControlName="state"
@@ -147,13 +175,18 @@
                   <mat-option [value]="state">{{ state }}</mat-option>
                 }
               </mat-select>
+              <mat-error>State is required.</mat-error>
             </mat-form-field>
           </div>
           <div class="admin-field">
             <label class="admin-field__label" id="city-label"
               >City <span class="admin-field__required">*</span></label
             >
-            <mat-form-field class="admin-form-field admin-form-field--select" appearance="outline">
+            <mat-form-field
+              class="admin-form-field admin-form-field--select"
+              appearance="outline"
+              subscriptSizing="dynamic"
+            >
               <mat-select
                 panelClass="admin-select-panel"
                 formControlName="city"
@@ -164,33 +197,23 @@
                   <mat-option [value]="city">{{ city }}</mat-option>
                 }
               </mat-select>
+              <mat-error>City is required.</mat-error>
             </mat-form-field>
           </div>
           <div class="admin-field">
             <label class="admin-field__label" for="zip-code"
               >ZIP / Postal Code <span class="admin-field__required">*</span></label
             >
-            <mat-form-field class="admin-form-field" appearance="outline"
-              ><input id="zip-code" matInput formControlName="zipCode" placeholder="Enter ZIP code"
-            /></mat-form-field>
+            <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
+              ><input
+                id="zip-code"
+                matInput
+                formControlName="zipCode"
+                placeholder="Enter ZIP code"
+              />
+              <mat-error>ZIP / postal code is required.</mat-error>
+            </mat-form-field>
           </div>
-        </div>
-        <div class="admin-field institution-form-grid__full">
-          <label class="admin-field__label" id="country-label"
-            >Country <span class="admin-field__required">*</span></label
-          >
-          <mat-form-field class="admin-form-field admin-form-field--select" appearance="outline">
-            <mat-select
-              panelClass="admin-select-panel"
-              formControlName="country"
-              placeholder="Select country"
-              aria-labelledby="country-label"
-            >
-              @for (country of countries; track country) {
-                <mat-option [value]="country">{{ country }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
         </div>
       </div>
     </section>
@@ -213,28 +236,32 @@
         <div class="admin-field">
           <label class="admin-field__label" for="primary-first-name"
             >First Name <span class="admin-field__required">*</span></label
-          ><mat-form-field class="admin-form-field" appearance="outline"
+          ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="primary-first-name"
               matInput
               formControlName="primaryFirstName"
               placeholder="Enter first name"
-          /></mat-form-field>
+            />
+            <mat-error>First name is required.</mat-error>
+          </mat-form-field>
         </div>
         <div class="admin-field">
           <label class="admin-field__label" for="primary-last-name"
             >Last Name <span class="admin-field__required">*</span></label
-          ><mat-form-field class="admin-form-field" appearance="outline"
+          ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="primary-last-name"
               matInput
               formControlName="primaryLastName"
               placeholder="Enter last name"
-          /></mat-form-field>
+            />
+            <mat-error>Last name is required.</mat-error>
+          </mat-form-field>
         </div>
         <div class="admin-field">
           <label class="admin-field__label" for="primary-job-title">Job Title</label
-          ><mat-form-field class="admin-form-field" appearance="outline"
+          ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="primary-job-title"
               matInput
@@ -245,32 +272,40 @@
         <div class="admin-field">
           <label class="admin-field__label" for="primary-email"
             >Email Address <span class="admin-field__required">*</span></label
-          ><mat-form-field class="admin-form-field" appearance="outline"
+          ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="primary-email"
               matInput
               type="email"
               formControlName="primaryEmail"
               placeholder="Enter email address"
-          /></mat-form-field>
+            />
+            @if (institutionForm.controls.primaryEmail.hasError('required')) {
+              <mat-error>Email address is required.</mat-error>
+            } @else {
+              <mat-error>Enter a valid email address.</mat-error>
+            }
+          </mat-form-field>
         </div>
         <div class="admin-field">
           <label class="admin-field__label" for="primary-phone"
             >Mobile Number <span class="admin-field__required">*</span></label
-          ><mat-form-field class="admin-form-field" appearance="outline"
+          ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="primary-phone"
               matInput
               type="tel"
               formControlName="primaryPhone"
               placeholder="+1 XXX-XXX-XXXX"
-          /></mat-form-field>
+            />
+            <mat-error>Mobile number is required.</mat-error>
+          </mat-form-field>
         </div>
       </div>
     </section>
 
     <section class="institution-form-card" aria-labelledby="institution-admin-title">
-      <header class="institution-form-card__header">
+      <header class="institution-form-card__header institution-form-card__header--with-action">
         <span class="institution-form-card__icon"
           ><img
             src="assets/admin/add-institution/section-building.svg"
@@ -282,33 +317,53 @@
           <h2 id="institution-admin-title">Institution Administrator Information</h2>
           <p>Admin account details for Gestara platform</p>
         </div>
+        @if (!isViewMode()) {
+          <button
+            matButton="filled"
+            class="app-button app-button--primary institution-form-card__copy-contact"
+            type="button"
+            (click)="copyPrimaryContact()"
+          >
+            <img
+              src="assets/admin/add-institution/copy-document.svg"
+              alt=""
+              width="16"
+              height="16"
+            />
+            <span>Copy Data from Primary Contact</span>
+          </button>
+        }
       </header>
       <div class="institution-form-grid institution-form-grid--two-columns">
         <div class="admin-field">
           <label class="admin-field__label" for="admin-first-name"
             >First Name <span class="admin-field__required">*</span></label
-          ><mat-form-field class="admin-form-field" appearance="outline"
+          ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="admin-first-name"
               matInput
               formControlName="adminFirstName"
               placeholder="Enter first name"
-          /></mat-form-field>
+            />
+            <mat-error>First name is required.</mat-error>
+          </mat-form-field>
         </div>
         <div class="admin-field">
           <label class="admin-field__label" for="admin-last-name"
             >Last Name <span class="admin-field__required">*</span></label
-          ><mat-form-field class="admin-form-field" appearance="outline"
+          ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="admin-last-name"
               matInput
               formControlName="adminLastName"
               placeholder="Enter last name"
-          /></mat-form-field>
+            />
+            <mat-error>Last name is required.</mat-error>
+          </mat-form-field>
         </div>
         <div class="admin-field">
           <label class="admin-field__label" for="admin-job-title">Job Title</label
-          ><mat-form-field class="admin-form-field" appearance="outline"
+          ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="admin-job-title"
               matInput
@@ -319,26 +374,34 @@
         <div class="admin-field">
           <label class="admin-field__label" for="admin-email"
             >Email Address <span class="admin-field__required">*</span></label
-          ><mat-form-field class="admin-form-field" appearance="outline"
+          ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="admin-email"
               matInput
               type="email"
               formControlName="adminEmail"
               placeholder="Enter email address"
-          /></mat-form-field>
+            />
+            @if (institutionForm.controls.adminEmail.hasError('required')) {
+              <mat-error>Email address is required.</mat-error>
+            } @else {
+              <mat-error>Enter a valid email address.</mat-error>
+            }
+          </mat-form-field>
         </div>
         <div class="admin-field">
           <label class="admin-field__label" for="admin-phone"
             >Phone Number <span class="admin-field__required">*</span></label
-          ><mat-form-field class="admin-form-field" appearance="outline"
+          ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
             ><input
               id="admin-phone"
               matInput
               type="tel"
               formControlName="adminPhone"
               placeholder="+1 XXX-XXX-XXXX"
-          /></mat-form-field>
+            />
+            <mat-error>Phone number is required.</mat-error>
+          </mat-form-field>
         </div>
       </div>
     </section>
@@ -372,10 +435,20 @@
             ><mat-radio-button value="Active">Active</mat-radio-button
             ><mat-radio-button value="Inactive">Inactive</mat-radio-button></mat-radio-group
           >
+          @if (
+            institutionForm.controls.status.touched &&
+            institutionForm.controls.status.hasError('required')
+          ) {
+            <p class="institution-status-error" role="alert">Institution status is required.</p>
+          }
         </div>
         <div class="admin-field">
           <label class="admin-field__label" for="internal-notes">Internal Notes</label>
-          <mat-form-field class="admin-form-field admin-form-field--textarea" appearance="outline">
+          <mat-form-field
+            class="admin-form-field admin-form-field--textarea"
+            appearance="outline"
+            subscriptSizing="dynamic"
+          >
             <textarea
               id="internal-notes"
               matInput

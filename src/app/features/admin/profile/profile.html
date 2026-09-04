@@ -19,7 +19,66 @@
   </section>
 
   <section class="admin-profile-card" aria-label="Profile settings">
-    <mat-tab-group class="admin-profile-tabs" animationDuration="200ms" preserveContent>
+    <div class="admin-profile-card__actions">
+      @if (activeTabIndex() === 0) {
+        @if (profileEditing()) {
+          <button
+            matButton="filled"
+            class="app-button app-button--secondary"
+            type="button"
+            (click)="cancelProfileChanges()"
+          >
+            Cancel
+          </button>
+          <button
+            matButton="filled"
+            class="app-button app-button--primary"
+            type="button"
+            [disabled]="profileForm.pristine"
+            (click)="saveProfile()"
+          >
+            <img src="assets/admin/add-institution/submit.svg" alt="" width="16" height="16" />
+            <span>Save Changes</span>
+          </button>
+        } @else {
+          <button
+            matButton="filled"
+            class="app-button app-button--primary admin-profile-card__edit"
+            type="button"
+            (click)="editProfile()"
+          >
+            <img src="assets/admin/profile/edit-profile.svg" alt="" width="14" height="14" />
+            <span>Edit Profile</span>
+          </button>
+        }
+      } @else {
+        <button
+          matButton="filled"
+          class="app-button app-button--secondary"
+          type="button"
+          (click)="cancelPasswordChange()"
+        >
+          Cancel
+        </button>
+        <button
+          matButton="filled"
+          class="app-button app-button--primary"
+          type="button"
+          (click)="savePassword()"
+          [disabled]="passwordForm.pristine"
+        >
+          <img src="assets/admin/add-institution/submit.svg" alt="" width="16" height="16" />
+          <span>Save Password</span>
+        </button>
+      }
+    </div>
+
+    <mat-tab-group
+      class="admin-profile-tabs"
+      animationDuration="200ms"
+      preserveContent
+      (selectedIndexChange)="activeTabIndex.set($event)"
+    >
       <mat-tab label="Personal Information">
         <form class="admin-profile-form" [formGroup]="profileForm" (ngSubmit)="saveProfile()">
           <div class="admin-profile-fields">
@@ -158,26 +217,6 @@
                 }
               </mat-form-field>
             </div>
-          </div>
-
-          <div class="admin-profile-form__actions">
-            <button
-              matButton="filled"
-              class="app-button app-button--secondary"
-              type="button"
-              (click)="cancelProfileChanges()"
-            >
-              Cancel
-            </button>
-            <button
-              matButton="filled"
-              class="app-button app-button--primary"
-              type="submit"
-              [disabled]="profileForm.pristine"
-            >
-              <img src="assets/admin/add-institution/submit.svg" alt="" width="16" height="16" />
-              <span>Save</span>
-            </button>
           </div>
         </form>
       </mat-tab>
@@ -355,27 +394,6 @@
                 }
               </mat-form-field>
             </div>
-          </div>
-
-          <div class="admin-profile-password__actions">
-            <button
-              matButton="filled"
-              class="app-button app-button--secondary"
-              type="button"
-              (click)="cancelPasswordChange()"
-            >
-              Cancel
-            </button>
-            <button
-              matButton="filled"
-              class="app-button app-button--primary"
-              type="button"
-              (click)="savePassword()"
-              [disabled]="passwordForm.pristine"
-            >
-              <img src="assets/admin/add-institution/submit.svg" alt="" width="16" height="16" />
-              <span>Save Password</span>
-            </button>
           </div>
         </form>
       </mat-tab>

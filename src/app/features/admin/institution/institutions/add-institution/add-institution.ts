@@ -35,7 +35,6 @@ export class AddInstitution {
   protected readonly institutionTypes = ['Hospital', 'Clinic', 'Health Center', 'Institute'];
   protected readonly cities = ['Austin', 'New York', 'Chicago', 'Houston', 'Miami', 'Denver'];
   protected readonly states = ['Texas', 'New York', 'Illinois', 'Florida', 'Colorado'];
-  protected readonly countries = ['United States', 'Canada', 'United Kingdom'];
   protected readonly mode = computed<InstitutionPageMode>(() => {
     const mode = this.routeParams().get('mode');
     return mode === 'view' || mode === 'edit' ? mode : 'add';
@@ -57,12 +56,12 @@ export class AddInstitution {
     organizationNpi: [''],
     organizationIdentifier: [''],
     website: [''],
+    numberOfProviders: ['', [Validators.min(0), Validators.pattern(/^\d+$/)]],
     addressLine1: ['', Validators.required],
     addressLine2: [''],
     state: ['', Validators.required],
     city: ['', Validators.required],
     zipCode: ['', Validators.required],
-    country: ['', Validators.required],
     primaryFirstName: ['', Validators.required],
     primaryLastName: ['', Validators.required],
     primaryJobTitle: [''],
@@ -101,6 +100,27 @@ export class AddInstitution {
     void this.router.navigate(['/admin', 'institution', 'institutions']);
   }
 
+  protected copyPrimaryContact(): void {
+    if (this.isViewMode()) return;
+
+    const controls = this.institutionForm.controls;
+    this.institutionForm.patchValue({
+      adminFirstName: controls.primaryFirstName.value,
+      adminLastName: controls.primaryLastName.value,
+      adminJobTitle: controls.primaryJobTitle.value,
+      adminEmail: controls.primaryEmail.value,
+      adminPhone: controls.primaryPhone.value,
+    });
+
+    [
+      controls.adminFirstName,
+      controls.adminLastName,
+      controls.adminJobTitle,
+      controls.adminEmail,
+      controls.adminPhone,
+    ].forEach((control) => control.markAsDirty());
+  }
+
   private readonly emptyInstitution = {
     institutionName: '',
     legalBusinessName: '',
@@ -108,12 +128,12 @@ export class AddInstitution {
     organizationNpi: '',
     organizationIdentifier: '',
     website: '',
+    numberOfProviders: '',
     addressLine1: '',
     addressLine2: '',
     state: '',
     city: '',
     zipCode: '',
-    country: '',
     primaryFirstName: '',
     primaryLastName: '',
     primaryJobTitle: '',
@@ -135,12 +155,12 @@ export class AddInstitution {
     organizationNpi: '1234567890',
     organizationIdentifier: 'GRN-MED-2024',
     website: 'www.greenfieldmedical.org',
+    numberOfProviders: '',
     addressLine1: '4200 Wellness Boulevard',
     addressLine2: 'Tower B, Floor 12',
     state: 'Texas',
     city: 'Austin',
     zipCode: '73301',
-    country: 'United States',
     primaryFirstName: 'Sarah',
     primaryLastName: 'Mitchell',
     primaryJobTitle: 'Chief Operating Officer',

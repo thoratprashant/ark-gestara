@@ -40,6 +40,8 @@ export class AdminProfile {
   private readonly formBuilder = inject(FormBuilder);
 
   protected readonly systemRoles = ['Administrator', 'Institution Admin', 'Clinical Admin'];
+  protected readonly activeTabIndex = signal(0);
+  protected readonly profileEditing = signal(false);
   protected readonly currentPasswordVisible = signal(false);
   protected readonly newPasswordVisible = signal(false);
   protected readonly confirmPasswordVisible = signal(false);
@@ -64,8 +66,19 @@ export class AdminProfile {
     { validators: matchingPasswords },
   );
 
+  constructor() {
+    this.profileForm.disable({ emitEvent: false });
+  }
+
+  protected editProfile(): void {
+    this.profileEditing.set(true);
+    this.profileForm.enable({ emitEvent: false });
+  }
+
   protected cancelProfileChanges(): void {
     this.profileForm.reset(this.savedProfile);
+    this.profileForm.disable({ emitEvent: false });
+    this.profileEditing.set(false);
   }
 
   protected saveProfile(): void {
@@ -77,6 +90,8 @@ export class AdminProfile {
     this.savedProfile = this.profileForm.getRawValue();
     this.profileForm.markAsPristine();
     this.profileForm.markAsUntouched();
+    this.profileForm.disable({ emitEvent: false });
+    this.profileEditing.set(false);
   }
 
   protected cancelPasswordChange(): void {

@@ -64,6 +64,18 @@ form {
   }
 }
 
+.institution-form-card__copy-contact {
+  flex: 0 0 auto;
+  margin-left: auto;
+  box-shadow: 0 1px 1px rgb(0 0 0 / 5%);
+
+  img {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+}
+
 .institution-form-grid {
   display: grid;
   min-width: 0;
@@ -115,6 +127,13 @@ form {
   }
 }
 
+.institution-status-error {
+  margin: 2px 0 0;
+  color: #b3261e;
+  font-size: 12px;
+  line-height: 16px;
+}
+
 .add-institution-page__actions {
   display: flex;
   align-items: center;
@@ -158,6 +177,15 @@ form {
     grid-template-columns: 1fr;
   }
 
+  .institution-form-card__header--with-action {
+    flex-wrap: wrap;
+  }
+
+  .institution-form-card__copy-contact {
+    width: 100%;
+    margin-left: 0;
+  }
+
   .add-institution-page__actions {
     align-items: stretch;
     flex-direction: column-reverse;
@@ -177,5 +205,11 @@ form {
 
   .institution-status-options .mat-mdc-radio-disabled {
     opacity: 1;
+  }
+}
+
+:host ::ng-deep .add-institution-page:not(.add-institution-page--view) {
+  .admin-form-field .mat-mdc-form-field-subscript-wrapper {
+    display: block;
   }
 }

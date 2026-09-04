@@ -282,6 +282,18 @@
   color: #7d7467;
   text-align: center;
 }
+  .admin--table {  
+    th {
+      text-align: center;
+    }
+    tbody{
+      tr{
+        td{
+          &:nth-child(4){text-align: center;}
+        }
+      }
+    }
+  }
 
 @media (min-width: 1280px) {
   .institution-list__table-wrap {
