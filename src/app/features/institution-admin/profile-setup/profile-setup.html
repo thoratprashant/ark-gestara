@@ -1,29 +1,74 @@
 <div class="profile-setup-page">
-  <section class="profile-setup-hero" aria-labelledby="profile-setup-title">
-    <div class="profile-setup-progress" aria-label="Profile setup 65 percent complete">
-      <img
-        class="profile-setup-progress__track"
-        src="assets/institution-admin/ring-track.svg"
-        alt=""
-        width="96"
-        height="96"
-      />
-      <img
-        class="profile-setup-progress__value"
-        src="assets/institution-admin/ring-progress.svg"
-        alt=""
-        width="87"
-        height="96"
-      />
-      <strong>65%</strong>
-    </div>
-    <div>
-      <h1 id="profile-setup-title">Profile Setup Incomplete</h1>
-      <p>Complete your profile to unlock and access the principal platform dashboard.</p>
-    </div>
+  <section
+    #profileSetupHero
+    class="profile-setup-hero"
+    [class.profile-setup-hero--complete]="profileCompleted()"
+    aria-labelledby="profile-setup-title"
+  >
+    @if (profileCompleted()) {
+      <div class="profile-setup-progress" aria-label="Profile setup complete">
+        <img
+          class="profile-setup-progress__complete-ring"
+          src="assets/institution-admin/ring-complete.svg"
+          alt=""
+          width="96"
+          height="96"
+        />
+        <img
+          class="profile-setup-progress__check"
+          src="assets/institution-admin/check-complete.svg"
+          alt=""
+          width="36"
+          height="36"
+        />
+      </div>
+      <div class="profile-setup-hero__info">
+        <h1 id="profile-setup-title">Profile Completed!</h1>
+        <p>
+          Congratulations, your Gestara administrator profile is fully configured. You are now free
+          to enter the dashboard.
+        </p>
+      </div>
+      <button
+        matButton="filled"
+        class="app-button app-button--primary profile-setup-hero__dashboard-button flex-shrink-0"
+        type="button"
+        (click)="goToDashboard()"
+      >
+        <img src="assets/institution-admin/arrow-dashboard.svg" alt="" width="16" height="16" />
+        <span>Go to Dashboard</span>
+      </button>
+    } @else {
+      <div class="profile-setup-progress" aria-label="Profile setup 65 percent complete">
+        <img
+          class="profile-setup-progress__track"
+          src="assets/institution-admin/ring-track.svg"
+          alt=""
+          width="96"
+          height="96"
+        />
+        <img
+          class="profile-setup-progress__value"
+          src="assets/institution-admin/ring-progress.svg"
+          alt=""
+          width="87"
+          height="96"
+        />
+        <strong>65%</strong>
+      </div>
+      <div class="profile-setup-hero__info">
+        <h1 id="profile-setup-title">Profile Setup Incomplete</h1>
+        <p>Complete your profile to unlock and access the principal platform dashboard.</p>
+      </div>
+    }
   </section>
 
-  <form class="profile-setup-form" [formGroup]="profileSetupForm" (ngSubmit)="saveProfile()">
+  <form
+    #profileSetupFormElement
+    class="profile-setup-form"
+    [formGroup]="profileSetupForm"
+    (ngSubmit)="saveProfile()"
+  >
     <section class="profile-setup-card" aria-labelledby="institution-information-title">
       <header class="profile-setup-card__header">
         <img src="assets/institution-admin/section-info.svg" alt="" width="32" height="32" />
@@ -160,7 +205,11 @@
       </div>
     </section>
 
-    <section class="profile-setup-card" aria-labelledby="primary-contact-title">
+    <section
+      class="profile-setup-card"
+      [class.profile-setup-card--invalid]="primaryContactHasError()"
+      aria-labelledby="primary-contact-title"
+    >
       <header class="profile-setup-card__header">
         <img src="assets/institution-admin/section-info.svg" alt="" width="32" height="32" />
         <span>
@@ -296,11 +345,13 @@
       </div>
     </section>
 
-    <div class="profile-setup-form__actions">
-      <button matButton="filled" class="app-button app-button--primary" type="submit">
-        <img src="assets/institution-admin/save.svg" alt="" width="16" height="16" />
-        <span>Save your Profile</span>
-      </button>
-    </div>
+    @if (!profileCompleted()) {
+      <div class="profile-setup-form__actions">
+        <button matButton="filled" class="app-button app-button--primary" type="submit">
+          <img src="assets/institution-admin/save.svg" alt="" width="16" height="16" />
+          <span>Save your Profile</span>
+        </button>
+      </div>
+    }
   </form>
 </div>

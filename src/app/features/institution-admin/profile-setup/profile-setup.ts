@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, ElementRef, inject, viewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,6 +19,10 @@ export class ProfileSetup {
   private readonly router = inject(Router);
 
   protected readonly countries = ['United States'];
+  protected readonly profileCompleted = this.profileState.profileCompleted;
+  protected readonly profileSetupHero = viewChild<ElementRef<HTMLElement>>('profileSetupHero');
+  protected readonly profileSetupFormElement =
+    viewChild<ElementRef<HTMLFormElement>>('profileSetupFormElement');
 
   protected readonly profileSetupForm = this.formBuilder.nonNullable.group({
     institutionName: [{ value: 'Gestara Healthcare', disabled: true }],
@@ -48,10 +52,56 @@ export class ProfileSetup {
   protected saveProfile(): void {
     if (this.profileSetupForm.invalid) {
       this.profileSetupForm.markAllAsTouched();
+      this.scrollToFirstInvalidSection();
       return;
     }
 
     this.profileState.completeProfile();
+    this.profileSetupForm.disable({ emitEvent: false });
+
+    queueMicrotask(() => {
+      this.profileSetupHero()?.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
+  }
+
+  protected goToDashboard(): void {
     void this.router.navigate(['/institution-admin', 'dashboard']);
+  }
+
+  protected primaryContactHasError(): boolean {
+    const controls = this.profileSetupForm.controls;
+
+    return [
+      controls.contactFirstName,
+      controls.contactLastName,
+      controls.contactEmail,
+      controls.contactPhone,
+    ].some((control) => control.invalid && control.touched);
+  }
+
+  private scrollToFirstInvalidSection(): void {
+    const firstInvalidControlName = Object.entries(this.profileSetupForm.controls).find(
+      ([, control]) => control.enabled && control.invalid,
+    )?.[0];
+
+    if (!firstInvalidControlName) {
+      return;
+    }
+
+    queueMicrotask(() => {
+      const invalidElement =
+        this.profileSetupFormElement()?.nativeElement.querySelector<HTMLElement>(
+          `[formcontrolname="${firstInvalidControlName}"]`,
+        );
+
+      invalidElement?.focus({ preventScroll: true });
+      invalidElement?.closest<HTMLElement>('.profile-setup-card')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
   }
 }
