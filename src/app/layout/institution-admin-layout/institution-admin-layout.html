@@ -1,8 +1,13 @@
 <div
   class="institution-admin-shell"
   [class.institution-admin-shell--mobile-open]="mobileNavigationOpen()"
+  [class.institution-admin-shell--collapsed]="sidebarCollapsed()"
 >
-  <aside class="institution-admin-sidebar" aria-label="Institution admin navigation">
+  <aside
+    class="institution-admin-sidebar"
+    [class.institution-admin-sidebar--dashboard]="isDashboardPage()"
+    aria-label="Institution admin navigation"
+  >
     <div class="institution-admin-sidebar__logo">
       <span class="institution-admin-sidebar__logo-crop">
         <img src="assets/institution-admin/logo.png" alt="Gestara" />
@@ -17,7 +22,12 @@
           routerLinkActive="institution-admin-sidebar__link--active"
           (click)="closeMobileNavigation()"
         >
-          <img src="assets/institution-admin/dashboard.svg" alt="" width="20" height="20" />
+          <img
+            src="assets/institution-admin/dashboard/dashboard-active.svg"
+            alt=""
+            width="20"
+            height="20"
+          />
           <span>Dashboard</span>
         </a>
       } @else {
@@ -40,16 +50,31 @@
         </button>
       }
 
-      <a
-        class="institution-admin-sidebar__link"
-        routerLink="/institution-admin/profile-setup"
-        routerLinkActive="institution-admin-sidebar__link--active"
-        (click)="closeMobileNavigation()"
-      >
-        <img src="assets/institution-admin/profile-setup.svg" alt="" width="20" height="20" />
-        <span>Profile Setup</span>
-      </a>
+      @if (!isDashboardPage()) {
+        <a
+          class="institution-admin-sidebar__link"
+          routerLink="/institution-admin/profile-setup"
+          routerLinkActive="institution-admin-sidebar__link--active"
+          (click)="closeMobileNavigation()"
+        >
+          <img src="assets/institution-admin/profile-setup.svg" alt="" width="20" height="20" />
+          <span>Profile Setup</span>
+        </a>
+      }
     </nav>
+
+    @if (isDashboardPage()) {
+      <button
+        class="institution-admin-sidebar__collapse"
+        type="button"
+        [attr.aria-label]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+        [title]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+        (click)="toggleSidebar()"
+      >
+        <img src="assets/institution-admin/dashboard/collapse.svg" alt="" width="16" height="16" />
+        <span>Collapse</span>
+      </button>
+    }
   </aside>
 
   <header class="institution-admin-header">

@@ -1,4 +1,205 @@
 <section class="institution-dashboard" aria-labelledby="institution-dashboard-title">
-  <h1 id="institution-dashboard-title">Dashboard</h1>
-  <p>Your institution profile is complete and dashboard access is now unlocked.</p>
+  <header class="institution-dashboard__welcome">
+    <h1 id="institution-dashboard-title">Welcome, City General Hospital Admin</h1>
+    <p>Here's an overview of your Institution</p>
+  </header>
+
+  <section class="provider-overview" aria-labelledby="provider-overview-title">
+    <h2 id="provider-overview-title">Provider Overview</h2>
+
+    <div class="provider-overview__cards">
+      <article class="provider-stat-card">
+        <span class="provider-stat-card__icon provider-stat-card__icon--total">
+          <img
+            src="assets/institution-admin/dashboard/total-providers.svg"
+            alt=""
+            width="20"
+            height="20"
+          />
+        </span>
+        <strong>1,207</strong>
+        <span>Total Providers</span>
+      </article>
+
+      <article class="provider-stat-card">
+        <span class="provider-stat-card__icon provider-stat-card__icon--active">
+          <img
+            src="assets/institution-admin/dashboard/active-providers.svg"
+            alt=""
+            width="20"
+            height="20"
+          />
+        </span>
+        <strong>86</strong>
+        <span>Active Providers</span>
+      </article>
+
+      <article class="provider-stat-card">
+        <span class="provider-stat-card__icon provider-stat-card__icon--inactive">
+          <img
+            src="assets/institution-admin/dashboard/inactive-providers.svg"
+            alt=""
+            width="20"
+            height="20"
+          />
+        </span>
+        <strong>38</strong>
+        <span>Inactive Providers</span>
+      </article>
+    </div>
+  </section>
+
+  <section class="provider-table-card" aria-label="Provider directory">
+    <div class="provider-table-card__controls">
+      <div class="provider-table-card__filters">
+        <label class="provider-search" aria-label="Search providers">
+          <img src="assets/institution-admin/dashboard/search.svg" alt="" width="14" height="14" />
+          <input
+            type="search"
+            placeholder="Search providers..."
+            [value]="searchTerm()"
+            (input)="updateSearch($event)"
+          />
+        </label>
+
+        <div class="provider-status-filter">
+          <span class="visually-hidden" id="provider-status-label">
+            Filter providers by status
+          </span>
+          <mat-select
+            aria-labelledby="provider-status-label"
+            panelClass="provider-status-panel"
+            panelWidth="auto"
+            [value]="selectedStatus()"
+            (selectionChange)="updateStatus($event)"
+          >
+            @for (status of statusOptions; track status) {
+              <mat-option [value]="status">{{ status }}</mat-option>
+            }
+          </mat-select>
+        </div>
+      </div>
+
+      <button
+        matButton="filled"
+        type="button"
+        class="app-button app-button--primary app-button--small provider-table-card__add"
+      >
+        <img src="assets/institution-admin/dashboard/add.svg" alt="" width="14" height="14" />
+        <span>Add Provider</span>
+      </button>
+    </div>
+
+    <div class="provider-table-card__scroll" tabindex="0" aria-label="Scrollable provider table">
+      <table class="admin--table provider-table">
+        <colgroup>
+          <col class="provider-table__name-column" />
+          <col class="provider-table__npi-column" />
+          <col class="provider-table__specialty-column" />
+          <col class="provider-table__status-column" />
+          <col class="provider-table__email-column" />
+          <col class="provider-table__phone-column" />
+          <col class="provider-table__joined-column" />
+          <col class="provider-table__actions-column" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th scope="col">Provider Name</th>
+            <th scope="col">NPI Number</th>
+            <th scope="col">Specialty</th>
+            <th scope="col">Status</th>
+            <th scope="col">Email</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Joined Date</th>
+            <th scope="col" class="provider-table__actions-heading">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (provider of visibleProviders(); track provider.npi) {
+            <tr>
+              <td class="provider-table__name">{{ provider.name }}</td>
+              <td>{{ provider.npi }}</td>
+              <td>{{ provider.specialty }}</td>
+              <td>
+                <span
+                  class="status-pill provider-table__status"
+                  [class.status-pill--pending]="provider.status === 'Pending'"
+                  [class.provider-table__status--inactive]="provider.status === 'Inactive'"
+                  >{{ provider.status }}</span
+                >
+              </td>
+              <td class="provider-table__email" [title]="provider.email">{{ provider.email }}</td>
+              <td>{{ provider.phone }}</td>
+              <td>{{ provider.joinedDate }}</td>
+              <td>
+                <span class="provider-table__actions">
+                  <button
+                    type="button"
+                    [attr.aria-label]="'View ' + provider.name"
+                    title="View provider"
+                  >
+                    <img
+                      src="assets/institution-admin/dashboard/view.svg"
+                      alt=""
+                      width="14"
+                      height="14"
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    [attr.aria-label]="'Edit ' + provider.name"
+                    title="Edit provider"
+                  >
+                    <img
+                      src="assets/institution-admin/dashboard/edit.svg"
+                      alt=""
+                      width="14"
+                      height="14"
+                    />
+                  </button>
+                </span>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="provider-table__empty" colspan="8">No providers match your search.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="admin--table__footer provider-table-card__footer">
+      <span>Showing {{ visibleProviders().length }} of 47 providers</span>
+      <nav aria-label="Provider table pagination">
+        <ul class="pagination admin--table__pagination">
+          <li class="page-item disabled">
+            <button class="page-link" type="button" disabled aria-label="Previous page">
+              <img
+                src="assets/institution-admin/dashboard/chevron-left.svg"
+                alt=""
+                width="14"
+                height="14"
+              />
+            </button>
+          </li>
+          <li class="page-item active" aria-current="page">
+            <button class="page-link" type="button">1</button>
+          </li>
+          <li class="page-item"><button class="page-link" type="button">2</button></li>
+          <li class="page-item"><button class="page-link" type="button">3</button></li>
+          <li class="page-item">
+            <button class="page-link" type="button" aria-label="Next page">
+              <img
+                src="assets/institution-admin/dashboard/chevron-right.svg"
+                alt=""
+                width="14"
+                height="14"
+              />
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </footer>
+  </section>
 </section>
