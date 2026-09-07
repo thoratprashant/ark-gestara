@@ -161,28 +161,6 @@
   }
 }
 
-.admin-select-panel.mat-mdc-select-panel {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 4px 12px rgb(17 24 39 / 10%);
-
-  .mat-mdc-option {
-    min-height: 40px;
-    color: #374151;
-    font:
-      400 14px/20px Inter,
-      Arial,
-      sans-serif;
-  }
-
-  .mdc-list-item__primary-text {
-    font-family: Inter, Arial, sans-serif;
-    font-size: 14px;
-    line-height: 20px;
-  }
-}
-
 .admin-account-menu.mat-mdc-menu-panel {
   --mat-menu-container-color: #faf9f7;
   --mat-menu-container-shape: 12px;

@@ -282,18 +282,20 @@
   color: #7d7467;
   text-align: center;
 }
-  .admin--table {  
-    th {
-      text-align: center;
-    }
-    tbody{
-      tr{
-        td{
-          &:nth-child(4){text-align: center;}
+.admin--table {
+  th {
+    text-align: center;
+  }
+  tbody {
+    tr {
+      td {
+        &:nth-child(4) {
+          text-align: center;
         }
       }
     }
   }
+}
 
 @media (min-width: 1280px) {
   .institution-list__table-wrap {
@@ -378,19 +380,5 @@
     svg {
       display: none;
     }
-  }
-}
-
-::ng-deep .institution-status-panel.mat-mdc-select-panel {
-  border: 1px solid #e8e2d9;
-  border-radius: 8px;
-  background: #fff;
-
-  .mat-mdc-option {
-    min-height: 40px;
-    font:
-      400 14px/20px Inter,
-      Arial,
-      sans-serif;
   }
 }

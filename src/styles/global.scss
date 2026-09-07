@@ -50,9 +50,107 @@ textarea.mat-mdc-input-element::placeholder {
 }
 
 .mat-mdc-select-panel {
-  padding: 0 !important;
+  --mat-option-label-text-color: #1f2921;
+  --mat-option-label-text-font: Inter, Arial, sans-serif;
+  --mat-option-label-text-size: 14px;
+  --mat-option-label-text-line-height: normal;
+  --mat-option-label-text-weight: 500;
+  --mat-option-selected-state-label-text-color: #1f2921;
+  box-sizing: border-box;
+  padding: 10px 16px !important;
+  border: 0;
+  border-radius: 12px !important;
+  background: #f5f2ec !important;
+  box-shadow: 0 4px 12px rgb(17 24 39 / 12%) !important;
+
+  .mat-mdc-option {
+    position: relative;
+    min-height: 29px;
+    padding: 6px 0 !important;
+    border: 0;
+    border-radius: 6px;
+    color: #1f2921;
+    font:
+      500 14px/normal Inter,
+      Arial,
+      sans-serif;
+
+    &::before {
+      content: '';
+      display: block;
+      box-sizing: border-box;
+      order: -1;
+      flex: 0 0 12px;
+      width: 12px;
+      height: 12px;
+      margin-right: 10px;
+      border: 1px solid rgb(123 127 132 / 50%);
+      border-radius: 2px;
+      background: transparent;
+    }
+
+    &::after {
+      content: none;
+    }
+
+    &:hover:not(.mdc-list-item--disabled) {
+      background: rgb(3 78 88 / 6%);
+    }
+
+    &.mat-mdc-option-active:not(.mdc-list-item--disabled),
+    &.mdc-list-item--selected:not(.mdc-list-item--disabled) {
+      background: transparent;
+    }
+
+    &.mdc-list-item--selected::before {
+      border-color: #034e58;
+      background: #034e58;
+    }
+
+    &.mdc-list-item--selected::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 4px;
+      width: 4px;
+      height: 7px;
+      border: solid #fff;
+      border-width: 0 1.5px 1.5px 0;
+      transform: translateY(-60%) rotate(45deg);
+    }
+
+    &:has(.mat-pseudo-checkbox-indeterminate)::after {
+      content: '';
+      position: absolute;
+      top: calc(50% - 0.75px);
+      left: 3px;
+      width: 6px;
+      height: 1.5px;
+      border: 0;
+      background: #fff;
+      transform: none;
+    }
+
+    &.mdc-list-item--disabled {
+      opacity: 0.45;
+    }
+  }
+
+  .mdc-list-item__primary-text {
+    min-width: 0;
+    color: inherit;
+    font:
+      500 14px/normal Inter,
+      Arial,
+      sans-serif;
+    overflow-wrap: anywhere;
+  }
+
+  .mat-pseudo-checkbox {
+    display: none !important;
+  }
 
   .mat-mdc-option + .mat-mdc-option {
-    border-top: 1px solid #f1eeea;
+    border-top: 0;
   }
 }
