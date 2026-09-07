@@ -13,10 +13,9 @@
   align-items: center;
   justify-content: flex-end;
   height: 100%;
-  padding: 0 var(--app-space-32px);
-  border-bottom: 1px solid #eef0f1;
-  background: rgb(255 255 255 / 84%);
-  backdrop-filter: blur(14px);
+  padding: 12px var(--app-space-32px);
+  border-bottom: 1px solid #f3f4f6;
+  background: #fff;
 }
 .admin-header__menu {
   display: none;
@@ -40,8 +39,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  min-height: 37px;
   padding-left: 17px;
-  padding-right: 0;
+  padding-right: 16px;
   border: 0;
   border-left: 1px solid #f3f4f6;
   background: transparent;
@@ -98,15 +98,15 @@
   transition: transform 160ms ease;
 }
 ::ng-deep .mat-mdc-menu-panel {
-      background-color: #fff !important;
-      min-width: 145px !important;
-      border-radius: 12px !important;
-      .mat-mdc-menu-content { 
-        .mat-mdc-menu-item{
-          min-height: unset;
-          padding: 7px 16px;
-        }
+  background-color: #fff !important;
+  min-width: 145px !important;
+  border-radius: 12px !important;
+  .mat-mdc-menu-content {
+    .mat-mdc-menu-item {
+      min-height: unset;
+      padding: 7px 16px;
     }
+  }
 }
 
 .admin-header__account[aria-expanded='true'] .admin-header__account-chevron {
@@ -125,5 +125,35 @@
 
   .admin-header__menu {
     display: block;
+  }
+}
+
+@media (max-width: 479.98px) {
+  .admin-header__account {
+    max-width: calc(100vw - 72px);
+    min-width: 0;
+    gap: 8px;
+    padding-left: 8px;
+    padding-right: 0;
+    border-left: 0;
+    overflow: hidden;
+  }
+
+  .admin-header__identity {
+    min-width: 0;
+
+    strong {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    span {
+      display: none;
+    }
+  }
+
+  .admin-header__account-chevron {
+    flex: 0 0 18px;
   }
 }

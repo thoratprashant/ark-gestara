@@ -1,11 +1,13 @@
 import { Component, HostListener, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { InstitutionAdminProfileState } from '../../features/institution-admin/institution-admin-profile-state';
 
 @Component({
   selector: 'app-institution-admin-layout',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [MatIconModule, MatMenuModule, RouterLink, RouterLinkActive, RouterOutlet],
   templateUrl: './institution-admin-layout.html',
   styleUrl: './institution-admin-layout.scss',
 })

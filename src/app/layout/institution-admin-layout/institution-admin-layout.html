@@ -63,18 +63,16 @@
       }
     </nav>
 
-    @if (isDashboardPage()) {
-      <button
-        class="institution-admin-sidebar__collapse"
-        type="button"
-        [attr.aria-label]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
-        [title]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
-        (click)="toggleSidebar()"
-      >
-        <img src="assets/institution-admin/dashboard/collapse.svg" alt="" width="16" height="16" />
-        <span>Collapse</span>
-      </button>
-    }
+    <button
+      class="institution-admin-sidebar__collapse"
+      type="button"
+      [attr.aria-label]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+      [title]="sidebarCollapsed() ? 'Expand sidebar' : 'Collapse sidebar'"
+      (click)="toggleSidebar()"
+    >
+      <img src="assets/institution-admin/dashboard/collapse.svg" alt="" width="16" height="16" />
+      <span>Collapse</span>
+    </button>
   </aside>
 
   <header class="institution-admin-header">
@@ -88,7 +86,12 @@
       <span></span><span></span><span></span>
     </button>
 
-    <div class="institution-admin-header__account">
+    <button
+      class="institution-admin-header__account"
+      type="button"
+      aria-label="Open account menu"
+      [matMenuTriggerFor]="accountMenu"
+    >
       <span class="institution-admin-header__avatar">
         <img src="assets/institution-admin/user.svg" alt="" width="16" height="16" />
       </span>
@@ -96,7 +99,42 @@
         <strong>Sarah Mitchell</strong>
         <small>Institution Admin</small>
       </span>
-    </div>
+      <mat-icon class="institution-admin-header__account-chevron" aria-hidden="true">
+        keyboard_arrow_down
+      </mat-icon>
+    </button>
+
+    <mat-menu #accountMenu="matMenu" panelClass="admin-account-menu" xPosition="before">
+      <button
+        mat-menu-item
+        type="button"
+        disableRipple
+        routerLink="/institution-admin/profile-setup"
+      >
+        <span class="admin-account-menu__icon me-2">
+          <img
+            class="admin-account-menu__profile-icon"
+            src="assets/admin/account-profile.svg"
+            alt=""
+            width="24"
+            height="24"
+          />
+        </span>
+        <span>Profile</span>
+      </button>
+      <button mat-menu-item type="button" disableRipple routerLink="/auth/login">
+        <span class="admin-account-menu__icon me-2">
+          <img
+            class="admin-account-menu__logout-icon"
+            src="assets/admin/account-logout.svg"
+            alt=""
+            width="24"
+            height="22"
+          />
+        </span>
+        <span>Log Out</span>
+      </button>
+    </mat-menu>
   </header>
 
   @if (mobileNavigationOpen()) {
