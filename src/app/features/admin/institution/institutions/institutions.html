@@ -107,7 +107,21 @@
               <td>{{ institution.adminEmail }}</td>
               <td>{{ institution.createdDate }}</td>
               <td>
-                <a class="institution-list__providers" href="#">{{ institution.providers }}</a>
+                <a
+                  class="institution-list__providers"
+                  [routerLink]="['/admin', 'institution', 'institutions', 'institution-provider']"
+                  [queryParams]="{
+                    institution: institution.name,
+                    type: institution.type,
+                    location: institution.location,
+                    status: institution.status,
+                    providers: institution.providers,
+                  }"
+                  [attr.aria-label]="
+                    'View ' + institution.providers + ' providers for ' + institution.name
+                  "
+                  >{{ institution.providers }}</a
+                >
               </td>
               <td>
                 <div class="institution-list__actions">

@@ -1,0 +1,170 @@
+<main class="institution-provider-page">
+  <header class="institution-provider-page__heading">
+    <nav class="institution-provider-page__breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/admin/institution/institutions">Institutions</a>
+      <img
+        src="assets/admin/institution-provider/breadcrumb-chevron.svg"
+        alt=""
+        width="12"
+        height="12"
+      />
+      <span>{{ institution().name }}</span>
+    </nav>
+
+    <div class="institution-provider-page__title">
+      <h1>{{ institution().name }}</h1>
+      <div class="institution-provider-page__metadata">
+        <span>{{ institution().type }}</span>
+        <i aria-hidden="true">•</i>
+        <span>{{ institution().location }}</span>
+        <i aria-hidden="true">•</i>
+        <span
+          class="institution-provider-page__institution-status"
+          [class.institution-provider-page__institution-status--active]="
+            institution().status === 'Active'
+          "
+          [class.institution-provider-page__institution-status--inactive]="
+            institution().status === 'Inactive'
+          "
+          >{{ institution().status }}</span
+        >
+      </div>
+    </div>
+  </header>
+
+  <section class="institution-provider-table" aria-label="Institution providers">
+    <div class="institution-provider-table__controls">
+      <div class="institution-provider-table__filters">
+        <label class="institution-provider-search">
+          <span class="visually-hidden">Search providers</span>
+          <img src="assets/institution-admin/dashboard/search.svg" alt="" width="14" height="14" />
+          <input
+            type="search"
+            placeholder="Search providers..."
+            [value]="searchTerm()"
+            (input)="updateSearch($event)"
+          />
+        </label>
+
+        <div class="institution-provider-filter">
+          <span class="visually-hidden" id="institution-provider-status-label">
+            Filter providers by status
+          </span>
+          <mat-select
+            aria-labelledby="institution-provider-status-label"
+            panelWidth="auto"
+            [value]="selectedStatus()"
+            (selectionChange)="updateStatus($event)"
+          >
+            @for (status of statusOptions; track status) {
+              <mat-option [value]="status">{{ status }}</mat-option>
+            }
+          </mat-select>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="institution-provider-table__scroll"
+      tabindex="0"
+      aria-label="Scrollable institution provider table"
+    >
+      <table class="admin--table institution-provider-table__table">
+        <colgroup>
+          <col class="institution-provider-table__name-column" />
+          <col class="institution-provider-table__npi-column" />
+          <col class="institution-provider-table__specialty-column" />
+          <col class="institution-provider-table__status-column" />
+          <col class="institution-provider-table__email-column" />
+          <col class="institution-provider-table__phone-column" />
+          <col class="institution-provider-table__joined-column" />
+          <col class="institution-provider-table__actions-column" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Provider Name</th>
+            <th>NPI Number</th>
+            <th>Specialty</th>
+            <th>Status</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Joined Date</th>
+            <th class="institution-provider-table__actions-heading">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (provider of visibleProviders(); track provider.npi) {
+            <tr>
+              <td class="institution-provider-table__name">{{ provider.name }}</td>
+              <td>{{ provider.npi }}</td>
+              <td>{{ provider.specialty }}</td>
+              <td>
+                <span
+                  class="status-pill institution-provider-table__status"
+                  [class.status-pill--pending]="provider.status === 'Pending'"
+                  [class.institution-provider-table__status--inactive]="
+                    provider.status === 'Inactive'
+                  "
+                  >{{ provider.status }}</span
+                >
+              </td>
+              <td class="institution-provider-table__email" [title]="provider.email">
+                {{ provider.email }}
+              </td>
+              <td>{{ provider.phone }}</td>
+              <td>{{ provider.joinedDate }}</td>
+              <td>
+                <div class="institution-provider-table__actions">
+                  <button type="button" aria-label="View {{ provider.name }}">
+                    <img src="assets/admin/view.svg" alt="" width="14" height="14" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="institution-provider-table__empty" colspan="8">
+                No providers match your search.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="admin--table__footer institution-provider-table__footer">
+      <span>
+        Showing {{ visibleProviders().length }} of {{ institution().providerCount }} providers
+      </span>
+      <nav aria-label="Institution provider table pages">
+        <ul class="pagination admin--table__pagination">
+          <li class="page-item disabled">
+            <button class="page-link" type="button" disabled aria-label="Previous page">
+              <img
+                src="assets/institution-admin/dashboard/chevron-left.svg"
+                alt=""
+                width="14"
+                height="14"
+              />
+            </button>
+          </li>
+          <li class="page-item active">
+            <button class="page-link" type="button" aria-current="page">1</button>
+          </li>
+          <li class="page-item"><button class="page-link" type="button">2</button></li>
+          <li class="page-item"><button class="page-link" type="button">3</button></li>
+          <li class="page-item">
+            <button class="page-link" type="button" aria-label="Next page">
+              <img
+                src="assets/institution-admin/dashboard/chevron-right.svg"
+                alt=""
+                width="14"
+                height="14"
+              />
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </footer>
+  </section>
+</main>
