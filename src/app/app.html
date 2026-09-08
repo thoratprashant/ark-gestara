@@ -1,1 +1,4 @@
-<router-outlet />
+<div [inert]="loader.visible()" [attr.aria-busy]="loader.visible()">
+  <router-outlet />
+</div>
+<app-loader />

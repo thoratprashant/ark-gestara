@@ -72,6 +72,7 @@
           <button
             matButton="filled"
             type="submit"
+            [disabled]="loader.visible()"
             class="app-button app-button--auth-primary auth-page__submit"
           >
             Sign in
