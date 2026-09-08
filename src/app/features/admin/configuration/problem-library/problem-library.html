@@ -1,8 +1,107 @@
-<section class="admin-feature-page">
-  <h1>Problem Library</h1>
-  <p>Manage standardized problems used throughout Gestara workflows.</p>
-  <article>
-    <h2>Problem Library</h2>
-    <p>This section is ready for problem templates and library controls.</p>
-  </article>
+<section class="providers-page" aria-labelledby="providers-title">
+  <header class="providers-heading d-flex flex-column flex-lg-row justify-content-between align-items-lg-end">
+    <div>
+      <h1 id="providers-title">Problem Library</h1>
+      <p>
+        Configure pregnancy-related clinical problem templates used throughout Gestara workflows.
+      </p>
+    </div>
+    <button matButton="filled" class="app-button app-button--primary providers-add">
+      <img src="assets/admin/providers/add.svg" alt="" width="14" height="14" />Add New Problem
+    </button>
+  </header>
+  <div class="row providers-stats" aria-label="Problem summary">
+    @for (stat of stats; track stat.label) {
+    <div class="col-6 col-md-3">
+      <article class="providers-stat d-flex flex-column">
+        <strong>{{ stat.value }}</strong><span>{{ stat.label }}</span>
+      </article>
+    </div>
+    }
+  </div>
+  <section class="providers-list" aria-label="Problem library">
+    <div class="providers-toolbar d-flex flex-column flex-sm-row">
+      <label class="providers-search"><span class="visually-hidden">Search problems</span><img
+          src="assets/admin/providers/search.svg" alt="" width="14" height="14" /><input type="search"
+          placeholder="Search problems..." [ngModel]="query()" (ngModelChange)="query.set($event)" /></label>
+      <label class="providers-filter"><span class="visually-hidden">Filter by status</span><select [ngModel]="status()"
+          (ngModelChange)="status.set($event)">
+          <option value="">All Status</option>
+          <option>Active</option>
+          <option>Draft</option>
+          <option>Pending</option>
+          <option>Inactive</option>
+        </select><img src="assets/admin/providers/chevron.svg" alt="" width="20" height="20" /></label>
+    </div>
+    <div class="providers-table-scroll" tabindex="0" role="region"
+      aria-label="Problems table, scroll horizontally for more columns">
+      <table>
+        <colgroup>
+          <col class="name-col" />
+          <col />
+          <col />
+          <col class="small-col" />
+          <col class="small-col" />
+          <col />
+          <col class="date-col" />
+          <col />
+        </colgroup>
+        <thead>
+          <tr>
+            <th scope="col">Problem Name</th>
+            <th scope="col">Mapped ICDs</th>
+            <th scope="col">Categories</th>
+            <th scope="col">Tasks</th>
+            <th scope="col">Orders</th>
+            <th scope="col">Status</th>
+            <th scope="col">Modified</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (problem of filtered(); track problem.id) {
+          <tr>
+            <th scope="row">{{ problem.name }}</th>
+            <td>{{ problem.icds }}</td>
+            <td>{{ problem.categories }}</td>
+            <td>{{ problem.tasks }}</td>
+            <td>{{ problem.orders }}</td>
+            <td>
+              <span class="providers-status" [attr.data-status]="problem.status">{{
+                  problem.status
+                }}</span>
+            </td>
+            <td>{{ problem.modified }}</td>
+            <td>
+              <div class="d-flex justify-content-end providers-actions">
+                <button type="button" [attr.aria-label]="'View ' + problem.name">
+                  <img src="assets/admin/providers/view.svg" alt="" width="14" height="14" /></button><button
+                  type="button" [attr.aria-label]="'Edit ' + problem.name">
+                  <img src="assets/admin/providers/edit.svg" alt="" width="14" height="14" />
+                </button>
+              </div>
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="8" class="providers-empty">No problems match your search.</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <footer class="providers-footer d-flex flex-wrap align-items-center justify-content-between">
+      <span aria-live="polite">Showing {{ filtered().length }} of {{ problems().length }} problems</span>
+      <nav class="d-flex" aria-label="Problem pagination">
+        <button type="button" disabled aria-label="Previous page">
+          <img src="assets/admin/providers/previous.svg" alt="" width="14" height="14" /></button><button type="button"
+          class="current" aria-current="page" aria-label="Page 1">1</button><button type="button" disabled
+          aria-label="Page 2 unavailable">2</button><button type="button" disabled
+          aria-label="Page 3 unavailable">3</button><button type="button" disabled aria-label="Next page">
+          <img src="assets/admin/providers/next.svg" alt="" width="14" height="14" />
+        </button>
+      </nav>
+    </footer>
+  </section>
+
 </section>
