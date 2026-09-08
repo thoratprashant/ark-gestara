@@ -46,6 +46,18 @@ export const ADMIN_ROUTES: Routes = [
         loadComponent: () => import('./institution/providers/providers').then((m) => m.Providers),
       },
       {
+        path: 'configuration/problem-library/problem-templates',
+        loadComponent: () =>
+          import('./configuration/problem-library/problem-templates/problem-templates').then(
+            (m) => m.ProblemTemplates,
+          ),
+      },
+      {
+        path: 'configuration/problem-library/icd-master',
+        loadComponent: () =>
+          import('./configuration/problem-library/icd-master/icd-master').then((m) => m.IcdMaster),
+      },
+      {
         path: 'configuration/problem-library',
         loadComponent: () =>
           import('./configuration/problem-library/problem-library').then((m) => m.ProblemLibrary),

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
@@ -15,7 +16,7 @@ interface Problem {
 }
 
 @Component({
-  imports: [FormsModule, MatButton, MatSelectModule],
+  imports: [FormsModule, MatButton, MatSelectModule, RouterLink],
   selector: 'app-problem-library',
   templateUrl: './problem-library.html',
   styleUrl: './problem-library.scss',

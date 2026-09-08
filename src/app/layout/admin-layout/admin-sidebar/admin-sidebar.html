@@ -56,21 +56,65 @@
         <div class="admin-sidebar__submenu" [id]="'admin-' + group.id + '-menu'">
           <div class="admin-sidebar__submenu-inner">
             @for (child of group.children; track child.label) {
-              <a
-                class="admin-sidebar__link admin-sidebar__sublink"
-                [routerLink]="child.route"
-                routerLinkActive="admin-sidebar__link--active"
-                [title]="child.label"
-                (click)="navigationSelected.emit()"
-              >
-                <img
-                  class="admin-sidebar__icon admin-sidebar__icon--child"
-                  [class.admin-sidebar__icon--child-small]="child.iconSize === 18"
-                  [src]="child.icon"
-                  alt=""
-                />
-                <span class="admin-sidebar__label">{{ child.label }}</span>
-              </a>
+              @if (child.children) {
+                <button
+                  type="button"
+                  class="admin-sidebar__link admin-sidebar__sublink admin-sidebar__nested-toggle"
+                  [routerLink]="child.route"
+                  routerLinkActive="admin-sidebar__link--active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  [title]="child.label"
+                  aria-controls="admin-problem-library-menu"
+                  [attr.aria-expanded]="problemLibraryOpen()"
+                  (click)="toggleProblemLibrary()"
+                >
+                  <img
+                    class="admin-sidebar__icon admin-sidebar__icon--child"
+                    [src]="child.icon"
+                    alt=""
+                  />
+                  <span class="admin-sidebar__label">{{ child.label }}</span>
+                  <span class="admin-sidebar__nested-arrow"
+                    ><img src="assets/admin/submenu-chevron.svg" alt=""
+                  /></span>
+                </button>
+                <div
+                  id="admin-problem-library-menu"
+                  class="admin-sidebar__nested-menu"
+                  [class.admin-sidebar__nested-menu--open]="problemLibraryOpen()"
+                  [attr.inert]="problemLibraryOpen() ? null : ''"
+                >
+                  <div>
+                    @for (item of child.children; track item.label) {
+                      <a
+                        class="admin-sidebar__link admin-sidebar__nested-link"
+                        [routerLink]="item.route"
+                        routerLinkActive="admin-sidebar__link--active"
+                        ariaCurrentWhenActive="page"
+                        [title]="item.label"
+                        (click)="navigationSelected.emit()"
+                        >{{ item.label }}</a
+                      >
+                    }
+                  </div>
+                </div>
+              } @else {
+                <a
+                  class="admin-sidebar__link admin-sidebar__sublink"
+                  [routerLink]="child.route"
+                  routerLinkActive="admin-sidebar__link--active"
+                  [title]="child.label"
+                  (click)="navigationSelected.emit()"
+                >
+                  <img
+                    class="admin-sidebar__icon admin-sidebar__icon--child"
+                    [class.admin-sidebar__icon--child-small]="child.iconSize === 18"
+                    [src]="child.icon"
+                    alt=""
+                  />
+                  <span class="admin-sidebar__label">{{ child.label }}</span>
+                </a>
+              }
             }
           </div>
         </div>

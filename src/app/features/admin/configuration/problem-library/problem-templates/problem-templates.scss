@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+h1 {
+  margin: 0;
+  color: #111827;
+  font-size: clamp(20px, 1.666667vw, 24px);
+  font-weight: 700;
+  line-height: 1.333333;
+  letter-spacing: -0.025em;
+}

@@ -1,5 +1,6 @@
 import { Component, inject, input, output, signal } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 type MenuGroupId = 'institution' | 'configuration' | 'clinicalRules';
 
@@ -8,6 +9,7 @@ interface MenuChild {
   readonly route: readonly string[];
   readonly icon: string;
   readonly iconSize: 18 | 20;
+  readonly children?: readonly { label: string; route: readonly string[] }[];
 }
 
 interface MenuGroup {
@@ -34,6 +36,21 @@ export class AdminSidebar {
   protected readonly openGroups = signal<Record<MenuGroupId, boolean>>(
     this.initialOpenGroups(this.router.url),
   );
+
+  protected readonly problemLibraryOpen = signal(this.router.url.includes('/problem-library/'));
+
+  constructor() {
+    this.router.events.pipe(takeUntilDestroyed()).subscribe((event) => {
+      if (event instanceof NavigationEnd && event.urlAfterRedirects.includes('/problem-library/')) {
+        this.problemLibraryOpen.set(true);
+        this.openGroups.update((groups) => ({ ...groups, configuration: true }));
+      }
+    });
+  }
+
+  protected toggleProblemLibrary(): void {
+    this.problemLibraryOpen.update((open) => !open);
+  }
 
   protected readonly groups: readonly MenuGroup[] = [
     {
@@ -62,6 +79,16 @@ export class AdminSidebar {
       children: [
         {
           label: 'Problem Library',
+          children: [
+            {
+              label: 'Problem Templates',
+              route: ['/admin', 'configuration', 'problem-library', 'problem-templates'],
+            },
+            {
+              label: 'ICD Master',
+              route: ['/admin', 'configuration', 'problem-library', 'icd-master'],
+            },
+          ],
           route: ['/admin', 'configuration', 'problem-library'],
           icon: 'assets/admin/problem-library.svg',
           iconSize: 18,
