@@ -1,9 +1,7 @@
- 
-
-
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 
 interface Problem {
   id: number;
@@ -16,8 +14,8 @@ interface Problem {
   modified: string;
 }
 
-@Component({ 
-  imports: [FormsModule, MatButton],
+@Component({
+  imports: [FormsModule, MatButton, MatSelectModule],
   selector: 'app-problem-library',
   templateUrl: './problem-library.html',
   styleUrl: './problem-library.scss',

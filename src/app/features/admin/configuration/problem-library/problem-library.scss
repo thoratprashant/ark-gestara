@@ -4,7 +4,7 @@
 }
 .providers-page {
   --page-gap: clamp(20px, 2.22222vw, 32px);
-  --body-size: clamp(12px, 0.972222vw, 14px); 
+  --body-size: clamp(12px, 0.972222vw, 14px);
   margin-inline: auto;
   display: flex;
   flex-direction: column;
@@ -80,7 +80,7 @@
   min-width: 0;
   margin: 0;
   input,
-  select {
+  mat-select {
     width: 100%;
     height: 44px;
     border: 1px solid #e8e2d9;
@@ -109,16 +109,11 @@
   }
 }
 .providers-filter {
-  select {
-    appearance: none;
-    padding: 7px 40px 7px 17px;
-  }
-  img {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none;
+  mat-select {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    border: 0;
   }
 }
 .providers-table-scroll {
@@ -252,11 +247,11 @@ table {
   height: 120px !important;
   text-align: center !important;
 }
-.providers-page :is(button, input, select, [tabindex]):focus-visible {
+.providers-page :is(button, input, mat-select, [tabindex]):focus-visible {
   outline: 2px solid #0d9488;
   outline-offset: 3px;
 }
- 
+
 @media (min-width: 576px) {
   .providers-search {
     width: min(393px, 65%);
@@ -270,7 +265,7 @@ table {
     align-self: flex-end;
   }
   .providers-search input,
-  .providers-filter select {
+  .providers-filter mat-select {
     height: 34px;
   }
   .providers-actions button,
@@ -278,4 +273,14 @@ table {
     width: 28px;
     height: 28px;
   }
+}
+
+// Material anchors the overlay to this trigger; keep it the full field size.
+:host ::ng-deep .providers-filter .mat-mdc-select-trigger {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 7px 16px 7px 17px;
+  border: 1px solid #e8e2d9;
+  border-radius: 8px;
 }
