@@ -5,13 +5,25 @@
   font-family: Inter, Arial, sans-serif;
 }
 
+::ng-deep .mat-mdc-menu-panel {
+  background-color: #fff !important;
+  min-width: 145px !important;
+  border-radius: 12px !important;
+  .mat-mdc-menu-content {
+    .mat-mdc-menu-item {
+      min-height: unset;
+      padding: 7px 16px;
+    }
+  }
+}
+
 .institution-admin-shell {
   min-height: 100dvh;
   background: #faf9f7;
 }
 
 .institution-admin-shell--collapsed {
-  --institution-admin-sidebar-width: 80px;
+  --institution-admin-sidebar-width: 121px;
 }
 
 .institution-admin-sidebar,
@@ -35,26 +47,26 @@
   color: #fff;
 }
 
+/* Exact Figma logo crop: full wordmark expanded, emblem collapsed. */
 .institution-admin-sidebar__logo {
   display: flex;
-  flex: 0 0 122px;
+  flex: 0 0 123px;
   align-items: center;
   padding: 24px 20px 25px;
+  overflow: hidden;
   border-bottom: 1px solid rgb(255 255 255 / 10%);
 }
-
 .institution-admin-sidebar__logo-crop {
   position: relative;
-  width: 200px;
-  height: 73px;
+  flex: 0 0 204px;
+  height: 74px;
   overflow: hidden;
-
   img {
     position: absolute;
-    top: -325.94%;
-    left: -3.97%;
-    width: 215.57%;
-    height: 466.11%;
+    top: -241.196px;
+    left: -8.1px;
+    width: 439.763px;
+    height: 344.921px;
     max-width: none;
   }
 }
@@ -152,8 +164,8 @@
 }
 
 .institution-admin-shell--collapsed {
-  .institution-admin-sidebar__logo {
-    width: 240px;
+  .institution-admin-sidebar__logo-crop {
+    flex-basis: 72px;
   }
 
   .institution-admin-sidebar__link {
@@ -215,7 +227,7 @@
   gap: 12px;
   min-height: 37px;
   padding-left: 17px;
-  padding-right: 16px;
+  // padding-right: 16px;
   border: 0;
   border-left: 1px solid #f3f4f6;
   background: transparent;
@@ -267,6 +279,10 @@
     font-size: 14px;
     font-weight: 600;
     line-height: 20px;
+        max-width: 164px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   small {
@@ -381,5 +397,32 @@
   .institution-admin-shell__content,
   .institution-admin-header__account-chevron {
     transition-duration: 0.01ms !important;
+  }
+}
+
+@media (min-width: 835px) {
+  .institution-admin-shell--collapsed {
+    .institution-admin-sidebar__link {
+      width: 40px;
+      margin-inline: auto;
+      padding-inline: 10px;
+    }
+    .institution-admin-sidebar__collapse {
+      min-height: 32px;
+    }
+    .institution-admin-sidebar__lock {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 834px) {
+  .institution-admin-shell--collapsed {
+    .institution-admin-sidebar__logo-crop {
+      flex-basis: 204px;
+    }
+    .institution-admin-sidebar__link--disabled {
+      grid-template-columns: 20px minmax(0, 1fr) 12px;
+    }
   }
 }

@@ -10,7 +10,7 @@
   >
     <div class="institution-admin-sidebar__logo">
       <span class="institution-admin-sidebar__logo-crop">
-        <img src="assets/institution-admin/logo.png" alt="Gestara" />
+        <img src="assets/admin/sidebar-brand.png" alt="Gestara" />
       </span>
     </div>
 
@@ -18,6 +18,8 @@
       @if (profileState.profileCompleted()) {
         <a
           class="institution-admin-sidebar__link"
+          aria-label="Dashboard"
+          title="Dashboard"
           routerLink="/institution-admin/dashboard"
           routerLinkActive="institution-admin-sidebar__link--active"
           (click)="closeMobileNavigation()"
@@ -53,6 +55,8 @@
       @if (!isDashboardPage()) {
         <a
           class="institution-admin-sidebar__link"
+          aria-label="Profile Setup"
+          title="Profile Setup"
           routerLink="/institution-admin/profile-setup"
           routerLinkActive="institution-admin-sidebar__link--active"
           (click)="closeMobileNavigation()"
