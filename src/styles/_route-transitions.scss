@@ -1,0 +1,19 @@
+// Animate the routed page without moving fixed headers, overlays, or sidebars.
+router-outlet + * {
+  animation: route-page-enter 280ms ease-out;
+}
+
+@keyframes route-page-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  router-outlet + * {
+    animation: none;
+  }
+}
