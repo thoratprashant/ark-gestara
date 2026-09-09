@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 type ProviderStatus = 'Active' | 'Pending' | 'Inactive';
@@ -17,7 +18,7 @@ interface ProviderRow {
 
 @Component({
   selector: 'app-institution-provider',
-  imports: [MatSelectModule, RouterLink],
+  imports: [MatSelectModule, MatTooltipModule, RouterLink],
   templateUrl: './institution-provider.html',
   styleUrl: './institution-provider.scss',
 })

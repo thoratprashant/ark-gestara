@@ -1,6 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 
 interface InstitutionRow {
@@ -16,7 +17,7 @@ interface InstitutionRow {
 
 @Component({
   selector: 'app-institutions',
-  imports: [MatButton, MatSelectModule, RouterLink],
+  imports: [MatButton, MatSelectModule, MatTooltipModule, RouterLink],
   templateUrl: './institutions.html',
   styleUrl: './institutions.scss',
 })

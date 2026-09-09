@@ -97,7 +97,11 @@
               <td>{{ problem.modified }}</td>
               <td>
                 <div class="d-flex justify-content-end providers-actions">
-                  <button type="button" [attr.aria-label]="'View ' + problem.name">
+                  <button
+                    type="button"
+                    [attr.aria-label]="'View ' + problem.name"
+                    [matTooltip]="'View ' + problem.name"
+                  >
                     <img
                       src="assets/admin/providers/view.svg"
                       alt=""
