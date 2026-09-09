@@ -1,5 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, forwardRef, Input } from '@angular/core';
+import {
+  Component,
+  forwardRef,
+  Input,
+  Output,
+  EventEmitter,
+  TemplateRef,
+  ViewChild,
+  ElementRef,
+  OnDestroy,
+} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 export interface SuggestiveOption {
@@ -22,10 +32,46 @@ export interface SuggestiveOption {
     },
   ],
 })
-export class SuggestiveInput implements ControlValueAccessor {
+export class SuggestiveInput implements ControlValueAccessor, OnDestroy {
   @Input({ required: true }) inputId = '';
   @Input() placeholder = '';
+  @Input() iconSrc = '';
+  private listObserver?: ResizeObserver;
+
+  @ViewChild('suggestions') set suggestions(ref: ElementRef<HTMLElement> | undefined) {
+    this.listObserver?.disconnect();
+    if (!ref) return;
+    const list = ref.nativeElement;
+    const measure = () => {
+      const rows = Array.from(list.querySelectorAll<HTMLElement>('.suggestive-input__option'));
+      const style = getComputedStyle(list);
+      const spacing =
+        parseFloat(style.paddingTop) +
+        parseFloat(style.paddingBottom) +
+        parseFloat(style.borderTopWidth) +
+        parseFloat(style.borderBottomWidth);
+      list.style.maxHeight =
+        rows.length > 7
+          ? Math.ceil(
+              rows
+                .slice(0, 7)
+                .reduce((height, row) => height + row.getBoundingClientRect().height, 0) + spacing,
+            ) + 'px'
+          : 'none';
+    };
+    this.listObserver = new ResizeObserver(measure);
+    this.listObserver.observe(list);
+    list
+      .querySelectorAll('.suggestive-input__option')
+      .forEach((row) => this.listObserver!.observe(row));
+  }
+
+  ngOnDestroy(): void {
+    this.listObserver?.disconnect();
+  }
   @Input() options: SuggestiveOption[] = [];
+  @Input() optionTemplate?: TemplateRef<{ $implicit: SuggestiveOption }>;
+  @Output() optionSelected = new EventEmitter<SuggestiveOption>();
 
   value = '';
   disabled = false;
@@ -62,6 +108,7 @@ export class SuggestiveInput implements ControlValueAccessor {
   }
 
   handleFocus(): void {
+    if (this.disabled) return;
     this.filterOptions();
     this.isOpen = this.filteredOptions.length > 0;
   }
@@ -102,6 +149,7 @@ export class SuggestiveInput implements ControlValueAccessor {
     this.onTouched();
     this.isOpen = false;
     this.activeIndex = -1;
+    this.optionSelected.emit(option);
   }
 
   optionId(index: number): string {

@@ -79,3 +79,19 @@
   color: #111827;
   font-weight: 700;
 }
+
+.suggestive-input__icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.suggestive-input--with-icon input {
+  padding-left: 42px;
+}
+.suggestive-input--with-icon .suggestive-input__icon {
+  top: 18px;
+}

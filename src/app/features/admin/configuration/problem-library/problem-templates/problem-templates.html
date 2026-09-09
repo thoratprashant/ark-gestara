@@ -1,3 +1,360 @@
-<section aria-labelledby="problem-templates-title">
-  <h1 id="problem-templates-title">Problem Templates</h1>
-</section>
+<div class="template-page">
+  <header class="template-heading">
+    <nav class="admin-breadcrumb" aria-label="Breadcrumb">
+      <span>Configuration Management</span><span aria-hidden="true">&gt;</span>
+      <a routerLink="/admin/configuration/problem-library">Problem Library</a
+      ><span aria-hidden="true">&gt;</span>
+      <span class="template-current" aria-current="page">Add New Problem</span>
+    </nav>
+    <h1>Add New Problem Template</h1>
+    <p>
+      Create a new standardized clinical problem template for usage across the Gestara platform.
+    </p>
+  </header>
+  <form [formGroup]="form" (ngSubmit)="save()" class="d-flex flex-column template-form">
+    <div class="template-overview">
+      <section class="template-card" aria-labelledby="basic-title">
+        <header class="template-card-heading"><h2 id="basic-title">Basic Information</h2></header>
+        <div class="template-card-body">
+          <div class="admin-field">
+            <label class="admin-field__label" for="problem-name"
+              >Problem Name <span class="admin-field__required">*</span></label
+            >
+            <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic">
+              <input
+                matInput
+                id="problem-name"
+                formControlName="name"
+                placeholder="e.g. Gestational Hypertension"
+              />
+            </mat-form-field>
+            @if (form.controls.name.touched && form.controls.name.invalid) {
+              <span class="field-error" role="alert">Problem name is required.</span>
+            }
+          </div>
+          <div class="row g-4">
+            <div class="col-12 col-sm-6 admin-field">
+              <label id="classification-label" class="admin-field__label"
+                >Problem Classification</label
+              >
+              <mat-form-field
+                class="admin-form-field admin-form-field--select"
+                appearance="outline"
+                subscriptSizing="dynamic"
+              >
+                <mat-select
+                  formControlName="classification"
+                  aria-labelledby="classification-label"
+                  placeholder="Select Classification"
+                  panelClass="admin-select-panel"
+                >
+                  @for (classification of classifications; track classification) {
+                    <mat-option [value]="classification">{{ classification }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-sm-6 admin-field">
+              <label class="admin-field__label" for="display-sequence">Display Sequence</label>
+              <mat-form-field
+                class="admin-form-field"
+                appearance="outline"
+                subscriptSizing="dynamic"
+              >
+                <input
+                  matInput
+                  id="display-sequence"
+                  type="number"
+                  min="1"
+                  step="1"
+                  formControlName="sequence"
+                />
+              </mat-form-field>
+              @if (form.controls.sequence.touched && form.controls.sequence.invalid) {
+                <span class="field-error" role="alert">Enter a positive whole number.</span>
+              }
+            </div>
+          </div>
+          <div class="admin-field">
+            <label class="admin-field__label" for="clinical-description"
+              >Clinical Description</label
+            >
+            <mat-form-field
+              class="admin-form-field template-description"
+              appearance="outline"
+              subscriptSizing="dynamic"
+            >
+              <textarea
+                matInput
+                id="clinical-description"
+                formControlName="description"
+                placeholder="Clinical description visible to administrators"
+              ></textarea>
+            </mat-form-field>
+          </div>
+          <div class="admin-field">
+            <label id="template-status-label" class="admin-field__label">Template Status</label>
+            <mat-radio-group
+              class="d-flex flex-wrap template-status"
+              formControlName="status"
+              aria-labelledby="template-status-label"
+            >
+              <mat-radio-button value="Draft">Draft</mat-radio-button
+              ><mat-radio-button value="Active">Active</mat-radio-button
+              ><mat-radio-button value="Inactive">Inactive</mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </div>
+      </section>
+      <aside class="template-card" aria-labelledby="summary-title">
+        <header class="template-card-heading">
+          <h2 id="summary-title">Workflow Impact Summary</h2>
+        </header>
+        <div class="template-card-body template-summary" aria-live="polite">
+          <dl>
+            <div>
+              <dt>Configured ICD Mappings</dt>
+              <dd>{{ icds().length }}</dd>
+            </div>
+            <div>
+              <dt>Associated Categories</dt>
+              <dd>{{ categories().length }}</dd>
+            </div>
+            <div>
+              <dt>Associated Tasks</dt>
+              <dd>{{ tasks() }}</dd>
+            </div>
+            <div>
+              <dt>Associated Orders</dt>
+              <dd>{{ orders() }}</dd>
+            </div>
+            <div class="summary-status">
+              <dt>Status</dt>
+              <dd>
+                <span class="status-pill" [attr.data-status]="form.controls.status.value">{{
+                  form.controls.status.value
+                }}</span>
+              </dd>
+            </div>
+          </dl>
+          <p class="template-note summary-note">
+            Review template configuration before activation. All changes are logged for clinical
+            audit
+          </p>
+        </div>
+      </aside>
+    </div>
+    <section class="template-card" aria-labelledby="icd-title">
+      <header class="template-card-heading d-flex align-items-center justify-content-between gap-3">
+        <h2 id="icd-title">ICD Mapping Configuration</h2>
+        <button
+          matButton="filled"
+          type="button"
+          class="app-button app-button--primary template-add"
+          (click)="icdPicker.handleFocus(); focusIcd()"
+        >
+          <img src="assets/admin/problem-templates/add.svg" width="12" height="12" alt="" />Add ICD
+        </button>
+      </header>
+      <div class="template-card-body">
+        <p>
+          Associate one or more ICD codes with this Problem Template. Multiple ICD codes may map to
+          the same clinical problem.
+        </p>
+        <div class="template-search">
+          <label class="visually-hidden" for="icd-search">Search ICD Code or Description</label>
+          <app-suggestive-input
+            iconSrc="assets/admin/problem-templates/search.svg"
+            #icdPicker
+            inputId="icd-search"
+            placeholder="Search ICD Code or Description"
+            [options]="availableIcds()"
+            [formControl]="icdSearch"
+            [optionTemplate]="icdOption"
+            (optionSelected)="addIcd($event)"
+          />
+        </div>
+        <ng-template #icdOption let-option
+          ><span class="icd-option"
+            ><strong>{{ option.value }}</strong
+            ><span>{{ option.label }}</span
+            ><span>{{ option.description }}</span></span
+          ></ng-template
+        >
+        <div
+          class="template-table-scroll"
+          tabindex="0"
+          role="region"
+          aria-label="Selected ICD codes"
+        >
+          <table class="icd-table">
+            <colgroup>
+              <col class="icd-code-col" />
+              <col />
+              <col class="trimester-col" />
+              <col class="action-col" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">ICD Code</th>
+                <th scope="col">Technical Description</th>
+                <th scope="col">Trimester</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (icd of icds(); track icd.value) {
+                <tr>
+                  <th scope="row">{{ icd.value }}</th>
+                  <td>{{ icd.label }}</td>
+                  <td>{{ icd.description }}</td>
+                  <td>
+                    <button
+                      type="button"
+                      class="remove-button"
+                      [attr.aria-label]="'Remove ' + icd.value"
+                      (click)="removeIcd(icd.value)"
+                    >
+                      <img
+                        src="assets/admin/problem-templates/delete.svg"
+                        width="14"
+                        height="14"
+                        alt=""
+                      />
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="table-empty">
+                    Search and select an ICD code to add a mapping.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <section class="template-card" aria-labelledby="categories-title">
+      <header class="template-card-heading">
+        <h2 id="categories-title">Associated Categories</h2>
+      </header>
+      <div class="template-card-body">
+        <p>Categories workflow activities under the problem.</p>
+        <div class="template-search">
+          <label class="visually-hidden" for="category-search">Search Category</label>
+          <app-suggestive-input
+            iconSrc="assets/admin/problem-templates/search.svg"
+            inputId="category-search"
+            placeholder="Search Category..."
+            [options]="availableCategories()"
+            [formControl]="categorySearch"
+            [optionTemplate]="categoryOption"
+            (optionSelected)="addCategory($event)"
+          />
+        </div>
+        <ng-template #categoryOption let-option>{{ option.label }}</ng-template>
+        <div
+          class="template-table-scroll"
+          tabindex="0"
+          role="region"
+          aria-label="Selected categories"
+        >
+          <table class="category-table">
+            <colgroup>
+              <col />
+              <col class="count-col" />
+              <col class="count-col" />
+              <col class="count-col" />
+              <col class="action-col" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Category Name</th>
+                <th scope="col">Tasks</th>
+                <th scope="col">Orders</th>
+                <th scope="col">Sequence</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (category of categories(); track category.value) {
+                <tr>
+                  <th scope="row">{{ category.label }}</th>
+                  <td>{{ category.tasks }}</td>
+                  <td>{{ category.orders }}</td>
+                  <td>
+                    <input
+                      type="number"
+                      min="1"
+                      [max]="categories().length"
+                      step="1"
+                      [value]="category.sequence"
+                      [attr.aria-label]="'Sequence for ' + category.label"
+                      (change)="changeSequence(category.value, $event)"
+                    />
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="remove-button"
+                      [attr.aria-label]="'Remove ' + category.label"
+                      (click)="removeCategory(category.value)"
+                    >
+                      <img
+                        src="assets/admin/problem-templates/delete.svg"
+                        width="14"
+                        height="14"
+                        alt=""
+                      />
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="table-empty">
+                    Search and select a category to associate it.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        @if (sequenceError()) {
+          <p class="field-error" role="alert">{{ sequenceError() }}</p>
+        }
+        <p class="template-note">
+          <!-- <img src="/assets/admin/problem-templates/info.svg" width="12" height="12" alt="" /> -->
+           <span>The category sequence is editable — you can reorder categories by updating the sequence number to change their display order.</span
+          >
+        </p>
+      </div>
+    </section>
+    @if (message()) {
+      <p class="save-message" role="status">{{ message() }}</p>
+    }
+    <footer
+      class="template-actions d-flex justify-content-between align-items-center flex-wrap gap-3"
+    >
+      <a
+        matButton="filled"
+        class="app-button app-button--secondary"
+        routerLink="/admin/configuration/problem-library"
+        >Cancel</a
+      >
+      <div class="d-flex gap-3">
+        <button
+          matButton="outlined"
+          type="button"
+          class="app-button app-button--outline-primary"
+          (click)="save(true)"
+        >
+          Save as Draft</button
+        ><button matButton="filled" type="submit" class="app-button app-button--primary">
+          Submit
+        </button>
+      </div>
+    </footer>
+  </form>
+</div>
