@@ -1,0 +1,300 @@
+<div class="add-category-page">
+  <header class="category-template-heading">
+    <nav class="admin-breadcrumb" aria-label="Breadcrumb">
+      <span>Configuration Management</span><span aria-hidden="true">&gt;</span>
+      <a routerLink="/admin/configuration/category-library">Category Library</a>
+      <span aria-hidden="true">&gt;</span>
+      <span class="category-current" aria-current="page">Add New Category</span>
+    </nav>
+    <h1>Add New Category Template</h1>
+    <p>
+      Create and configure a reusable clinical category template used within Gestara workflow
+      structures.
+    </p>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="category-template-form">
+    <div class="category-overview">
+      <section class="category-card" aria-labelledby="category-information-title">
+        <header class="category-card-heading">
+          <h2 id="category-information-title">Category Information</h2>
+        </header>
+        <div class="category-card-body">
+          <div class="admin-field">
+            <label class="admin-field__label" for="category-name"
+              >Category Name <span class="admin-field__required">*</span></label
+            >
+            <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic">
+              <input
+                id="category-name"
+                matInput
+                formControlName="name"
+                placeholder="e.g. Labs, Generic Screening, Ultrasounds, Counselling, Vaccines"
+              />
+            </mat-form-field>
+            @if (form.controls.name.touched && form.controls.name.invalid) {
+              <span class="field-error" role="alert">Category name is required.</span>
+            }
+          </div>
+
+          <div class="admin-field">
+            <label class="admin-field__label" for="category-description"
+              >Description <span class="admin-field__required">*</span></label
+            >
+            <mat-form-field
+              class="admin-form-field category-description"
+              appearance="outline"
+              subscriptSizing="dynamic"
+            >
+              <textarea
+                id="category-description"
+                matInput
+                formControlName="description"
+                placeholder="Clinical grouping description visible to administration"
+              ></textarea>
+            </mat-form-field>
+            @if (form.controls.description.touched && form.controls.description.invalid) {
+              <span class="field-error" role="alert">Description is required.</span>
+            }
+          </div>
+
+          <div class="admin-field">
+            <label class="admin-field__label" id="category-sequence-label">Display Sequence</label>
+            <mat-form-field
+              class="admin-form-field admin-form-field--select"
+              appearance="outline"
+              subscriptSizing="dynamic"
+            >
+              <mat-select
+                formControlName="sequence"
+                aria-labelledby="category-sequence-label"
+                panelClass="admin-select-panel"
+              >
+                @for (sequence of sequenceOptions; track sequence) {
+                  <mat-option [value]="sequence">{{ sequence }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="admin-field">
+            <label id="category-status-label" class="admin-field__label">Template Status</label>
+            <mat-radio-group
+              class="category-status-options"
+              formControlName="status"
+              aria-labelledby="category-status-label"
+            >
+              <mat-radio-button value="Draft">Draft</mat-radio-button>
+              <mat-radio-button value="Active">Active</mat-radio-button>
+              <mat-radio-button value="Inactive">Inactive</mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </div>
+      </section>
+
+      <aside class="category-card category-summary-card" aria-labelledby="configuration-summary-title">
+        <header class="category-card-heading">
+          <h2 id="configuration-summary-title">Configuration Summary</h2>
+        </header>
+        <div class="category-card-body category-summary">
+          <dl>
+            <div>
+              <dt>Associated Problems</dt>
+              <dd>{{ problems().length }}</dd>
+            </div>
+            <div>
+              <dt>Associated Tasks</dt>
+              <dd>{{ tasks().length }}</dd>
+            </div>
+            <div>
+              <dt>Associated Sequence</dt>
+              <dd>{{ form.controls.sequence.value }}</dd>
+            </div>
+            <div class="summary-status">
+              <dt>Status</dt>
+              <dd>
+                <span class="category-status-pill" [attr.data-status]="statusValue()">{{
+                  statusValue()
+                }}</span>
+              </dd>
+            </div>
+          </dl>
+          <p class="summary-note">
+            Configuration is ready for Clinical Validation and Cross Problem Mapping
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="category-card" aria-labelledby="associated-problems-title">
+      <header class="category-card-heading category-card-heading--actions">
+        <h2 id="associated-problems-title">Associated Problems</h2>
+        <button
+          matButton="filled"
+          type="button"
+          class="app-button app-button--primary app-button--small"
+          (click)="openProblemDialog()"
+        >
+          <img src="assets/admin/providers/add.svg" alt="" width="12" height="12" />Associate
+          Problem
+        </button>
+      </header>
+      <div class="category-card-body">
+        <p class="category-helper">
+          <span>A Category must be associated with at least one problem Template.</span>
+          <em>Opens Problem Library selector. Associated existing Problems only.</em>
+        </p>
+        <div class="association-table" tabindex="0" role="region" aria-label="Associated problems">
+          <table>
+            <colgroup>
+              <col />
+              <col class="sequence-col" />
+              <col class="status-col" />
+              <col class="actions-col" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Problem Name</th>
+                <th scope="col">Category Sequence</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (problem of problems(); track problem.id) {
+                <tr>
+                  <th scope="row">{{ problem.code }} - {{ problem.name }}</th>
+                  <td>{{ problem.sequence }}</td>
+                  <td>
+                    <span class="category-status-pill" [attr.data-status]="problem.status">{{
+                      problem.status
+                    }}</span>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="icon-action"
+                      [attr.aria-label]="'Delete ' + problem.name"
+                      [matTooltip]="'Delete ' + problem.name"
+                      (click)="removeProblem(problem.id)"
+                    >
+                      <img src="assets/admin/problem-templates/delete.svg" alt="" width="14" height="14" />
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4">
+                    <div class="empty-state">
+                      <strong>No tasks associated yet.</strong>
+                      <span>Use + Associate Problem to Add</span>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="category-card" aria-labelledby="associated-tasks-title">
+      <header class="category-card-heading category-card-heading--actions">
+        <h2 id="associated-tasks-title">Associated Tasks</h2>
+        <button
+          matButton="filled"
+          type="button"
+          class="app-button app-button--primary app-button--small"
+          (click)="openTaskDialog()"
+        >
+          <img src="assets/admin/providers/add.svg" alt="" width="12" height="12" />Associate Task
+        </button>
+      </header>
+      <div class="category-card-body">
+        <p class="category-helper category-helper--split">
+          <span>Selected Task Templates that belong to this category.</span>
+          <em>Opens Task Library selector. Associates existing Task Only.</em>
+        </p>
+        <div class="association-table" tabindex="0" role="region" aria-label="Associated tasks">
+          <table>
+            <colgroup>
+              <col />
+              <col class="status-col" />
+              <col class="sequence-col" />
+              <col class="actions-col" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Task Name</th>
+                <th scope="col">Status</th>
+                <th scope="col">Sequence</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (task of tasks(); track task.id) {
+                <tr>
+                  <th scope="row">{{ task.name }}</th>
+                  <td>
+                    <span class="category-status-pill" [attr.data-status]="task.status">{{
+                      task.status
+                    }}</span>
+                  </td>
+                  <td>{{ task.sequence }}</td>
+                  <td>
+                    <button
+                      type="button"
+                      class="icon-action"
+                      [attr.aria-label]="'Delete ' + task.name"
+                      [matTooltip]="'Delete ' + task.name"
+                      (click)="removeTask(task.id)"
+                    >
+                      <img src="assets/admin/problem-templates/delete.svg" alt="" width="14" height="14" />
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4">
+                    <div class="empty-state">
+                      <strong>No tasks associated yet.</strong>
+                      <span>Use + Associate Task to Add</span>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    @if (message()) {
+      <p class="save-message" role="status">{{ message() }}</p>
+    }
+
+    <footer class="category-actions-footer">
+      <button
+        matButton="filled"
+        type="button"
+        class="app-button app-button--secondary"
+        (click)="cancel()"
+      >
+        Cancel
+      </button>
+      <div class="category-actions-footer__group">
+        <button
+          matButton="outlined"
+          type="button"
+          class="app-button app-button--outline-primary"
+          (click)="save(true)"
+        >
+          Save as Draft
+        </button>
+        <button matButton="filled" type="submit" class="app-button app-button--primary">
+          Submit
+        </button>
+      </div>
+    </footer>
+  </form>
+</div>

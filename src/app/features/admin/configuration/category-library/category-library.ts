@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { RouterLink } from '@angular/router';
 
 type CategoryStatus = 'Active' | 'Draft' | 'Pending' | 'Inactive';
 
@@ -24,7 +25,7 @@ interface CategoryTemplate {
   selector: 'app-category-library',
   templateUrl: './category-library.html',
   styleUrl: './category-library.scss',
-  imports: [FormsModule, MatButton, MatSelectModule, MatTooltipModule],
+  imports: [FormsModule, MatButton, MatSelectModule, MatTooltipModule, RouterLink],
 })
 export class CategoryLibrary {
   protected readonly query = signal('');

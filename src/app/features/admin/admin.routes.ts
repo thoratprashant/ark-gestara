@@ -63,6 +63,13 @@ export const ADMIN_ROUTES: Routes = [
           import('./configuration/problem-library/problem-library').then((m) => m.ProblemLibrary),
       },
       {
+        path: 'configuration/category-library/add-category',
+        loadComponent: () =>
+          import('./configuration/category-library/add-category/add-category').then(
+            (m) => m.AddCategory,
+          ),
+      },
+      {
         path: 'configuration/category-library',
         loadComponent: () =>
           import('./configuration/category-library/category-library').then(
