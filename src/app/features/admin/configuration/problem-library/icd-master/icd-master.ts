@@ -1,28 +1,18 @@
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  signal,
-  TemplateRef,
-} from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+
 import { MatButton } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { RouterLink } from '@angular/router';
-interface IcdRecord {
-  code: string;
-  description: string;
-  trimester: string;
-}
+import { AddIcdDialog, IcdRecord, ICD_DIALOG_CONFIG } from '../add-icd-dialog/add-icd-dialog';
 @Component({
   selector: 'app-icd-master',
   imports: [
+    MatTooltipModule,
     MatDialogModule,
-    ReactiveFormsModule,
     MatButton,
     MatFormFieldModule,
     MatInputModule,
@@ -34,12 +24,7 @@ interface IcdRecord {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IcdMaster {
-  private readonly fb = inject(FormBuilder);
   private readonly dialog = inject(MatDialog);
-  private editorRef?: MatDialogRef<unknown>;
-  protected closeEditor(): void {
-    this.editorRef?.close();
-  }
   protected readonly query = signal('');
   protected readonly trimester = signal('');
   protected readonly page = signal(1);
@@ -92,13 +77,6 @@ export class IcdMaster {
   protected readonly visible = computed(() =>
     this.filtered().slice((this.page() - 1) * this.pageSize, this.page() * this.pageSize),
   );
-  protected readonly editing = signal<string | null>(null);
-  protected readonly error = signal('');
-  protected readonly form = this.fb.nonNullable.group({
-    code: ['', [Validators.required, Validators.pattern(/^[A-Za-z]\d{2}(\.[A-Za-z0-9]{1,4})?$/)]],
-    description: ['', [Validators.required, Validators.pattern(/\S/)]],
-    trimester: ['-'],
-  });
   protected search(event: Event): void {
     this.query.set((event.target as HTMLInputElement).value);
     this.page.set(1);
@@ -112,38 +90,21 @@ export class IcdMaster {
     this.page.set(page);
     table.scrollTop = 0;
   }
-  protected open(dialog: TemplateRef<unknown>, row?: IcdRecord): void {
-    this.editing.set(row?.code ?? null);
-    this.error.set('');
-    this.form.reset(row ?? { code: '', description: '', trimester: '-' });
-    this.editorRef = this.dialog.open(dialog, {
-      width: '520px',
-      maxWidth: 'calc(100vw - 32px)',
-      autoFocus: 'input',
-    });
-  }
-  protected save(): void {
-    this.form.markAllAsTouched();
-    if (this.form.invalid) return;
-    const value = this.form.getRawValue();
-    const record = {
-      ...value,
-      code: value.code.trim().toUpperCase(),
-      description: value.description.trim(),
-    };
-    if (this.records().some((row) => row.code === record.code && row.code !== this.editing())) {
-      this.error.set('This ICD code already exists.');
-      return;
-    }
-    this.records.update((rows) =>
-      this.editing()
-        ? rows.map((row) => (row.code === this.editing() ? record : row))
-        : [...rows, record],
-    );
-    this.query.set('');
-    this.trimester.set('');
-    this.page.set(Math.ceil(this.records().length / this.pageSize));
-    this.closeEditor();
+  protected open(row?: IcdRecord): void {
+    this.dialog
+      .open(AddIcdDialog, {
+        ...ICD_DIALOG_CONFIG,
+        data: { record: row, existingCodes: this.records().map((item) => item.code) },
+      })
+      .afterClosed()
+      .subscribe((record: IcdRecord | undefined) => {
+        if (!record) return;
+        this.records.update((rows) =>
+          row ? rows.map((item) => (item.code === row.code ? record : item)) : [...rows, record],
+        );
+        this.query.set('');
+        this.trimester.set('');
+        this.page.set(Math.ceil(this.records().length / this.pageSize));
+      });
   }
 }
-

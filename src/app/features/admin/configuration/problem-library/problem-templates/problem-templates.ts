@@ -1,3 +1,6 @@
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { AddIcdDialog, IcdRecord, ICD_DIALOG_CONFIG } from '../add-icd-dialog/add-icd-dialog';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -28,6 +31,8 @@ interface Category extends SuggestiveOption {
 @Component({
   selector: 'app-problem-templates',
   imports: [
+    MatTooltipModule,
+    MatDialogModule,
     ReactiveFormsModule,
     MatButton,
     MatFormFieldModule,
@@ -43,6 +48,7 @@ interface Category extends SuggestiveOption {
 })
 export class ProblemTemplates {
   private readonly fb = inject(FormBuilder);
+  private readonly dialog = inject(MatDialog);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -186,8 +192,28 @@ export class ProblemTemplates {
     items.splice(sequence - 1, 0, item);
     this.categories.set(items.map((row, i) => ({ ...row, sequence: i + 1 })));
   }
-  protected focusIcd(): void {
-    document.getElementById('icd-search')?.focus();
+  protected openIcdDialog(): void {
+    this.dialog
+      .open(AddIcdDialog, {
+        ...ICD_DIALOG_CONFIG,
+        data: {
+          existingCodes: [
+            ...this.icdOptions.map((item) => item.value),
+            ...this.icds().map((item) => item.value),
+          ],
+        },
+      })
+      .afterClosed()
+      .subscribe((record: IcdRecord | undefined) => {
+        if (!record) return;
+        const option = {
+          value: record.code,
+          label: record.description,
+          description: record.trimester,
+        };
+        this.icdOptions.push(option);
+        this.addIcd(option);
+      });
   }
   protected save(draft = false): void {
     this.message.set('');

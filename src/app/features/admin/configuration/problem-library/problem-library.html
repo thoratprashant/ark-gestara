@@ -104,7 +104,11 @@
                       width="14"
                       height="14"
                     /></button
-                  ><button type="button" [attr.aria-label]="'Edit ' + problem.name">
+                  ><button
+                    type="button"
+                    [attr.aria-label]="'Edit ' + problem.name"
+                    [matTooltip]="'Edit ' + problem.name"
+                  >
                     <img src="assets/admin/providers/edit.svg" alt="" width="14" height="14" />
                   </button>
                 </div>

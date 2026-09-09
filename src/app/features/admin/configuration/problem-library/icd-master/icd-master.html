@@ -21,23 +21,25 @@
       class="admin-form-field admin-form-field--select icd-filter"
       appearance="outline"
       subscriptSizing="dynamic"
-      ><mat-select
+    >
+      <mat-select
         aria-label="Filter by trimester"
         [value]="trimester()"
         (selectionChange)="filter($event.value)"
         panelClass="admin-select-panel"
-        ><mat-option value="">All Trimesters</mat-option
-        ><mat-option value="1st">1st Trimester</mat-option
-        ><mat-option value="2nd">2nd Trimester</mat-option
-        ><mat-option value="3rd">3rd Trimester</mat-option
-        ><mat-option value="-">Unspecified</mat-option></mat-select
-      ></mat-form-field
-    >
+      >
+        <mat-option value="">All Trimesters</mat-option>
+        <mat-option value="1st">1st Trimester</mat-option>
+        <mat-option value="2nd">2nd Trimester</mat-option>
+        <mat-option value="3rd">3rd Trimester</mat-option>
+        <mat-option value="-">Unspecified</mat-option>
+      </mat-select>
+    </mat-form-field>
     <button
       matButton="filled"
       class="app-button app-button--primary"
       type="button"
-      (click)="open(editor)"
+      (click)="open()"
     >
       <img src="assets/admin/icd-master/add.svg" alt="" width="14" height="14" />Add ICD
     </button>
@@ -76,7 +78,8 @@
                   type="button"
                   class="icd-edit"
                   [attr.aria-label]="'Edit ' + row.code"
-                  (click)="open(editor, row)"
+                  [matTooltip]="'Edit ' + row.code"
+                  (click)="open(row)"
                 >
                   <img src="assets/admin/icd-master/edit.svg" alt="" width="14" height="14" />
                 </button>
@@ -126,65 +129,3 @@
     </footer>
   </div>
 </section>
-<ng-template #editor
-  ><section class="icd-editor" aria-labelledby="editor-title">
-    <form [formGroup]="form" (ngSubmit)="save()" class="d-flex flex-column gap-4">
-      <h2 id="editor-title">{{ editing() ? 'Edit ICD' : 'Add ICD' }}</h2>
-      <div class="admin-field">
-        <label class="admin-field__label" for="icd-code"
-          >ICD Code <span class="admin-field__required">*</span></label
-        ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
-          ><input matInput id="icd-code" formControlName="code" placeholder="e.g. O09.01"
-        /></mat-form-field>
-        @if (form.controls.code.touched && form.controls.code.invalid) {
-          <span class="icd-error">Enter a valid ICD code.</span>
-        }
-      </div>
-      <div class="admin-field">
-        <label class="admin-field__label" for="icd-description"
-          >Technical Description <span class="admin-field__required">*</span></label
-        ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
-          ><input
-            matInput
-            id="icd-description"
-            formControlName="description"
-            placeholder="Enter description"
-        /></mat-form-field>
-        @if (form.controls.description.touched && form.controls.description.invalid) {
-          <span class="icd-error">Description is required.</span>
-        }
-      </div>
-      <div class="admin-field">
-        <label class="admin-field__label" for="icd-trimester">Trimester</label
-        ><mat-form-field
-          class="admin-form-field admin-form-field--select"
-          appearance="outline"
-          subscriptSizing="dynamic"
-          ><mat-select
-            id="icd-trimester"
-            formControlName="trimester"
-            panelClass="admin-select-panel"
-            ><mat-option value="-">Unspecified</mat-option><mat-option value="1st">1st</mat-option
-            ><mat-option value="2nd">2nd</mat-option
-            ><mat-option value="3rd">3rd</mat-option></mat-select
-          ></mat-form-field
-        >
-      </div>
-      @if (error()) {
-        <p class="icd-error" role="alert">{{ error() }}</p>
-      }
-      <div class="d-flex justify-content-end gap-3">
-        <button
-          type="button"
-          matButton="filled"
-          class="app-button app-button--secondary"
-          (click)="closeEditor()"
-        >
-          Cancel</button
-        ><button type="submit" matButton="filled" class="app-button app-button--primary">
-          Save
-        </button>
-      </div>
-    </form>
-  </section></ng-template
->

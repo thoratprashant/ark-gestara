@@ -199,29 +199,6 @@ tr > :last-child {
   text-align: center !important;
   padding: 32px 16px;
 }
-.icd-editor {
-  width: 100%;
-  overflow-y: auto;
-  max-height: calc(100dvh - 32px);
-  padding: 24px;
-  border: 1px solid #e8e2d9;
-  border-radius: 16px;
-  color: #111827;
-  &::backdrop {
-    background: rgb(0 0 0 / 35%);
-  }
-  h2 {
-    font:
-      600 20px/28px Inter,
-      Arial,
-      sans-serif;
-    margin: 0;
-  }
-}
-.icd-error {
-  color: #b91c1c;
-  font-size: 12px;
-}
 :host ::ng-deep .icd-filter.admin-form-field {
   .mat-mdc-text-field-wrapper {
     height: 40px;

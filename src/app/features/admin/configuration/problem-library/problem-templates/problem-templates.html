@@ -151,7 +151,7 @@
           matButton="filled"
           type="button"
           class="app-button app-button--primary template-add"
-          (click)="icdPicker.handleFocus(); focusIcd()"
+          (click)="openIcdDialog()"
         >
           <img src="assets/admin/problem-templates/add.svg" width="12" height="12" alt="" />Add ICD
         </button>
@@ -213,6 +213,7 @@
                       type="button"
                       class="remove-button"
                       [attr.aria-label]="'Remove ' + icd.value"
+                      [matTooltip]="'Remove ' + icd.value"
                       (click)="removeIcd(icd.value)"
                     >
                       <img
@@ -300,6 +301,7 @@
                       type="button"
                       class="remove-button"
                       [attr.aria-label]="'Remove ' + category.label"
+                      [matTooltip]="'Remove ' + category.label"
                       (click)="removeCategory(category.value)"
                     >
                       <img
@@ -326,7 +328,9 @@
         }
         <p class="template-note">
           <!-- <img src="/assets/admin/problem-templates/info.svg" width="12" height="12" alt="" /> -->
-           <span>The category sequence is editable — you can reorder categories by updating the sequence number to change their display order.</span
+          <span
+            >The category sequence is editable — you can reorder categories by updating the sequence
+            number to change their display order.</span
           >
         </p>
       </div>

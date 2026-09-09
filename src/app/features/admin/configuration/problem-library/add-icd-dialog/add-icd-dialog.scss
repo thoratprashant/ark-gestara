@@ -1,0 +1,101 @@
+:host {
+  display: block;
+  font-family: Inter, Arial, sans-serif;
+  color: #111827;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 32px);
+}
+.dialog-header {
+  flex-shrink: 0;
+  padding: 20px 24px;
+  background: #faf9f7;
+  border-bottom: 1px solid #e5e7eb;
+}
+h2 {
+  margin: 0;
+  font:
+    600 18px/22px Inter,
+    Arial,
+    sans-serif;
+}
+.dialog-close {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  &:hover {
+    background: #eef0f0;
+  }
+}
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  overflow-y: auto;
+  min-height: 0;
+}
+.admin-field__label {
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+.dialog-footer {
+  flex-shrink: 0;
+  gap: 12px;
+  padding: 16px 24px 20px;
+  border-top: 1px solid #e5e7eb;
+  .app-button {
+    --mat-button-filled-horizontal-padding: 16px;
+  }
+}
+.dialog-submit {
+  --mat-button-filled-container-color: #0d9488;
+  &:not(:disabled):hover {
+    --mat-button-filled-container-color: #0b8278;
+  }
+}
+.field-error {
+  margin: 0;
+  color: #b91c1c;
+  font-size: 12px;
+}
+:host ::ng-deep .admin-form-field {
+  .mat-mdc-text-field-wrapper {
+    height: 40px;
+    background: #fff;
+    padding-inline: 14px;
+  }
+  .mat-mdc-form-field-flex {
+    height: 38px;
+  }
+  .mat-mdc-form-field-infix {
+    min-height: 38px;
+    padding-block: 9px;
+  }
+}
+:host ::ng-deep .dialog-description {
+  .mat-mdc-text-field-wrapper,
+  .mat-mdc-form-field-flex {
+    height: 100px;
+  }
+  .mat-mdc-form-field-infix {
+    height: 100%;
+  }
+  textarea {
+    height: 78px;
+    resize: none;
+  }
+}
+@media (max-width: 479px) {
+  .dialog-header,
+  .dialog-body,
+  .dialog-footer {
+    padding-inline: 16px;
+  }
+}

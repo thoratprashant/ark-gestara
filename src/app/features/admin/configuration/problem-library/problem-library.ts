@@ -1,3 +1,4 @@
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -16,7 +17,7 @@ interface Problem {
 }
 
 @Component({
-  imports: [FormsModule, MatButton, MatSelectModule, RouterLink],
+  imports: [MatTooltipModule, FormsModule, MatButton, MatSelectModule, RouterLink],
   selector: 'app-problem-library',
   templateUrl: './problem-library.html',
   styleUrl: './problem-library.scss',

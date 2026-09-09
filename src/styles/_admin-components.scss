@@ -303,3 +303,12 @@
     font-size: 12px;
   }
 }
+.add-icd-dialog-panel .mat-mdc-dialog-surface {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 12px 32px rgb(0 0 0 / 12%);
+}
+.add-icd-dialog-backdrop {
+  background: rgb(0 0 0 / 20%);
+}

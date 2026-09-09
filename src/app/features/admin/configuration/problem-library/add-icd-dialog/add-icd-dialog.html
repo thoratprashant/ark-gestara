@@ -1,0 +1,80 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <header class="dialog-header d-flex align-items-center justify-content-between">
+    <h2 id="add-icd-title">{{ data.record ? 'Edit ICD Code' : 'Add ICD Code' }}</h2>
+    <button
+      type="button"
+      class="dialog-close"
+      mat-dialog-close
+      aria-label="Close ICD dialog"
+      matTooltip="Close"
+    >
+      <img src="assets/admin/icd-master/close.svg" alt="" width="16" height="16" />
+    </button>
+  </header>
+  <div class="dialog-body">
+    <div class="admin-field">
+      <label class="admin-field__label" for="dialog-icd-code">ICD CODE</label
+      ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
+        ><input id="dialog-icd-code" matInput formControlName="code" placeholder="Enter ICD code"
+      /></mat-form-field>
+      @if (form.controls.code.touched && form.controls.code.invalid) {
+        <span class="field-error" role="alert">Enter a valid ICD code.</span>
+      }
+    </div>
+    <div class="admin-field">
+      <label class="admin-field__label" for="dialog-icd-description">TECHNICAL DESCRIPTION</label
+      ><mat-form-field
+        class="admin-form-field dialog-description"
+        appearance="outline"
+        subscriptSizing="dynamic"
+      >
+        <textarea
+          id="dialog-icd-description"
+          matInput
+          formControlName="description"
+          placeholder="Enter technical description"
+        ></textarea>
+      </mat-form-field>
+      @if (form.controls.description.touched && form.controls.description.invalid) {
+        <span class="field-error" role="alert">Technical description is required.</span>
+      }
+    </div>
+    <div class="admin-field">
+      <label class="admin-field__label" id="dialog-trimester-label">TRIMESTER</label
+      ><mat-form-field
+        class="admin-form-field admin-form-field--select"
+        appearance="outline"
+        subscriptSizing="dynamic"
+        ><mat-select
+          aria-labelledby="dialog-trimester-label"
+          formControlName="trimester"
+          placeholder="Select trimester"
+          panelClass="admin-select-panel"
+          ><mat-option value="1st">1st Trimester</mat-option
+          ><mat-option value="2nd">2nd Trimester</mat-option
+          ><mat-option value="3rd">3rd Trimester</mat-option
+          ><mat-option value="-">Unspecified</mat-option
+          ><mat-option value="N/A">Not applicable</mat-option></mat-select
+        ></mat-form-field
+      >
+      @if (form.controls.trimester.touched && form.controls.trimester.invalid) {
+        <span class="field-error" role="alert">Select a trimester.</span>
+      }
+    </div>
+    @if (error()) {
+      <p class="field-error" role="alert">{{ error() }}</p>
+    }
+  </div>
+  <footer class="dialog-footer d-flex justify-content-end">
+    <button
+      type="button"
+      matButton="filled"
+      class="app-button app-button--secondary"
+      mat-dialog-close
+    >
+      Cancel</button
+    ><button type="submit" matButton="filled" class="app-button app-button--primary dialog-submit">
+      Submit
+    </button>
+  </footer>
+</form>
