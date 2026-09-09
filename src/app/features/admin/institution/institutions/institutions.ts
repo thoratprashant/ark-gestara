@@ -32,7 +32,7 @@ export class Institutions {
       status: 'Invitation Sent',
       adminName: 'John Smith',
       adminEmail: 'john.smith@citygeneral.com',
-      createdDate: '10 Jan 2025',
+      createdDate: '10-05-2025',
       providers: 47,
     },
     {
@@ -42,7 +42,7 @@ export class Institutions {
       status: 'Inactive',
       adminName: 'Sarah Johnson',
       adminEmail: 'sarah.j@sunriseclinic.com',
-      createdDate: '22 Feb 2025',
+      createdDate: '22-02-2025',
       providers: 0,
     },
     {
@@ -52,7 +52,7 @@ export class Institutions {
       status: 'Active',
       adminName: 'Michael Chen',
       adminEmail: 'mchen@greenvalley.org',
-      createdDate: '03 Mar 2025',
+      createdDate: '03-03-2025',
       providers: 28,
     },
     {
@@ -62,7 +62,7 @@ export class Institutions {
       status: 'Profile Incomplete',
       adminName: 'Emily Davis',
       adminEmail: 'edavis@harborhealth.com',
-      createdDate: '14 Mar 2025',
+      createdDate: '14-03-2025',
       providers: 5,
     },
     {
@@ -72,7 +72,7 @@ export class Institutions {
       status: 'Inactive',
       adminName: 'Robert Wilson',
       adminEmail: 'rwilson@mountainpeak.com',
-      createdDate: '01 Apr 2025',
+      createdDate: '01-04-2025',
       providers: 0,
     },
     {
@@ -82,7 +82,7 @@ export class Institutions {
       status: 'Active',
       adminName: 'Lisa Anderson',
       adminEmail: 'landerson@riverside.com',
-      createdDate: '05 Apr 2025',
+      createdDate: '05-04-2025',
       providers: 18,
     },
     {
@@ -92,7 +92,7 @@ export class Institutions {
       status: 'Inactive',
       adminName: 'David Martinez',
       adminEmail: 'dmartinez@pacifichealth.org',
-      createdDate: '19 Apr 2025',
+      createdDate: '19-04-2025',
       providers: 5,
     },
   ];

@@ -283,9 +283,15 @@
   text-align: center;
 }
 .admin--table {
-  th {
-    text-align: center;
+  thead{
+    th {
+      &:nth-child(8),
+      &:nth-child(4) {
+            text-align: center;
+      }
+    }
   }
+
   tbody {
     tr {
       td {
