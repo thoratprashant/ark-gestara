@@ -1,1 +1,190 @@
-<section aria-labelledby="icd-master-title"><h1 id="icd-master-title">ICD Master</h1></section>
+<section class="icd-page" aria-labelledby="icd-title">
+  <header class="icd-heading">
+    <nav class="admin-breadcrumb" aria-label="Breadcrumb">
+      <span>Configuration</span><span aria-hidden="true">&gt;</span
+      ><a routerLink="/admin/configuration/problem-library">Problem Library</a
+      ><span aria-hidden="true">&gt;</span><strong aria-current="page">ICD Master</strong>
+    </nav>
+    <h1 id="icd-title">ICD Master</h1>
+    <p>Manage standardized ICD codes, descriptions and trimester mappings across Gestara.</p>
+  </header>
+  <div class="icd-controls">
+    <label class="icd-search"
+      ><span class="visually-hidden">Search by ICD code or description</span
+      ><img src="assets/admin/icd-master/search.svg" alt="" width="16" height="16" /><input
+        type="search"
+        placeholder="Search by ICD code or description..."
+        [value]="query()"
+        (input)="search($event)"
+    /></label>
+    <mat-form-field
+      class="admin-form-field admin-form-field--select icd-filter"
+      appearance="outline"
+      subscriptSizing="dynamic"
+      ><mat-select
+        aria-label="Filter by trimester"
+        [value]="trimester()"
+        (selectionChange)="filter($event.value)"
+        panelClass="admin-select-panel"
+        ><mat-option value="">All Trimesters</mat-option
+        ><mat-option value="1st">1st Trimester</mat-option
+        ><mat-option value="2nd">2nd Trimester</mat-option
+        ><mat-option value="3rd">3rd Trimester</mat-option
+        ><mat-option value="-">Unspecified</mat-option></mat-select
+      ></mat-form-field
+    >
+    <button
+      matButton="filled"
+      class="app-button app-button--primary"
+      type="button"
+      (click)="open(editor)"
+    >
+      <img src="assets/admin/icd-master/add.svg" alt="" width="14" height="14" />Add ICD
+    </button>
+  </div>
+  <div class="icd-list">
+    <div
+      #tableScroll
+      class="icd-table-scroll"
+      tabindex="0"
+      role="region"
+      aria-label="ICD codes table"
+    >
+      <table>
+        <colgroup>
+          <col class="code-col" />
+          <col />
+          <col class="trimester-col" />
+          <col class="actions-col" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th scope="col">ICD Code</th>
+            <th scope="col">Technical Description</th>
+            <th scope="col">Trimester</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of visible(); track row.code) {
+            <tr>
+              <th scope="row">{{ row.code }}</th>
+              <td>{{ row.description }}</td>
+              <td>{{ row.trimester }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="icd-edit"
+                  [attr.aria-label]="'Edit ' + row.code"
+                  (click)="open(editor, row)"
+                >
+                  <img src="assets/admin/icd-master/edit.svg" alt="" width="14" height="14" />
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="icd-empty">No ICD codes match your search.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <footer class="icd-footer d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <span aria-live="polite"
+        >Showing {{ visible().length }} of {{ filtered().length }} ICD codes</span
+      >
+      <nav class="d-flex" aria-label="ICD pagination">
+        <button
+          type="button"
+          aria-label="Previous page"
+          [disabled]="page() === 1"
+          (click)="goToPage(page() - 1, tableScroll)"
+        >
+          <img src="assets/admin/icd-master/previous.svg" alt="" width="14" height="14" />
+        </button>
+        @for (number of pages(); track number) {
+          <button
+            type="button"
+            [class.current]="page() === number"
+            [attr.aria-current]="page() === number ? 'page' : null"
+            [attr.aria-label]="'Page ' + number"
+            (click)="goToPage(number, tableScroll)"
+          >
+            {{ number }}
+          </button>
+        }
+        <button
+          type="button"
+          aria-label="Next page"
+          [disabled]="page() === pages().length"
+          (click)="goToPage(page() + 1, tableScroll)"
+        >
+          <img src="assets/admin/icd-master/next.svg" alt="" width="14" height="14" />
+        </button>
+      </nav>
+    </footer>
+  </div>
+</section>
+<ng-template #editor
+  ><section class="icd-editor" aria-labelledby="editor-title">
+    <form [formGroup]="form" (ngSubmit)="save()" class="d-flex flex-column gap-4">
+      <h2 id="editor-title">{{ editing() ? 'Edit ICD' : 'Add ICD' }}</h2>
+      <div class="admin-field">
+        <label class="admin-field__label" for="icd-code"
+          >ICD Code <span class="admin-field__required">*</span></label
+        ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
+          ><input matInput id="icd-code" formControlName="code" placeholder="e.g. O09.01"
+        /></mat-form-field>
+        @if (form.controls.code.touched && form.controls.code.invalid) {
+          <span class="icd-error">Enter a valid ICD code.</span>
+        }
+      </div>
+      <div class="admin-field">
+        <label class="admin-field__label" for="icd-description"
+          >Technical Description <span class="admin-field__required">*</span></label
+        ><mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic"
+          ><input
+            matInput
+            id="icd-description"
+            formControlName="description"
+            placeholder="Enter description"
+        /></mat-form-field>
+        @if (form.controls.description.touched && form.controls.description.invalid) {
+          <span class="icd-error">Description is required.</span>
+        }
+      </div>
+      <div class="admin-field">
+        <label class="admin-field__label" for="icd-trimester">Trimester</label
+        ><mat-form-field
+          class="admin-form-field admin-form-field--select"
+          appearance="outline"
+          subscriptSizing="dynamic"
+          ><mat-select
+            id="icd-trimester"
+            formControlName="trimester"
+            panelClass="admin-select-panel"
+            ><mat-option value="-">Unspecified</mat-option><mat-option value="1st">1st</mat-option
+            ><mat-option value="2nd">2nd</mat-option
+            ><mat-option value="3rd">3rd</mat-option></mat-select
+          ></mat-form-field
+        >
+      </div>
+      @if (error()) {
+        <p class="icd-error" role="alert">{{ error() }}</p>
+      }
+      <div class="d-flex justify-content-end gap-3">
+        <button
+          type="button"
+          matButton="filled"
+          class="app-button app-button--secondary"
+          (click)="closeEditor()"
+        >
+          Cancel</button
+        ><button type="submit" matButton="filled" class="app-button app-button--primary">
+          Save
+        </button>
+      </div>
+    </form>
+  </section></ng-template
+>
