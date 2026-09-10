@@ -1,0 +1,96 @@
+<section class="task-category-dialog" aria-labelledby="add-category-dialog-title">
+  <header class="task-category-dialog__header">
+    <div>
+      <span class="dialog-title-icon" aria-hidden="true"></span>
+      <h2 id="add-category-dialog-title">Add Category</h2>
+    </div>
+    <button
+      type="button"
+      class="dialog-close"
+      mat-dialog-close
+      aria-label="Close add category dialog"
+      matTooltip="Close"
+    >
+      <img src="assets/admin/icd-master/close.svg" alt="" width="16" height="16" />
+    </button>
+  </header>
+
+  <div class="task-category-dialog__search">
+    <label class="visually-hidden" for="task-category-search">Search categories</label>
+    <img src="assets/admin/providers/search.svg" alt="" width="16" height="16" />
+    <input
+      id="task-category-search"
+      type="search"
+      placeholder="Search categories..."
+      [ngModel]="query()"
+      (ngModelChange)="query.set($event)"
+    />
+    @if (query()) {
+      <button
+        type="button"
+        class="search-clear"
+        aria-label="Clear category search"
+        matTooltip="Clear search"
+        (click)="clearQuery()"
+      >
+        <img src="assets/admin/icd-master/close.svg" alt="" width="14" height="14" />
+      </button>
+    }
+  </div>
+
+  <div class="task-category-dialog__results">
+    @for (group of filteredGroups(); track group.id) {
+      <section class="problem-group">
+        <button
+          type="button"
+          class="problem-group__header"
+          [class.is-collapsed]="!expandedIds().has(group.id)"
+          [attr.aria-expanded]="expandedIds().has(group.id)"
+          (click)="toggleGroup(group.id)"
+        >
+          <span class="chevron" aria-hidden="true"></span>
+          <span>{{ group.name }}</span>
+        </button>
+
+        <div
+          class="problem-group__categories"
+          [class.is-open]="expandedIds().has(group.id)"
+          [attr.aria-hidden]="!expandedIds().has(group.id)"
+        >
+          <div class="problem-group__categories-inner">
+            @for (category of group.categories; track category.id) {
+              <button
+                type="button"
+                class="category-option"
+                [class.is-selected]="selectedIds().has(category.id)"
+                [attr.aria-pressed]="selectedIds().has(category.id)"
+                [attr.aria-label]="'Select ' + category.categoryName"
+                [attr.tabindex]="expandedIds().has(group.id) ? 0 : -1"
+                (click)="toggle(category)"
+              >
+                <span class="category-check" aria-hidden="true"></span>
+                <span>{{ category.categoryName }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      </section>
+    } @empty {
+      <p class="dialog-empty">No categories match your search.</p>
+    }
+  </div>
+
+  <div class="selection-summary">
+    <span><i aria-hidden="true"></i>{{ selectedIds().size }} Categories selected</span>
+    <button type="button" (click)="clearSelection()">Clear selection</button>
+  </div>
+
+  <footer class="task-category-dialog__footer">
+    <button matButton="filled" type="button" class="app-button app-button--secondary" mat-dialog-close>
+      Cancel
+    </button>
+    <button matButton="filled" type="button" class="app-button app-button--primary" (click)="associate()">
+      Associate Selected Category
+    </button>
+  </footer>
+</section>

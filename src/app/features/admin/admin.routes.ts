@@ -77,6 +77,13 @@ export const ADMIN_ROUTES: Routes = [
           ),
       },
       {
+        path: 'configuration/task-library/add-task',
+        loadComponent: () =>
+          import('./configuration/task-library/add-new-task/add-new-task').then(
+            (m) => m.AddNewTask,
+          ),
+      },
+      {
         path: 'configuration/task-library',
         loadComponent: () =>
           import('./configuration/task-library/task-library').then((m) => m.TaskLibrary),

@@ -1,0 +1,378 @@
+<div class="add-task-page">
+  <header class="task-template-heading">
+    <nav class="admin-breadcrumb" aria-label="Breadcrumb">
+      <span>Configuration Management</span><span aria-hidden="true">&gt;</span>
+      <a routerLink="/admin/configuration/task-library">Task Template Library</a>
+      <span aria-hidden="true">&gt;</span>
+      <span class="task-current" aria-current="page">Add New Task Template</span>
+    </nav>
+    <h1>Add New Task Template</h1>
+    <p>Create and configure a reusable pregnancy workflow task templates used for timeline generation.</p>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="task-template-form">
+    <div class="task-overview">
+      <section class="task-card" aria-labelledby="task-information-title">
+        <header class="task-card-heading">
+          <h2 id="task-information-title">Task Information</h2>
+        </header>
+        <div class="task-card-body">
+          <div class="admin-field">
+            <label class="admin-field__label" for="task-name"
+              >Task Name <span class="admin-field__required">*</span></label
+            >
+            <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic">
+              <input
+                id="task-name"
+                matInput
+                formControlName="name"
+                placeholder="e.g. First Trimester Labs, Anatomy Ultrasound, Blood Sugar Monitoring"
+              />
+            </mat-form-field>
+            @if (form.controls.name.touched && form.controls.name.invalid) {
+              <span class="field-error" role="alert">Task name is required.</span>
+            }
+          </div>
+
+          <div class="admin-field">
+            <label class="admin-field__label" for="task-description"
+              >Task Description <span class="admin-field__required">*</span></label
+            >
+            <mat-form-field
+              class="admin-form-field task-description"
+              appearance="outline"
+              subscriptSizing="dynamic"
+            >
+              <textarea
+                id="task-description"
+                matInput
+                formControlName="description"
+                placeholder="e.g. Comprehensive metabolic panel and blood count for baseline clinical assessment"
+              ></textarea>
+            </mat-form-field>
+            <em class="task-help">Administrative description explaining the purpose of the task.</em>
+            @if (form.controls.description.touched && form.controls.description.invalid) {
+              <span class="field-error" role="alert">Task description is required.</span>
+            }
+          </div>
+
+          <div class="task-option-grid">
+            <div class="admin-field">
+              <label id="task-status-label" class="admin-field__label">Template Status</label>
+              <mat-radio-group
+                class="task-radio-options"
+                formControlName="status"
+                aria-labelledby="task-status-label"
+              >
+                <mat-radio-button value="Draft">Draft</mat-radio-button>
+                <mat-radio-button value="Active">Active</mat-radio-button>
+                <mat-radio-button value="Inactive">Inactive</mat-radio-button>
+              </mat-radio-group>
+            </div>
+
+            <div class="admin-field">
+              <label id="task-type-label" class="admin-field__label">Task Type</label>
+              <mat-radio-group
+                class="task-radio-options"
+                formControlName="type"
+                aria-labelledby="task-type-label"
+              >
+                <mat-radio-button value="Order Layout">Order Layout</mat-radio-button>
+                <mat-radio-button value="Checkbox Layout">Checkbox Layout</mat-radio-button>
+              </mat-radio-group>
+              <em class="task-help">Determines the task completion method: orders or checklist items</em>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="task-card task-summary-card" aria-labelledby="configuration-summary-title">
+        <header class="task-card-heading">
+          <h2 id="configuration-summary-title">Configuration Summary</h2>
+        </header>
+        <div class="task-card-body task-summary">
+          <dl>
+            <div>
+              <dt>Associated Category</dt>
+              <dd>{{ categories().length }}</dd>
+            </div>
+            <div>
+              <dt>Associated Order</dt>
+              <dd>{{ orders().length }}</dd>
+            </div>
+            <div>
+              <dt>Start Week</dt>
+              <dd>{{ form.controls.startWeek.value }}</dd>
+            </div>
+            <div>
+              <dt>End Week</dt>
+              <dd>{{ form.controls.endWeek.value }}</dd>
+            </div>
+            <div class="summary-status">
+              <dt>Status</dt>
+              <dd>
+                <span class="task-status-pill" [attr.data-status]="statusValue()">{{
+                  statusValue()
+                }}</span>
+              </dd>
+            </div>
+          </dl>
+          <p class="summary-note">
+            Configuration is compliant with standard pregnancy workflow guidelines. Review associated
+            orders before publication
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="task-card" aria-labelledby="gestational-scheduling-title">
+      <header class="task-card-heading">
+        <h2 id="gestational-scheduling-title">Gestational Scheduling</h2>
+      </header>
+      <div class="task-card-body scheduling-body">
+        <p>Define the pregnancy week range during which task becomes available</p>
+        <div class="scheduling-grid">
+          <div class="admin-field">
+            <label class="admin-field__label" for="start-week"
+              >Gestational Start Week <span class="admin-field__required">*</span></label
+            >
+            <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic">
+              <input id="start-week" matInput type="number" min="0" formControlName="startWeek" />
+            </mat-form-field>
+          </div>
+          <div class="admin-field">
+            <label class="admin-field__label" for="end-week"
+              >Gestational End Week <span class="admin-field__required">*</span></label
+            >
+            <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic">
+              <input id="end-week" matInput type="number" min="0" formControlName="endWeek" />
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="task-card" aria-labelledby="associated-categories-title">
+      <header class="task-card-heading task-card-heading--actions">
+        <h2 id="associated-categories-title">Associated Categories</h2>
+        <button
+          matButton="filled"
+          type="button"
+          class="app-button app-button--primary app-button--small"
+          (click)="openCategoryDialog()"
+        >
+          <img src="assets/admin/providers/add.svg" alt="" width="12" height="12" />Add Category
+        </button>
+      </header>
+      <div class="task-card-body">
+        <p class="task-helper">Select Category Templates where this task may be utilized</p>
+        <div class="association-table" tabindex="0" role="region" aria-label="Associated categories">
+          <table>
+            <colgroup>
+              <col class="category-col" />
+              <col />
+              <col class="status-col" />
+              <col class="actions-col" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Category Name</th>
+                <th scope="col">Problem Name</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (category of categories(); track category.id) {
+                <tr>
+                  <th scope="row">{{ category.categoryName }}</th>
+                  <td>{{ category.problemName }}</td>
+                  <td>
+                    <span class="task-status-pill" [attr.data-status]="category.status">{{
+                      category.status
+                    }}</span>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="icon-action"
+                      [attr.aria-label]="'Delete ' + category.categoryName"
+                      [matTooltip]="'Delete ' + category.categoryName"
+                      (click)="removeCategory(category.id)"
+                    >
+                      <img src="assets/admin/problem-templates/delete.svg" alt="" width="14" height="14" />
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="task-card" aria-labelledby="associated-orders-title">
+      <header class="task-card-heading task-card-heading--actions">
+        <h2 id="associated-orders-title">Associated Orders</h2>
+        <button matButton="filled" type="button" class="app-button app-button--primary app-button--small">
+          <img src="assets/admin/providers/add.svg" alt="" width="12" height="12" />Associate Order
+        </button>
+      </header>
+      <div class="task-card-body">
+        <p class="task-helper">Select prebuilt orders from the Global Order Library</p>
+        <div class="association-table" tabindex="0" role="region" aria-label="Associated orders">
+          <table>
+            <colgroup>
+              <col />
+              <col class="sequence-col" />
+              <col class="status-col" />
+              <col class="actions-col" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Order Name</th>
+                <th scope="col">Sequence</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (order of orders(); track order.id) {
+                <tr>
+                  <th scope="row">{{ order.name }}</th>
+                  <td>{{ order.sequence }}</td>
+                  <td>
+                    <span class="task-status-pill" [attr.data-status]="order.status">{{
+                      order.status
+                    }}</span>
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="icon-action"
+                      [attr.aria-label]="'Delete ' + order.name"
+                      [matTooltip]="'Delete ' + order.name"
+                      (click)="removeOrder(order.id)"
+                    >
+                      <img src="assets/admin/problem-templates/delete.svg" alt="" width="14" height="14" />
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <em class="task-help">
+          Orders must come from Global Order Library. Order sequence is configurable. A task may contain
+          one or more orders.
+        </em>
+      </div>
+    </section>
+
+    <section class="task-card" aria-labelledby="checkbox-items-title">
+      <header class="task-card-heading task-card-heading--actions">
+        <h2 id="checkbox-items-title">Checkbox Items</h2>
+        <button matButton="filled" type="button" class="app-button app-button--primary app-button--small">
+          <img src="assets/admin/providers/add.svg" alt="" width="12" height="12" />Add Item
+        </button>
+      </header>
+      <div class="task-card-body">
+        <p class="task-helper">Define checklist items that must be completed for this task</p>
+        <div class="association-table checklist-table" tabindex="0" role="region" aria-label="Checkbox items">
+          <table>
+            <colgroup>
+              <col />
+              <col class="notes-col" />
+              <col class="sequence-col" />
+              <col class="actions-col" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Item Name</th>
+                <th scope="col">Requires Notes</th>
+                <th scope="col">Sequence</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of checklistItems(); track item.id) {
+                <tr>
+                  <th scope="row">{{ item.name }}</th>
+                  <td>
+                    <button
+                      type="button"
+                      class="notes-toggle"
+                      [class.is-on]="item.requiresNotes"
+                      [attr.aria-pressed]="item.requiresNotes"
+                      [attr.aria-label]="'Toggle notes for ' + item.name"
+                      [matTooltip]="'Toggle notes for ' + item.name"
+                      (click)="toggleNotes(item.id)"
+                    >
+                      <span></span>{{ item.requiresNotes ? 'Yes' : 'No' }}
+                    </button>
+                  </td>
+                  <td>
+                    <span class="sequence-box">{{ item.sequence }}</span>
+                  </td>
+                  <td>
+                    <div class="table-actions">
+                      <button
+                        type="button"
+                        class="icon-action"
+                        [attr.aria-label]="'Edit ' + item.name"
+                        [matTooltip]="'Edit ' + item.name"
+                      >
+                        <img src="assets/admin/providers/edit.svg" alt="" width="14" height="14" />
+                      </button>
+                      <button
+                        type="button"
+                        class="icon-action"
+                        [attr.aria-label]="'Delete ' + item.name"
+                        [matTooltip]="'Delete ' + item.name"
+                        (click)="removeChecklistItem(item.id)"
+                      >
+                        <img src="assets/admin/problem-templates/delete.svg" alt="" width="14" height="14" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <em class="task-help">
+          Each checkbox item represents a discrete step. When 'Requires Notes' is enabled, the user must
+          provide a text note when completing the item.
+        </em>
+      </div>
+    </section>
+
+    @if (message()) {
+      <p class="save-message" role="status">{{ message() }}</p>
+    }
+
+    <footer class="task-actions-footer">
+      <button
+        matButton="filled"
+        type="button"
+        class="app-button app-button--secondary"
+        (click)="cancel()"
+      >
+        Cancel
+      </button>
+      <div class="task-actions-footer__group">
+        <button
+          matButton="outlined"
+          type="button"
+          class="app-button app-button--outline-primary"
+          (click)="save(true)"
+        >
+          Save as Draft
+        </button>
+        <button matButton="filled" type="submit" class="app-button app-button--primary">
+          Submit
+        </button>
+      </div>
+    </footer>
+  </form>
+</div>
