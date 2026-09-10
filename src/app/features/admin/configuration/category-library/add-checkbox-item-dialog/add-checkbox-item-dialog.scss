@@ -1,0 +1,169 @@
+:host {
+  display: block;
+  color: #111827;
+  font-family: Inter, Arial, sans-serif;
+}
+
+.add-checkbox-dialog {
+  overflow: hidden;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 14%);
+}
+
+.add-checkbox-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  border-bottom: 1px solid #e8e2d9;
+
+  h2 {
+    margin: 0;
+    color: #111827;
+    font-size: clamp(16px, 1.25vw, 18px);
+    font-weight: 600;
+    line-height: 24px;
+  }
+}
+
+.dialog-close {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 0;
+  border-radius: 9999px;
+  background: transparent;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-checkbox-dialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: clamp(20px, 1.667vw, 24px);
+}
+
+.notes-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  > div {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  strong {
+    color: #111827;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 18px;
+  }
+
+  span {
+    color: #6b7280;
+    font-size: 12px;
+    line-height: 16px;
+  }
+}
+
+.dialog-toggle {
+  display: inline-flex;
+  min-width: 72px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  color: #6b7280;
+  font-size: 13px;
+  line-height: 18px;
+
+  i {
+    position: relative;
+    width: 36px;
+    height: 20px;
+    border-radius: 9999px;
+    background: #d1d5db;
+  }
+
+  i::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 20%);
+    transition: transform 160ms ease;
+  }
+
+  &.is-on {
+    color: #034e58;
+  }
+
+  &.is-on i {
+    background: #034e58;
+  }
+
+  &.is-on i::after {
+    transform: translateX(16px);
+  }
+}
+
+.sequence-field {
+  width: 140px;
+  max-width: 100%;
+}
+
+.field-error {
+  margin: 2px 0 0;
+  color: #b91c1c;
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.add-checkbox-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 20px;
+  border-top: 1px solid #e8e2d9;
+
+  .app-button {
+    --mat-button-filled-horizontal-padding: 16px;
+  }
+}
+
+.add-checkbox-dialog input:focus-visible {
+  outline: none;
+}
+
+.add-checkbox-dialog button:focus-visible {
+  outline: 2px solid #0d9488;
+  outline-offset: 2px;
+}
+
+@media (max-width: 575.98px) {
+  .notes-field,
+  .add-checkbox-dialog__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

@@ -272,7 +272,12 @@
     <section class="task-card" aria-labelledby="checkbox-items-title">
       <header class="task-card-heading task-card-heading--actions">
         <h2 id="checkbox-items-title">Checkbox Items</h2>
-        <button matButton="filled" type="button" class="app-button app-button--primary app-button--small">
+        <button
+          matButton="filled"
+          type="button"
+          class="app-button app-button--primary app-button--small"
+          (click)="openCheckboxItemDialog()"
+        >
           <img src="assets/admin/providers/add.svg" alt="" width="12" height="12" />Add Item
         </button>
       </header>

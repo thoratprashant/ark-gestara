@@ -11,6 +11,11 @@ import {
   ADD_CATEGORY_DIALOG_CONFIG,
   AddCategoryDialog,
 } from '../add-category-dialog/add-category-dialog';
+import {
+  ADD_CHECKBOX_ITEM_DIALOG_CONFIG,
+  AddCheckboxItemDialog,
+  CheckboxItemDialogResult,
+} from '../../category-library/add-checkbox-item-dialog/add-checkbox-item-dialog';
 
 type TaskStatus = 'Draft' | 'Active' | 'Inactive';
 type TaskType = 'Order Layout' | 'Checkbox Layout';
@@ -102,6 +107,25 @@ export class AddNewTask {
 
     ref.afterClosed().subscribe((selected) => {
       if (selected) this.categories.set(selected);
+    });
+  }
+
+  protected openCheckboxItemDialog(): void {
+    const currentItems = this.checklistItems();
+    const ref = this.dialog.open<
+      AddCheckboxItemDialog,
+      { nextId: number; nextSequence: number },
+      CheckboxItemDialogResult
+    >(AddCheckboxItemDialog, {
+      ...ADD_CHECKBOX_ITEM_DIALOG_CONFIG,
+      data: {
+        nextId: Math.max(...currentItems.map((item) => item.id), 0) + 1,
+        nextSequence: Math.max(...currentItems.map((item) => item.sequence), 0) + 1,
+      },
+    });
+
+    ref.afterClosed().subscribe((item) => {
+      if (item) this.checklistItems.update((items) => [...items, item]);
     });
   }
 
