@@ -38,7 +38,7 @@ export class CategoryLibrary {
       tasks: 12,
       orders: 5,
       status: 'Active',
-      modified: '2024-05-10',
+      modified: '01-05-2025',
     },
     {
       id: 2,
@@ -46,7 +46,7 @@ export class CategoryLibrary {
       tasks: 9,
       orders: 4,
       status: 'Active',
-      modified: '2024-04-22',
+      modified: '01-04-2025',
     },
     {
       id: 3,
@@ -54,7 +54,7 @@ export class CategoryLibrary {
       tasks: 7,
       orders: 3,
       status: 'Draft',
-      modified: '2024-03-15',
+      modified: '01-03-2025',
     },
     {
       id: 4,
@@ -62,7 +62,7 @@ export class CategoryLibrary {
       tasks: 6,
       orders: 2,
       status: 'Pending',
-      modified: '2024-06-01',
+      modified: '01-06-2025',
     },
     {
       id: 5,
@@ -70,7 +70,7 @@ export class CategoryLibrary {
       tasks: 8,
       orders: 3,
       status: 'Pending',
-      modified: '2024-02-28',
+      modified: '01-02-2025',
     },
   ]);
 
