@@ -99,6 +99,27 @@
   font-weight: 600;
 }
 
+.patient-identity__history {
+  padding: 0;
+  color: #0d9488;
+  background: transparent;
+  border: 0;
+  border-radius: 0.25rem;
+  font-family: Inter, sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.patient-identity__history:hover,
+.patient-identity__history:focus-visible {
+  color: #007f78;
+  outline: 2px solid rgba(13, 148, 136, 0.18);
+  outline-offset: 2px;
+}
+
 .summary-facts {
   display: flex;
   justify-content: flex-end;
@@ -178,6 +199,24 @@
   transition:
     background-color 180ms ease,
     box-shadow 180ms ease;
+}
+
+.summary-fact--edd {
+  border: 0;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  transition:
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.summary-fact--edd:hover,
+.summary-fact--edd:focus-visible {
+  background: #dff2f0;
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.14);
+  outline: none;
 }
 
 .summary-fact--delivery:hover,
@@ -377,6 +416,50 @@
   min-height: 4.75rem;
   padding: clamp(0.75rem, 1.5vw, 0.9rem);
   border-radius: 0.875rem;
+}
+
+.patient-metric--edd {
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.patient-metric--edd:hover,
+.patient-metric--edd:focus-visible {
+  background: #f1fbfa;
+  border-color: #78c9c5;
+  box-shadow:
+    0 0 0 2px rgba(13, 148, 136, 0.08),
+    0 0.5rem 1.25rem rgba(23, 36, 43, 0.14);
+  outline: none;
+}
+
+.patient-metric--pregnancy-history {
+  background: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.patient-metric--pregnancy-history:hover,
+.patient-metric--pregnancy-history:focus-visible {
+  background: #f1fbfa;
+  border-color: #78c9c5;
+  box-shadow:
+    0 0 0 2px rgba(13, 148, 136, 0.08),
+    0 0.5rem 1.25rem rgba(23, 36, 43, 0.14);
+  outline: none;
 }
 
 .patient-metric h2,

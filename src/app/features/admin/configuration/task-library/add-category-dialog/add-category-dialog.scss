@@ -132,7 +132,7 @@
 }
 
 .task-category-dialog__results {
-  max-height: min(480px, calc(100dvh - 238px));
+  height: min(480px, calc(100dvh - 238px));
   overflow-y: auto;
 }
 

@@ -80,6 +80,17 @@ interface TooltipGlassFocusRect {
   top: number;
 }
 
+interface EddTooltipRow {
+  label: string;
+  value: string;
+}
+
+interface PregnancyHistoryEntry {
+  date: string;
+  details: readonly EddTooltipRow[];
+  title: string;
+}
+
 interface ResultTableRow {
   alert?: 'low';
   name: string;
@@ -847,6 +858,61 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     top: 0,
     width: 300,
   });
+  readonly eddTooltipOpen = signal(false);
+  readonly eddTooltipPosition = signal<VitalTooltipPosition>({
+    left: 0,
+    top: 0,
+    width: 420,
+  });
+  readonly eddCalculationRows: readonly EddTooltipRow[] = [
+    { label: 'Last Menstrual Period (LMP)', value: 'August 28, 2025' },
+    { label: 'EDD by LMP', value: 'June 4, 2026' },
+    { label: 'First Ultrasound', value: 'October 25, 2025' },
+    { label: 'Gestational Age', value: '8 weeks 4 days' },
+    { label: 'EDD by Ultrasound', value: 'June 15, 2026' },
+  ];
+  readonly eddFinalRows: readonly EddTooltipRow[] = [
+    { label: 'Final EDD', value: 'June 15, 2026' },
+    { label: 'Based on', value: 'first trimester ultrasound' },
+  ];
+  readonly pregnancyHistoryTooltipOpen = signal(false);
+  readonly pregnancyHistoryTooltipPosition = signal<VitalTooltipPosition>({
+    left: 0,
+    top: 0,
+    width: 460,
+  });
+  readonly pregnancyHistoryEntries: readonly PregnancyHistoryEntry[] = [
+    {
+      title: 'Pregnancy 1',
+      date: 'March 2020',
+      details: [
+        { label: 'GA at Delivery:', value: '39w 2d' },
+        { label: 'Mode:', value: 'Vaginal' },
+        { label: 'Complications:', value: 'None' },
+      ],
+    },
+    {
+      title: 'Pregnancy 2',
+      date: 'June 2022',
+      details: [
+        { label: 'GA at Delivery:', value: '8w 0d' },
+        { label: 'Mode:', value: 'Spontaneous abortion' },
+        { label: 'Complications:', value: 'None' },
+      ],
+    },
+    {
+      title: 'Pregnancy 3',
+      date: 'Current',
+      details: [
+        { label: 'GA at Delivery:', value: '28w 4d' },
+        { label: 'Mode:', value: 'In progress' },
+        {
+          label: 'Complications:',
+          value: 'Gestational Diabetes Mellitus, Gestational Hypertension',
+        },
+      ],
+    },
+  ];
   readonly activeTimelineGroupTooltip = signal<TimelineGroup | null>(null);
   readonly timelineGroupTooltipPosition = signal<VitalTooltipPosition>({
     left: 0,
@@ -875,6 +941,8 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       this.activeResultTooltip() !== null ||
       this.riskAssessmentOpen() ||
       this.deliveryWindowTooltipOpen() ||
+      this.eddTooltipOpen() ||
+      this.pregnancyHistoryTooltipOpen() ||
       this.activeTimelineGroupTooltip() !== null,
   );
   readonly highRiskFactors = [
@@ -922,6 +990,8 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   private resultTooltipHideTimer: number | null = null;
   private riskAssessmentHideTimer: number | null = null;
   private deliveryWindowTooltipHideTimer: number | null = null;
+  private eddTooltipHideTimer: number | null = null;
+  private pregnancyHistoryTooltipHideTimer: number | null = null;
   private timelineGroupTooltipHideTimer: number | null = null;
   private timelineStatusTooltipHideTimer: number | null = null;
   private timelineItemSequence = 0;
@@ -942,6 +1012,8 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.cancelResultTooltipHide();
     this.cancelRiskAssessmentHide();
     this.cancelDeliveryWindowTooltipHide();
+    this.cancelEddTooltipHide();
+    this.cancelPregnancyHistoryTooltipHide();
     this.cancelTimelineGroupTooltipHide();
     this.cancelTimelineStatusTooltipHide();
   }
@@ -959,6 +1031,8 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.hideResultTooltip();
     this.hideRiskAssessment();
     this.hideDeliveryWindowTooltip();
+    this.hideEddTooltip();
+    this.hidePregnancyHistoryTooltip();
     this.hideTimelineGroupTooltip();
     this.vitalChartHover.set(null);
 
@@ -1010,6 +1084,8 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.hideVitalTooltip();
     this.hideRiskAssessment();
     this.hideDeliveryWindowTooltip();
+    this.hideEddTooltip();
+    this.hidePregnancyHistoryTooltip();
     this.hideTimelineGroupTooltip();
     const tooltip = RESULT_TOOLTIPS.find((item) => item.id === tooltipId);
     const card = event.currentTarget as HTMLElement | null;
@@ -1055,6 +1131,8 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.hideVitalTooltip();
     this.hideResultTooltip();
     this.hideDeliveryWindowTooltip();
+    this.hideEddTooltip();
+    this.hidePregnancyHistoryTooltip();
     this.hideTimelineGroupTooltip();
     const trigger = event.currentTarget as HTMLElement | null;
 
@@ -1099,6 +1177,8 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.hideVitalTooltip();
     this.hideResultTooltip();
     this.hideRiskAssessment();
+    this.hideEddTooltip();
+    this.hidePregnancyHistoryTooltip();
     this.hideTimelineGroupTooltip();
     const trigger = event.currentTarget as HTMLElement | null;
 
@@ -1136,12 +1216,106 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.cancelDeliveryWindowTooltipHide();
   }
 
+  showEddTooltip(event: Event): void {
+    this.cancelEddTooltipHide();
+    this.hideVitalTooltip();
+    this.hideResultTooltip();
+    this.hideRiskAssessment();
+    this.hideDeliveryWindowTooltip();
+    this.hidePregnancyHistoryTooltip();
+    this.hideTimelineGroupTooltip();
+    const trigger = event.currentTarget as HTMLElement | null;
+
+    if (!trigger) {
+      return;
+    }
+
+    const triggerBounds = trigger.getBoundingClientRect();
+    const width = Math.min(420, Math.max(window.innerWidth - 24, 280));
+    const maximumLeft = Math.max(12, window.innerWidth - width - 12);
+    const preferredLeft = triggerBounds.right - width;
+    const top = triggerBounds.bottom + 8;
+
+    this.eddTooltipPosition.set({
+      left: this.clamp(preferredLeft, 12, maximumLeft),
+      top,
+      width,
+    });
+    this.setTooltipGlassFocus(triggerBounds);
+    this.eddTooltipOpen.set(true);
+  }
+
+  hideEddTooltip(): void {
+    this.cancelEddTooltipHide();
+    this.eddTooltipOpen.set(false);
+  }
+
+  scheduleEddTooltipHide(): void {
+    this.cancelEddTooltipHide();
+    this.eddTooltipHideTimer = window.setTimeout(() => {
+      this.eddTooltipOpen.set(false);
+      this.eddTooltipHideTimer = null;
+    }, 180);
+  }
+
+  keepEddTooltipOpen(): void {
+    this.cancelEddTooltipHide();
+  }
+
+  showPregnancyHistoryTooltip(event: Event): void {
+    this.cancelPregnancyHistoryTooltipHide();
+    this.hideVitalTooltip();
+    this.hideResultTooltip();
+    this.hideRiskAssessment();
+    this.hideDeliveryWindowTooltip();
+    this.hideEddTooltip();
+    this.hideTimelineGroupTooltip();
+    const trigger = event.currentTarget as HTMLElement | null;
+
+    if (!trigger) {
+      return;
+    }
+
+    const triggerBounds = trigger.getBoundingClientRect();
+    const width = Math.min(460, Math.max(window.innerWidth - 24, 300));
+    const maximumLeft = Math.max(12, window.innerWidth - width - 12);
+    const preferredLeft = triggerBounds.right - width;
+    const top = triggerBounds.bottom + 8;
+
+    this.pregnancyHistoryTooltipPosition.set({
+      left: this.clamp(preferredLeft, 12, maximumLeft),
+      top,
+      width,
+    });
+    this.setTooltipGlassFocus(triggerBounds);
+    this.pregnancyHistoryTooltipOpen.set(true);
+  }
+
+  hidePregnancyHistoryTooltip(): void {
+    this.cancelPregnancyHistoryTooltipHide();
+    this.pregnancyHistoryTooltipOpen.set(false);
+  }
+
+  schedulePregnancyHistoryTooltipHide(): void {
+    this.cancelPregnancyHistoryTooltipHide();
+    this.pregnancyHistoryTooltipHideTimer = window.setTimeout(() => {
+      this.pregnancyHistoryTooltipOpen.set(false);
+      this.pregnancyHistoryTooltipHideTimer = null;
+    }, 180);
+  }
+
+  keepPregnancyHistoryTooltipOpen(): void {
+    this.cancelPregnancyHistoryTooltipHide();
+  }
+
   showTimelineGroupTooltip(group: TimelineGroup, event: Event): void {
     this.cancelTimelineGroupTooltipHide();
     this.hideVitalTooltip();
     this.hideResultTooltip();
     this.hideRiskAssessment();
     this.hideDeliveryWindowTooltip();
+    this.hideEddTooltip();
+    this.hidePregnancyHistoryTooltip();
     const trigger = event.currentTarget as HTMLElement | null;
 
     if (!trigger) {
@@ -1207,6 +1381,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.cancelTimelineStatusTooltipHide();
     this.hideVitalTooltip();
     this.hideResultTooltip();
+    this.hideRiskAssessment();
+    this.hideDeliveryWindowTooltip();
+    this.hideEddTooltip();
+    this.hidePregnancyHistoryTooltip();
     this.hideTimelineGroupTooltip();
     const trigger = event.currentTarget as HTMLElement | null;
 
@@ -1657,6 +1835,14 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       this.hideDeliveryWindowTooltip();
     }
 
+    if (this.eddTooltipOpen()) {
+      this.hideEddTooltip();
+    }
+
+    if (this.pregnancyHistoryTooltipOpen()) {
+      this.hidePregnancyHistoryTooltip();
+    }
+
     if (this.activeTimelineGroupTooltip()) {
       this.hideTimelineGroupTooltip();
     }
@@ -1755,6 +1941,20 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     if (this.deliveryWindowTooltipHideTimer !== null) {
       window.clearTimeout(this.deliveryWindowTooltipHideTimer);
       this.deliveryWindowTooltipHideTimer = null;
+    }
+  }
+
+  private cancelEddTooltipHide(): void {
+    if (this.eddTooltipHideTimer !== null) {
+      window.clearTimeout(this.eddTooltipHideTimer);
+      this.eddTooltipHideTimer = null;
+    }
+  }
+
+  private cancelPregnancyHistoryTooltipHide(): void {
+    if (this.pregnancyHistoryTooltipHideTimer !== null) {
+      window.clearTimeout(this.pregnancyHistoryTooltipHideTimer);
+      this.pregnancyHistoryTooltipHideTimer = null;
     }
   }
 

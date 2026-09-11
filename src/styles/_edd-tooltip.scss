@@ -1,0 +1,140 @@
+.edd-tooltip {
+  position: fixed;
+  z-index: 1250;
+  max-width: calc(100vw - 1.5rem);
+  overflow: hidden;
+  padding-bottom: 1rem;
+  color: #171f26;
+  background: #fff;
+  border: 1px solid #e3ded9;
+  border-radius: 0.75rem;
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.03),
+    0 4px 16px rgba(0, 0, 0, 0.1);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  pointer-events: auto;
+  transform-origin: top right;
+  animation: edd-tooltip-open 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.edd-tooltip p,
+.edd-tooltip h3,
+.edd-tooltip dl,
+.edd-tooltip dd {
+  margin: 0;
+}
+
+.edd-tooltip__summary {
+  display: flex;
+  justify-content: space-between;
+  gap: clamp(1.5rem, 8vw, 8.4375rem);
+  padding: 0.625rem 1.25rem;
+  overflow: hidden;
+  background: #fff;
+  color: #0d9488;
+}
+
+.edd-tooltip__summary > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.edd-tooltip__summary > div:last-child {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.edd-tooltip__summary span {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.edd-tooltip__summary strong {
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: normal;
+  white-space: nowrap;
+}
+
+.edd-tooltip__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.25rem 1.25rem 0.5rem;
+}
+
+.edd-tooltip__body h3 {
+  color: #0d9488;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.5rem;
+}
+
+.edd-tooltip__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.edd-tooltip__list--final {
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.edd-tooltip__list div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.edd-tooltip__list dt {
+  color: #73808c;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.edd-tooltip__list dd {
+  color: #171f26;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+}
+
+@keyframes edd-tooltip-open {
+  from {
+    opacity: 0;
+    transform: translateY(-0.375rem) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 575px) {
+  .edd-tooltip__summary {
+    gap: 0.75rem;
+  }
+
+  .edd-tooltip__summary span {
+    font-size: 0.625rem;
+  }
+
+  .edd-tooltip__summary strong {
+    font-size: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edd-tooltip {
+    animation-duration: 1ms;
+  }
+}
