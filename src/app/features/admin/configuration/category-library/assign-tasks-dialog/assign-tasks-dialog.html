@@ -35,20 +35,37 @@
       <tbody>
         @for (task of filtered(); track task.id) {
           <tr [class.is-selected]="selectedIds().has(task.id)">
-            <td>
+            <td
+              class="assign-dialog__select-cell"
+              role="button"
+              tabindex="0"
+              [attr.aria-label]="'Select ' + task.name"
+              [attr.aria-pressed]="selectedIds().has(task.id)"
+              (click)="toggle(task)"
+              (keydown.enter)="toggle(task)"
+              (keydown.space)="toggle(task); $event.preventDefault()"
+            >
               <button
                 type="button"
                 class="assign-check"
                 [class.is-selected]="selectedIds().has(task.id)"
                 [attr.aria-pressed]="selectedIds().has(task.id)"
                 [attr.aria-label]="'Select ' + task.name"
-                (click)="toggle(task)"
-              >
-              </button>
+                (click)="toggle(task); $event.stopPropagation()"
+              ></button>
               <span>{{ task.name }}</span>
             </td>
             <td>
               <span class="assign-status" [attr.data-status]="task.status">{{ task.status }}</span>
+            </td>
+          </tr>
+        } @empty {
+          <tr class="assign-dialog__empty-row">
+            <td colspan="2">
+              <div class="assign-dialog__empty-state">
+                <strong>No record found</strong>
+                <span>Try another task name or code.</span>
+              </div>
             </td>
           </tr>
         }
@@ -59,10 +76,20 @@
   <footer class="assign-dialog__footer">
     <span>{{ selectedIds().size }} of {{ tasks.length }} items selected for assignment</span>
     <div>
-      <button matButton="filled" type="button" class="app-button app-button--secondary" mat-dialog-close>
+      <button
+        matButton="filled"
+        type="button"
+        class="app-button app-button--secondary"
+        mat-dialog-close
+      >
         Cancel
       </button>
-      <button matButton="filled" type="button" class="app-button app-button--primary" (click)="assign()">
+      <button
+        matButton="filled"
+        type="button"
+        class="app-button app-button--primary"
+        (click)="assign()"
+      >
         Assign Selected ({{ selectedIds().size }})
       </button>
     </div>
