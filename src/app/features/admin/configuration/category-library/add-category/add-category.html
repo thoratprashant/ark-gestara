@@ -92,7 +92,10 @@
         </div>
       </section>
 
-      <aside class="category-card category-summary-card" aria-labelledby="configuration-summary-title">
+      <aside
+        class="category-card category-summary-card"
+        aria-labelledby="configuration-summary-title"
+      >
         <header class="category-card-heading">
           <h2 id="configuration-summary-title">Configuration Summary</h2>
         </header>
@@ -175,10 +178,15 @@
                       type="button"
                       class="icon-action"
                       [attr.aria-label]="'Delete ' + problem.name"
-                      [matTooltip]="'Delete ' + problem.name"
+                      matTooltip="Delete"
                       (click)="removeProblem(problem.id)"
                     >
-                      <img src="assets/admin/problem-templates/delete.svg" alt="" width="14" height="14" />
+                      <img
+                        src="assets/admin/problem-templates/delete.svg"
+                        alt=""
+                        width="14"
+                        height="14"
+                      />
                     </button>
                   </td>
                 </tr>
@@ -246,10 +254,15 @@
                       type="button"
                       class="icon-action"
                       [attr.aria-label]="'Delete ' + task.name"
-                      [matTooltip]="'Delete ' + task.name"
+                      matTooltip="Delete"
                       (click)="removeTask(task.id)"
                     >
-                      <img src="assets/admin/problem-templates/delete.svg" alt="" width="14" height="14" />
+                      <img
+                        src="assets/admin/problem-templates/delete.svg"
+                        alt=""
+                        width="14"
+                        height="14"
+                      />
                     </button>
                   </td>
                 </tr>

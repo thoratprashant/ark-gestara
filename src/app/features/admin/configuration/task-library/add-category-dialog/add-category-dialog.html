@@ -30,7 +30,7 @@
         type="button"
         class="search-clear"
         aria-label="Clear category search"
-        matTooltip="Clear search"
+        matTooltip="Clear"
         (click)="clearQuery()"
       >
         <img src="assets/admin/icd-master/close.svg" alt="" width="14" height="14" />
@@ -86,10 +86,20 @@
   </div>
 
   <footer class="task-category-dialog__footer">
-    <button matButton="filled" type="button" class="app-button app-button--secondary" mat-dialog-close>
+    <button
+      matButton="filled"
+      type="button"
+      class="app-button app-button--secondary"
+      mat-dialog-close
+    >
       Cancel
     </button>
-    <button matButton="filled" type="button" class="app-button app-button--primary" (click)="associate()">
+    <button
+      matButton="filled"
+      type="button"
+      class="app-button app-button--primary"
+      (click)="associate()"
+    >
       Associate Selected Category
     </button>
   </footer>

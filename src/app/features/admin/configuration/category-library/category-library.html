@@ -1,5 +1,7 @@
 <section class="category-page" aria-labelledby="category-title">
-  <header class="category-heading d-flex flex-column flex-lg-row justify-content-between align-items-lg-end">
+  <header
+    class="category-heading d-flex flex-column flex-lg-row justify-content-between align-items-lg-end"
+  >
     <div>
       <h1 id="category-title">Category Library</h1>
       <p>
@@ -19,7 +21,8 @@
     @for (stat of stats(); track stat.label) {
       <div class="col-6 col-md-3">
         <article class="category-stat d-flex flex-column">
-          <strong>{{ stat.value }}</strong><span>{{ stat.label }}</span>
+          <strong>{{ stat.value }}</strong
+          ><span>{{ stat.label }}</span>
         </article>
       </div>
     }
@@ -97,14 +100,14 @@
                   <button
                     type="button"
                     [attr.aria-label]="'View ' + category.name"
-                    [matTooltip]="'View ' + category.name"
+                    matTooltip="View"
                   >
                     <img src="assets/admin/providers/view.svg" alt="" width="14" height="14" />
                   </button>
                   <button
                     type="button"
                     [attr.aria-label]="'Edit ' + category.name"
-                    [matTooltip]="'Edit ' + category.name"
+                    matTooltip="Edit"
                   >
                     <img src="assets/admin/providers/edit.svg" alt="" width="14" height="14" />
                   </button>

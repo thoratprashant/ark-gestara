@@ -26,6 +26,11 @@ textarea {
   font: inherit;
 }
 
+select::first-letter,
+.mat-mdc-select-value-text::first-letter {
+  text-transform: uppercase;
+}
+
 textarea {
   resize: none;
 }
