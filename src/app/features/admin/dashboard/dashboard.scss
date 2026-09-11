@@ -1,40 +1,317 @@
-.admin-feature-page {
-  width: 100%;
-  font-family: Inter, Arial, sans-serif;
+:host {
+  display: block;
+}
 
+.admin-dashboard {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 32px;
+  color: #111827;
+  font-family: Inter, Arial, sans-serif;
+}
+
+.admin-dashboard__intro {
   h1 {
     margin: 0;
-    color: #111827;
-    font-size: var(--app-font-size-24px);
+    font-size: clamp(21px, 1.67vw, 24px);
     font-weight: 700;
     line-height: 32px;
-    letter-spacing: -0.025em;
+    letter-spacing: 0;
   }
-  > p {
-    margin: 4px 0 28px;
+
+  p {
+    margin: 4px 0 0;
     color: #6b7280;
-    font-size: 14px;
+    font-size: clamp(13px, 0.98vw, 14px);
     line-height: 20px;
   }
-  article {
-    min-height: 240px;
-    padding: var(--app-space-24px);
-    border: 1px solid #e8e2d9;
-    border-radius: 16px;
-    background: #fff;
-    box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
-  }
+}
+
+.admin-dashboard__section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
   h2 {
-    margin: 0 0 8px;
-    color: #111827;
-    font-size: var(--app-font-size-18px);
-    font-weight: 600;
-    line-height: 24px;
-  }
-  article p {
     margin: 0;
+    padding: 10px 0 11px;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: clamp(16px, 1.25vw, 18px);
+    font-weight: 600;
+    line-height: 28px;
+    letter-spacing: 0;
+  }
+}
+
+.admin-dashboard__metric-grid,
+.admin-dashboard__config-grid,
+.admin-dashboard__integrity-grid,
+.admin-dashboard__action-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.admin-dashboard__metric-grid--institutions {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.admin-dashboard__metric-card,
+.admin-dashboard__integrity-card,
+.admin-dashboard__quick-actions {
+  border: 1px solid #f3f4f6;
+  background: #fff;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 5%);
+}
+
+.admin-dashboard__metric-card {
+  display: flex;
+  min-width: 0;
+  min-height: 158px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 21px;
+  border-radius: 16px;
+}
+
+.admin-dashboard__metric-icon,
+.admin-dashboard__action-icon {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+
+  img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+  }
+}
+
+.admin-dashboard__metric-icon--teal,
+.admin-dashboard__action-icon--teal {
+  background: rgb(42 111 106 / 8%);
+}
+
+.admin-dashboard__metric-icon--coral {
+  background: rgb(232 115 74 / 8%);
+}
+
+.admin-dashboard__metric-icon--gold,
+.admin-dashboard__action-icon--gold {
+  background: rgb(212 168 67 / 8%);
+}
+
+.admin-dashboard__metric-icon--blue,
+.admin-dashboard__action-icon--blue {
+  background: rgb(91 143 217 / 8%);
+}
+
+.admin-dashboard__metric-value {
+  margin-top: 12px;
+  color: #111827;
+  font-size: clamp(25px, 2.08vw, 30px);
+  font-weight: 700;
+  line-height: 36px;
+  letter-spacing: 0;
+}
+
+.admin-dashboard__metric-label {
+  color: #6b7280;
+  font-size: clamp(13px, 0.98vw, 14px);
+  line-height: 20px;
+}
+
+.admin-dashboard__config-grid {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin-dashboard__config-card {
+  display: flex;
+  min-width: 0;
+  min-height: 72px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 16px;
+  border: 1px solid #f3f4f6;
+  border-radius: 12px;
+  background: #fff;
+  text-align: center;
+
+  strong {
+    color: #111827;
+    font-size: clamp(17px, 1.39vw, 20px);
+    font-weight: 700;
+    line-height: 28px;
+  }
+
+  span {
+    color: #6b7280;
+    font-size: clamp(10px, 0.83vw, 12px);
+    line-height: 16px;
+  }
+}
+
+.admin-dashboard__integrity {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 20px 21px;
+  border-radius: 16px;
+  background: #e5f4f1;
+
+  h2 {
+    margin: 0;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgb(255 255 255 / 60%);
+    font-size: clamp(16px, 1.25vw, 18px);
+    font-weight: 600;
+    line-height: 28px;
+    letter-spacing: 0;
+  }
+}
+
+.admin-dashboard__integrity-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.admin-dashboard__integrity-card {
+  display: flex;
+  min-width: 0;
+  min-height: 136px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 21px;
+  border-radius: 12px;
+
+  > span {
+    overflow-wrap: anywhere;
+    color: #6b7280;
+    font-size: clamp(12px, 0.98vw, 14px);
+    line-height: 20px;
+  }
+
+  a {
     color: #6b7280;
     font-size: 14px;
     line-height: 20px;
+    text-decoration: underline;
+    text-underline-position: from-font;
+  }
+}
+
+.admin-dashboard__quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 25px;
+  border-radius: 16px;
+
+  h2 {
+    margin: 0;
+    font-size: clamp(16px, 1.25vw, 18px);
+    font-weight: 600;
+    line-height: 28px;
+    letter-spacing: 0;
+  }
+}
+
+.admin-dashboard__action-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 28px;
+  row-gap: 12px;
+}
+
+.admin-dashboard__action {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  color: #374151;
+  font-size: clamp(13px, 0.98vw, 14px);
+  font-weight: 500;
+  line-height: 20px;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+
+  &:hover,
+  &:focus-visible {
+    background: #fbfaf9;
+    transform: translateY(-1px);
+  }
+
+  span:nth-child(2) {
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow-wrap: anywhere;
+  }
+}
+
+.admin-dashboard__action-arrow {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+@media (max-width: 1199px) {
+  .admin-dashboard {
+    gap: 24px;
+  }
+
+  .admin-dashboard__metric-grid--institutions,
+  .admin-dashboard__integrity-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-dashboard__config-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 834px) {
+  .admin-dashboard {
+    gap: 22px;
+  }
+
+  .admin-dashboard__metric-card {
+    min-height: 144px;
+    padding: 18px;
+  }
+
+  .admin-dashboard__integrity,
+  .admin-dashboard__quick-actions {
+    padding: 18px;
+  }
+
+  .admin-dashboard__action-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 575px) {
+  .admin-dashboard__metric-grid--institutions,
+  .admin-dashboard__config-grid,
+  .admin-dashboard__integrity-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-dashboard__section h2,
+  .admin-dashboard__integrity h2 {
+    padding-bottom: 8px;
+  }
+
+  .admin-dashboard__config-card {
+    align-items: flex-start;
+    text-align: left;
   }
 }

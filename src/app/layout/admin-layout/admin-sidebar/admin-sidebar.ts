@@ -37,13 +37,12 @@ export class AdminSidebar {
     this.initialOpenGroups(this.router.url),
   );
 
-  protected readonly problemLibraryOpen = signal(this.router.url.includes('/problem-library/'));
+  protected readonly problemLibraryOpen = signal(this.isProblemLibraryRoute(this.router.url));
 
   constructor() {
     this.router.events.pipe(takeUntilDestroyed()).subscribe((event) => {
-      if (event instanceof NavigationEnd && event.urlAfterRedirects.includes('/problem-library/')) {
-        this.problemLibraryOpen.set(true);
-        this.openGroups.update((groups) => ({ ...groups, configuration: true }));
+      if (event instanceof NavigationEnd) {
+        this.openActiveRouteGroup(event.urlAfterRedirects);
       }
     });
   }
@@ -140,5 +139,34 @@ export class AdminSidebar {
       configuration: decodedUrl.includes('/configuration/'),
       clinicalRules: decodedUrl.includes('/clinical-rules/'),
     };
+  }
+
+  private openActiveRouteGroup(url: string): void {
+    const decodedUrl = decodeURIComponent(url);
+    const nextOpenGroups: Partial<Record<MenuGroupId, boolean>> = {};
+
+    if (decodedUrl.includes('/institution/')) {
+      nextOpenGroups.institution = true;
+    }
+
+    if (decodedUrl.includes('/configuration/')) {
+      nextOpenGroups.configuration = true;
+    }
+
+    if (decodedUrl.includes('/clinical-rules/')) {
+      nextOpenGroups.clinicalRules = true;
+    }
+
+    if (Object.keys(nextOpenGroups).length) {
+      this.openGroups.update((groups) => ({ ...groups, ...nextOpenGroups }));
+    }
+
+    if (this.isProblemLibraryRoute(decodedUrl)) {
+      this.problemLibraryOpen.set(true);
+    }
+  }
+
+  private isProblemLibraryRoute(url: string): boolean {
+    return decodeURIComponent(url).includes('/problem-library');
   }
 }

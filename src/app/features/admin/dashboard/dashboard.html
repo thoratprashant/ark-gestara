@@ -1,8 +1,100 @@
-<section class="admin-feature-page">
-  <h1>Dashboard</h1>
-  <p>Administrative activity and platform overview.</p>
-  <article>
-    <h2>Dashboard Overview</h2>
-    <p>This section is ready for dashboard widgets and administrative metrics.</p>
-  </article>
+<section class="admin-dashboard" aria-labelledby="admin-dashboard-title">
+  <header class="admin-dashboard__intro">
+    <h1 id="admin-dashboard-title">Welcome, Gestara Administrator</h1>
+    <p>Here's an overview of your healthcare network</p>
+  </header>
+
+  <section class="admin-dashboard__section" aria-labelledby="institution-overview-title">
+    <h2 id="institution-overview-title">Institution Overview</h2>
+    <div class="admin-dashboard__metric-grid admin-dashboard__metric-grid--institutions">
+      @for (metric of institutionMetrics; track metric.id) {
+        <article class="admin-dashboard__metric-card">
+          <span
+            class="admin-dashboard__metric-icon admin-dashboard__metric-icon--{{ metric.tone }}"
+          >
+            <img [src]="metric.icon" alt="" width="20" height="20" />
+          </span>
+          <strong
+            #countValue
+            class="admin-dashboard__metric-value"
+            [attr.data-metric-id]="metric.id"
+          >
+            {{ displayedValue(metric) }}
+          </strong>
+          <span class="admin-dashboard__metric-label">{{ metric.label }}</span>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="admin-dashboard__section" aria-labelledby="configuration-overview-title">
+    <h2 id="configuration-overview-title">Configuration Overview</h2>
+    <div class="admin-dashboard__config-grid">
+      @for (metric of configurationMetrics; track metric.id) {
+        <article class="admin-dashboard__config-card">
+          <strong
+            #countValue
+            class="admin-dashboard__config-value"
+            [attr.data-metric-id]="metric.id"
+          >
+            {{ displayedValue(metric) }}
+          </strong>
+          <span>{{ metric.label }}</span>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="admin-dashboard__integrity" aria-labelledby="configuration-integrity-title">
+    <h2 id="configuration-integrity-title">Configuration Integrity</h2>
+    <div class="admin-dashboard__integrity-grid">
+      @for (metric of integrityMetrics; track metric.id) {
+        <article class="admin-dashboard__integrity-card">
+          <span>{{ metric.label }}</span>
+          <strong
+            #countValue
+            class="admin-dashboard__metric-value"
+            [attr.data-metric-id]="metric.id"
+          >
+            {{ displayedValue(metric) }}
+          </strong>
+          <a
+            routerLink="/admin/configuration/problem-library"
+            matTooltip="View {{ metric.label }}"
+            aria-label="View {{ metric.label }}"
+          >
+            View Details
+          </a>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="admin-dashboard__quick-actions" aria-labelledby="quick-actions-title">
+    <h2 id="quick-actions-title">Quick Actions</h2>
+    <div class="admin-dashboard__action-grid">
+      @for (action of quickActions; track action.label) {
+        <a
+          class="admin-dashboard__action"
+          [routerLink]="action.route"
+          matTooltip="{{ action.label }}"
+          [attr.aria-label]="action.label"
+        >
+          <span
+            class="admin-dashboard__action-icon admin-dashboard__action-icon--{{ action.tone }}"
+          >
+            <img [src]="action.icon" alt="" width="20" height="20" />
+          </span>
+          <span>{{ action.label }}</span>
+          <img
+            class="admin-dashboard__action-arrow"
+            src="assets/admin/dashboard/action-arrow.svg"
+            alt=""
+            width="16"
+            height="16"
+          />
+        </a>
+      }
+    </div>
+  </section>
 </section>
