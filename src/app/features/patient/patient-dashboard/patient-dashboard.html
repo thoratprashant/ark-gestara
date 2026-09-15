@@ -808,7 +808,7 @@
             </dl>
           </section>
         </div>
-    </aside>
+      </aside>
     }
 
     @if (pregnancyHistoryTooltipOpen()) {
@@ -833,11 +833,14 @@
             src="assets/pregnancy-history-tooltip/header-divider.svg"
             alt=""
             aria-hidden="true"
-            width="420"
+            width="354"
             height="28"
           />
 
-          <section class="pregnancy-history-tooltip__content" aria-labelledby="pregnancy-history-title">
+          <section
+            class="pregnancy-history-tooltip__content"
+            aria-labelledby="pregnancy-history-title"
+          >
             <h4 id="pregnancy-history-title">Obstetrical History</h4>
             <div class="pregnancy-history-tooltip__entries">
               @for (entry of pregnancyHistoryEntries; track entry.title) {
