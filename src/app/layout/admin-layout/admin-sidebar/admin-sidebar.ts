@@ -104,6 +104,12 @@ export class AdminSidebar {
           icon: 'assets/admin/task-library.svg',
           iconSize: 18,
         },
+        {
+          label: 'Order Library',
+          route: ['/admin', 'configuration', 'order-library'],
+          icon: 'assets/admin/order-library.svg',
+          iconSize: 18,
+        },
       ],
     },
     {
