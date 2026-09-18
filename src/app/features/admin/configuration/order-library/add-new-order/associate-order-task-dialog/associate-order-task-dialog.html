@@ -1,0 +1,121 @@
+<section class="task-association-dialog" aria-labelledby="associate-order-tasks-title">
+  <header class="task-association-dialog__header">
+    <div>
+      <span class="dialog-title-icon" aria-hidden="true"></span>
+      <h2 id="associate-order-tasks-title">Search &amp; Associate Task</h2>
+    </div>
+    <button
+      type="button"
+      class="dialog-close"
+      mat-dialog-close
+      aria-label="Close task association dialog"
+      matTooltip="Close"
+    >
+      <img src="assets/admin/icd-master/close.svg" alt="" width="14" height="14" />
+    </button>
+  </header>
+
+  <div class="task-association-dialog__search">
+    <label class="visually-hidden" for="order-task-search">Search task templates</label>
+    <img src="assets/admin/providers/search.svg" alt="" width="14" height="14" />
+    <input
+      id="order-task-search"
+      type="search"
+      placeholder="Search tasks..."
+      [ngModel]="query()"
+      (ngModelChange)="query.set($event)"
+    />
+    @if (query()) {
+      <button
+        type="button"
+        class="search-clear"
+        aria-label="Clear task search"
+        matTooltip="Clear"
+        (click)="clearQuery()"
+      >
+        <img src="assets/admin/icd-master/close.svg" alt="" width="12" height="12" />
+      </button>
+    }
+  </div>
+
+  <div class="task-association-dialog__results">
+    @for (problem of filteredGroups(); track problem.id) {
+      <section class="problem-group">
+        <button
+          type="button"
+          class="problem-group__header"
+          [class.is-collapsed]="!expandedProblemIds().has(problem.id)"
+          [attr.aria-expanded]="expandedProblemIds().has(problem.id)"
+          (click)="toggleProblem(problem.id)"
+        >
+          <span class="chevron" aria-hidden="true"></span>
+          <span>{{ problem.name }}</span>
+        </button>
+
+        @if (expandedProblemIds().has(problem.id)) {
+          @for (category of problem.categories; track category.id) {
+            <div class="category-group">
+              <button
+                type="button"
+                class="category-group__header"
+                [class.is-collapsed]="!expandedCategoryIds().has(category.id)"
+                [attr.aria-expanded]="expandedCategoryIds().has(category.id)"
+                (click)="toggleCategory(category.id)"
+              >
+                <span class="chevron" aria-hidden="true"></span>
+                <span>{{ category.name }}</span>
+              </button>
+
+              @if (expandedCategoryIds().has(category.id)) {
+                <div class="category-group__tasks">
+                  @for (task of category.tasks; track task.id) {
+                    <button
+                      type="button"
+                      class="task-option"
+                      [class.is-selected]="selectedIds().has(task.id)"
+                      [attr.aria-pressed]="selectedIds().has(task.id)"
+                      (click)="toggleTask(task.id)"
+                    >
+                      <span class="task-check" aria-hidden="true"></span>
+                      <span class="task-option__name">{{ task.name }}</span>
+                      @if (task.note) {
+                        <span class="task-option__note">{{ task.note }}</span>
+                      }
+                    </button>
+                  }
+                </div>
+              }
+            </div>
+          }
+        }
+      </section>
+    } @empty {
+      <p class="dialog-empty">No tasks match your search.</p>
+    }
+  </div>
+
+  <div class="selection-summary">
+    <span><i aria-hidden="true"></i>{{ selectedIds().size }} Tasks selected</span>
+    <button type="button" (click)="clearSelection()">Clear selection</button>
+  </div>
+
+  <footer class="task-association-dialog__footer">
+    <button
+      matButton="filled"
+      type="button"
+      class="app-button app-button--secondary"
+      mat-dialog-close
+    >
+      Cancel
+    </button>
+    <button
+      matButton="filled"
+      type="button"
+      class="app-button app-button--primary"
+      [disabled]="selectedIds().size === 0"
+      (click)="associate()"
+    >
+      Associate Selected Tasks
+    </button>
+  </footer>
+</section>

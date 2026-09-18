@@ -1,0 +1,228 @@
+<div class="add-order-page">
+  <header class="order-template-heading">
+    <nav class="admin-breadcrumb" aria-label="Breadcrumb">
+      <span>Configuration Management</span><span aria-hidden="true">&gt;</span>
+      <a routerLink="/admin/configuration/order-library">Order Library</a>
+      <span aria-hidden="true">&gt;</span>
+      <span class="order-current" aria-current="page">Add New Order Template</span>
+    </nav>
+    <h1>Add New Order Template</h1>
+    <p>
+      Create and configure a reusable pregnancy related order definition used throughout Gestara
+      workflows, task templates and future recommendations engines.
+    </p>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="save()" class="order-template-form">
+    <div class="order-overview">
+      <section class="order-card" aria-labelledby="order-information-title">
+        <header class="order-card-heading">
+          <h2 id="order-information-title">Order Information</h2>
+        </header>
+        <div class="order-card-body">
+          <div class="admin-field">
+            <label class="admin-field__label" for="order-name"
+              >Order Name <span class="admin-field__required">*</span></label
+            >
+            <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic">
+              <input
+                id="order-name"
+                matInput
+                formControlName="name"
+                placeholder="e.g. CBC, Hemoglobin, Blood Group, Glucose Tolerance Test"
+              />
+            </mat-form-field>
+            @if (form.controls.name.touched && form.controls.name.invalid) {
+              <span class="field-error" role="alert">Order name is required.</span>
+            }
+          </div>
+
+          <div class="admin-field">
+            <label class="admin-field__label" for="order-description"
+              >Order Description <span class="admin-field__required">*</span></label
+            >
+            <mat-form-field
+              class="admin-form-field admin-form-field--textarea"
+              appearance="outline"
+              subscriptSizing="dynamic"
+            >
+              <textarea
+                id="order-description"
+                matInput
+                formControlName="description"
+                placeholder="Purpose and administrative description of the order."
+              ></textarea>
+            </mat-form-field>
+            <em class="order-help">Purpose and administrative description of the order.</em>
+            @if (form.controls.description.touched && form.controls.description.invalid) {
+              <span class="field-error" role="alert">Order description is required.</span>
+            }
+          </div>
+
+          <div class="admin-field">
+            <label id="order-status-label" class="admin-field__label">Template Status</label>
+            <mat-radio-group
+              class="order-radio-options"
+              formControlName="status"
+              aria-labelledby="order-status-label"
+            >
+              <mat-radio-button value="Draft">Draft</mat-radio-button>
+              <mat-radio-button value="Active">Active</mat-radio-button>
+              <mat-radio-button value="Inactive">Inactive</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <div class="admin-field">
+            <label class="admin-field__label" for="epic-code">Epic Order Code / ID</label>
+            <mat-form-field class="admin-form-field" appearance="outline" subscriptSizing="dynamic">
+              <input
+                id="epic-code"
+                matInput
+                formControlName="epicCode"
+                placeholder="e.g. LAB1234 or ORD-5678"
+              />
+            </mat-form-field>
+            <em class="order-help"
+              >Leave blank to keep this order Gestara-only (won't sync results from Epic).</em
+            >
+          </div>
+        </div>
+      </section>
+
+      <aside class="order-card order-summary-card" aria-labelledby="configuration-summary-title">
+        <header class="order-card-heading">
+          <h2 id="configuration-summary-title">Configuration Summary</h2>
+        </header>
+        <div class="order-card-body order-summary">
+          <dl>
+            <div>
+              <dt>Associated Tasks</dt>
+              <dd>{{ dependencySummary.tasks }}</dd>
+            </div>
+            <div>
+              <dt>Associated Category</dt>
+              <dd>{{ dependencySummary.categories }}</dd>
+            </div>
+            <div>
+              <dt>Associated Problem</dt>
+              <dd>{{ dependencySummary.problems }}</dd>
+            </div>
+            <div class="summary-status">
+              <dt>Status</dt>
+              <dd>
+                <span class="order-status-pill" [attr.data-status]="statusValue()">{{
+                  statusValue()
+                }}</span>
+              </dd>
+            </div>
+          </dl>
+          <p class="summary-note">Review all dependencies before activating this Order template.</p>
+        </div>
+      </aside>
+    </div>
+
+    <section class="order-card" aria-labelledby="associated-tasks-title">
+      <header class="order-card-heading order-card-heading--actions">
+        <h2 id="associated-tasks-title">Associated Task Templates</h2>
+        <button
+          matButton="filled"
+          type="button"
+          class="app-button app-button--primary app-button--small"
+          (click)="openTaskDialog()"
+        >
+          <img src="assets/admin/providers/add.svg" alt="" width="12" height="12" />Associate Task
+        </button>
+      </header>
+      <div class="order-card-body">
+        <p class="order-helper">Select Task Templates that may utilize this order.</p>
+        <div class="association-table" tabindex="0" role="region" aria-label="Associated tasks">
+          <table>
+            <colgroup>
+              <col class="task-col" />
+              <col class="category-col" />
+              <col />
+              <col class="sequence-col" />
+              <col class="actions-col" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col">Task Name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Problem Name</th>
+                <th scope="col">Order Sequence</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (task of tasks(); track task.id) {
+                <tr>
+                  <td>{{ task.name }}</td>
+                  <td>{{ task.category }}</td>
+                  <th scope="row">{{ task.problem }}</th>
+                  <td>
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      [value]="task.sequence"
+                      [attr.aria-label]="'Order sequence for ' + task.name"
+                      (change)="updateSequence(task.id, $event)"
+                    />
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      class="icon-action"
+                      [attr.aria-label]="'Delete ' + task.name"
+                      matTooltip="Delete"
+                      (click)="removeTask(task.id)"
+                    >
+                      <img
+                        src="assets/admin/problem-templates/delete.svg"
+                        alt=""
+                        width="14"
+                        height="14"
+                      />
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="table-empty">No task templates associated yet.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    @if (message()) {
+      <p class="save-message" role="status">{{ message() }}</p>
+    }
+
+    <footer class="order-actions-footer">
+      <button
+        matButton="filled"
+        type="button"
+        class="app-button app-button--secondary"
+        (click)="cancel()"
+      >
+        Cancel
+      </button>
+      <div class="order-actions-footer__group">
+        <button
+          matButton="outlined"
+          type="button"
+          class="app-button app-button--outline-primary"
+          (click)="save(true)"
+        >
+          Save as Draft
+        </button>
+        <button matButton="filled" type="submit" class="app-button app-button--primary">
+          Submit
+        </button>
+      </div>
+    </footer>
+  </form>
+</div>
