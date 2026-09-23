@@ -1,6 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
+import { RouterLink } from '@angular/router';
 
 type ProviderStatus = 'Active' | 'Pending' | 'Inactive';
 
@@ -16,7 +17,7 @@ interface InstitutionProvider {
 
 @Component({
   selector: 'app-institution-dashboard',
-  imports: [MatButton, MatSelectModule],
+  imports: [MatButton, MatSelectModule, RouterLink],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })

@@ -5,7 +5,10 @@
   </header>
 
   <section class="provider-overview" aria-labelledby="provider-overview-title">
-    <h2 id="provider-overview-title">Provider Overview</h2>
+    <div class="provider-overview__heading">
+      <h2 id="provider-overview-title">Provider Overview</h2>
+      <p>*1500 Providers allowed to access Gestara Platform</p>
+    </div>
 
     <div class="provider-overview__cards">
       <article class="provider-stat-card">
@@ -84,6 +87,7 @@
         matButton="filled"
         type="button"
         class="app-button app-button--primary app-button--small provider-table-card__add"
+        routerLink="/institution-admin/dashboard/add-provider"
       >
         <img src="assets/institution-admin/dashboard/add.svg" alt="" width="14" height="14" />
         <span>Add Provider</span>
@@ -111,7 +115,7 @@
             <th scope="col">Email</th>
             <th scope="col">Phone</th>
             <th scope="col">Joined Date</th>
-            <th scope="col" class="provider-table__actions-heading">Actions</th>
+            <th scope="col" class="">Actions</th>
           </tr>
         </thead>
         <tbody>

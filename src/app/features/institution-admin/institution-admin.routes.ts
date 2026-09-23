@@ -16,8 +16,14 @@ export const INSTITUTION_ADMIN_ROUTES: Routes = [
       },
       {
         path: 'dashboard',
-        canActivate: [institutionAdminProfileGuard],
+        // canActivate: [institutionAdminProfileGuard],
         loadComponent: () => import('./dashboard/dashboard').then((m) => m.InstitutionDashboard),
+      },
+      {
+        path: 'dashboard/add-provider',
+        // canActivate: [institutionAdminProfileGuard],
+        loadComponent: () =>
+          import('./add-provider/add-provider').then((m) => m.AddProvider),
       },
     ],
   },

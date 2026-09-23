@@ -1,0 +1,154 @@
+<main class="add-provider-page" aria-labelledby="add-provider-title">
+  <header class="add-provider-page__header">
+    <h1 id="add-provider-title">Add Provider</h1>
+    <p>Create a new medical provider profile in Gestara to grant platform access.</p>
+  </header>
+
+  <form class="add-provider-form" [formGroup]="providerForm" (ngSubmit)="saveProvider()">
+    <section class="provider-form-card" aria-labelledby="provider-information-title">
+      <h2 id="provider-information-title">Provider Information</h2>
+
+      <div class="provider-form-grid">
+        <div class="provider-form-field">
+          <label for="provider-first-name">First Name <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input
+              id="provider-first-name"
+              matInput
+              formControlName="firstName"
+              autocomplete="given-name"
+              placeholder="e.g. Sarah"
+            />
+            <mat-error>First name is required.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="provider-form-field">
+          <label for="provider-last-name">Last Name <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input
+              id="provider-last-name"
+              matInput
+              formControlName="lastName"
+              autocomplete="family-name"
+              placeholder="e.g. Jenkins"
+            />
+            <mat-error>Last name is required.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="provider-form-field">
+          <label id="credentials-label">Credentials / Suffix</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-select
+              formControlName="credentials"
+              placeholder="Select credentials"
+              aria-labelledby="credentials-label"
+            >
+              @for (credential of credentials; track credential) {
+                <mat-option [value]="credential">{{ credential }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="provider-form-field">
+          <label for="provider-email">Email Address <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input
+              id="provider-email"
+              matInput
+              type="email"
+              formControlName="email"
+              autocomplete="email"
+              placeholder="e.g. sjenkins@citygeneral.com"
+            />
+            @if (providerForm.controls.email.hasError('required')) {
+              <mat-error>Email address is required.</mat-error>
+            } @else {
+              <mat-error>Enter a valid email address.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <div class="provider-form-field">
+          <label for="provider-mobile">Mobile Number</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input
+              id="provider-mobile"
+              matInput
+              type="tel"
+              formControlName="mobileNumber"
+              autocomplete="tel"
+              placeholder="e.g. (213) 555-0143"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+
+    <section class="provider-form-card" aria-labelledby="professional-information-title">
+      <h2 id="professional-information-title">Professional Information</h2>
+
+      <div class="provider-form-grid">
+        <div class="provider-form-field">
+          <label id="provider-role-label">Provider Type / Role <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-select
+              formControlName="providerRole"
+              placeholder="Select role"
+              aria-labelledby="provider-role-label"
+            >
+              @for (role of providerRoles; track role) {
+                <mat-option [value]="role">{{ role }}</mat-option>
+              }
+            </mat-select>
+            <mat-error>Provider type or role is required.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="provider-form-field">
+          <label id="primary-specialty-label">Primary Specialty <em>*</em></label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-select
+              formControlName="primarySpecialty"
+              placeholder="Select specialty"
+              aria-labelledby="primary-specialty-label"
+            >
+              @for (specialty of specialties; track specialty) {
+                <mat-option [value]="specialty">{{ specialty }}</mat-option>
+              }
+            </mat-select>
+            <mat-error>Primary specialty is required.</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="provider-form-field">
+          <label for="provider-license">License Number</label>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <input
+              id="provider-license"
+              matInput
+              formControlName="licenseNumber"
+              placeholder="e.g. MD123456"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+
+    <footer class="add-provider-form__actions">
+      <button
+        matButton="filled"
+        type="button"
+        class="app-button app-button--secondary"
+        (click)="cancel()"
+      >
+        Cancel
+      </button>
+      <button matButton="filled" type="submit" class="app-button app-button--primary">
+        Save Provider
+      </button>
+    </footer>
+  </form>
+</main>

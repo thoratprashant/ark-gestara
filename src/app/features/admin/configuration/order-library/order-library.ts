@@ -34,31 +34,31 @@ export class OrderLibrary {
       id: 1,
       name: 'Routine Prenatal Care',
       status: 'Active',
-      modified: '2024-05-10',
+      modified: '05-10-2024',
     },
     {
       id: 2,
       name: 'Gestational Diabetes Mellitus',
       status: 'Active',
-      modified: '2024-04-22',
+      modified: '04-22-2024',
     },
     {
       id: 3,
       name: 'Chronic Hypertension',
       status: 'Draft',
-      modified: '2024-03-15',
+      modified: '03-15-2024',
     },
     {
       id: 4,
       name: 'Anemia in Pregnancy',
       status: 'Pending',
-      modified: '2024-06-01',
+      modified: '06-01-2024',
     },
     {
       id: 5,
       name: 'Obesity in Pregnancy',
       status: 'Pending',
-      modified: '2024-02-28',
+      modified: '02-28-2024',
     },
   ]);
 
