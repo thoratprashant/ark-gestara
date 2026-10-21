@@ -8,6 +8,7 @@ import {
   computed,
   signal,
 } from '@angular/core';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { MatDialog } from '@angular/material/dialog';
 import { scaleLinear } from 'd3-scale';
 
@@ -124,7 +125,7 @@ interface VitalCountValues {
   weightGain: number;
 }
 
-type TimelineStatus = 'completed' | 'not-reviewed' | 'ordered' | 'late' | 'abnormal' | 'future';
+type TimelineStatus = 'completed' | 'not-reviewed' | 'ordered' | 'due-soon' | 'late' | 'abnormal' | 'superseded' | 'future';
 type ChipInteractionMode = 'move' | 'resize-start' | 'resize-end';
 type TimelineStatusTooltipIcon = 'calendar' | 'clock';
 
@@ -561,8 +562,10 @@ const ADDITIONAL_TIMELINE_GROUPS: TimelineGroup[] = [
     'completed',
     'not-reviewed',
     'ordered',
+    'due-soon',
     'late',
     'abnormal',
+    'superseded',
     'future',
   ];
   const startWeek = 8 + ((index * 4) % 25);
@@ -597,6 +600,17 @@ const TIMELINE_STATUS_TOOLTIPS: Record<TimelineStatus, TimelineStatusTooltip> = 
     notePlaceholder: 'Add notes...',
     schedule: [{ icon: 'calendar', label: 'Scheduled:', value: 'Week 24-26' }],
     status: 'ordered',
+    subtitle: 'Gestational Hypertension',
+    tests: [{ label: '24-hour Urine Protein', showActions: true }],
+    title: '24-hour urine protein (Baseline)',
+  },
+  'due-soon': {
+    badgeLabel: 'Due Soon',
+    notes:
+      'Patient scheduled but did not complete collection. Rescheduled for next week. Emphasized importance of test.',
+    notePlaceholder: 'Add notes...',
+    schedule: [{ icon: 'calendar', label: 'Scheduled:', value: 'Week 24-26' }],
+    status: 'due-soon',
     subtitle: 'Gestational Hypertension',
     tests: [{ label: '24-hour Urine Protein', showActions: true }],
     title: '24-hour urine protein (Baseline)',
@@ -666,6 +680,19 @@ const TIMELINE_STATUS_TOOLTIPS: Record<TimelineStatus, TimelineStatusTooltip> = 
     schedule: [{ icon: 'calendar', label: 'Scheduled:', value: 'Week 28-32' }],
     showBulkActions: true,
     status: 'future',
+    subtitle: 'Routine Prenatal Care',
+    tests: [
+      { label: 'CBC', showActions: true },
+      { label: 'Antibody Screen (Repeat)', showActions: true },
+      { label: '1-hour Glucose (if not done)', removed: true },
+    ],
+    title: 'Labs (Repeat)',
+  },
+  superseded: {
+    badgeLabel: 'Superseded',
+    schedule: [{ icon: 'calendar', label: 'Scheduled:', value: 'Week 28-32' }],
+    showBulkActions: true,
+    status: 'superseded',
     subtitle: 'Routine Prenatal Care',
     tests: [
       { label: 'CBC', showActions: true },
@@ -942,8 +969,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       this.riskAssessmentOpen() ||
       this.deliveryWindowTooltipOpen() ||
       this.eddTooltipOpen() ||
-      this.pregnancyHistoryTooltipOpen() ||
-      this.activeTimelineGroupTooltip() !== null,
+      this.pregnancyHistoryTooltipOpen(),
   );
   readonly highRiskFactors = [
     { label: 'Hypertensive disorder in previous pregnancy', selected: false },
@@ -978,8 +1004,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     { label: 'Completed/Reviewed', status: 'completed' },
     { label: 'Completed/Not Reviewed', status: 'not-reviewed' },
     { label: 'Ordered', status: 'ordered' },
+    { label: 'Due Soon', status: 'due-soon' },
     { label: 'Late', status: 'late' },
     { label: 'Abnormal', status: 'abnormal' },
+    { label: 'Superseded', status: 'superseded' },
     { label: 'Future', status: 'future' },
   ];
 
@@ -1342,7 +1370,6 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       width,
     });
     this.timelineGroupTooltipMaxHeight.set(tooltipHeight);
-    this.setTooltipGlassFocus(triggerBounds);
     this.activeTimelineGroupTooltip.set(group);
   }
 
@@ -1402,6 +1429,8 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       late: 650,
       'not-reviewed': 380,
       ordered: 440,
+      superseded: 400,
+      'due-soon': 380,
     };
     const spaceBelow = window.innerHeight - triggerBounds.bottom - 12;
     const spaceAbove = triggerBounds.top - 12;
@@ -1599,6 +1628,20 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   isTimelineGroupExpanded(groupId: string): boolean {
     return this.expandedTimelineGroupIds().has(groupId);
+  }
+
+  reorderTimelineGroup(event: CdkDragDrop<TimelineGroup[]>): void {
+    this.moveTimelineGroup(event.previousIndex, event.currentIndex);
+  }
+
+  moveTimelineGroupWithKeyboard(event: KeyboardEvent, groupIndex: number): void {
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
+      return;
+    }
+
+    event.preventDefault();
+    const direction = event.key === 'ArrowUp' ? -1 : 1;
+    this.moveTimelineGroup(groupIndex, groupIndex + direction);
   }
 
   openAddProblemDialog(): void {
@@ -2109,6 +2152,29 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     if (this.timelineHistory.length > 20) {
       this.timelineHistory.shift();
     }
+  }
+
+  private moveTimelineGroup(previousIndex: number, currentIndex: number): void {
+    const groups = this.pregnancyTimeline().groups;
+    const boundedCurrentIndex = this.clamp(currentIndex, 0, groups.length - 1);
+
+    if (
+      previousIndex < 0 ||
+      previousIndex >= groups.length ||
+      previousIndex === boundedCurrentIndex
+    ) {
+      return;
+    }
+
+    this.rememberTimeline();
+    this.hideTimelineGroupTooltip();
+    this.hideTimelineStatusTooltip();
+    this.pregnancyTimeline.update((timeline) => {
+      const reorderedGroups = [...timeline.groups];
+      moveItemInArray(reorderedGroups, previousIndex, boundedCurrentIndex);
+
+      return { ...timeline, groups: reorderedGroups };
+    });
   }
 
   private cloneTimeline(timeline: PregnancyTimeline): PregnancyTimeline {

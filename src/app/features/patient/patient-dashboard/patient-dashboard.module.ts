@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -20,6 +21,7 @@ const routes: Routes = [
   declarations: [AddProblemDialog, PatientDashboard, TimelineItemDialog],
   imports: [
     CommonModule,
+    DragDropModule,
     MatDialogModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes),

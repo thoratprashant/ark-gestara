@@ -37,6 +37,41 @@ describe('PatientDashboard timeline', () => {
     expect(dashboard.isTimelineGroupExpanded(groups[5].id)).toBe(true);
   });
 
+  it('reorders timeline groups by drag and keyboard and keeps each change undoable', () => {
+    const dashboard = new PatientDashboard();
+    const originalGroupIds = dashboard.pregnancyTimeline().groups.map((group) => group.id);
+
+    dashboard.reorderTimelineGroup({
+      previousIndex: 0,
+      currentIndex: 2,
+    } as Parameters<PatientDashboard['reorderTimelineGroup']>[0]);
+
+    expect(dashboard.pregnancyTimeline().groups.map((group) => group.id)).toEqual([
+      originalGroupIds[1],
+      originalGroupIds[2],
+      originalGroupIds[0],
+      ...originalGroupIds.slice(3),
+    ]);
+    expect(dashboard.canUndoTimeline()).toBe(true);
+
+    dashboard.undoTimelineChange();
+    expect(dashboard.pregnancyTimeline().groups.map((group) => group.id)).toEqual(originalGroupIds);
+
+    const keyboardEvent = {
+      key: 'ArrowDown',
+      preventDefault: vi.fn(),
+    } as unknown as KeyboardEvent;
+    dashboard.moveTimelineGroupWithKeyboard(keyboardEvent, 0);
+
+    expect(keyboardEvent.preventDefault).toHaveBeenCalledOnce();
+    expect(
+      dashboard
+        .pregnancyTimeline()
+        .groups.slice(0, 2)
+        .map((group) => group.id),
+    ).toEqual([originalGroupIds[1], originalGroupIds[0]]);
+  });
+
   it('opens the Material timeline dialog with enabled task and medication fields', () => {
     const fixture = TestBed.createComponent(PatientDashboard);
     const dialog = TestBed.inject(MatDialog);
@@ -155,6 +190,7 @@ describe('PatientDashboard timeline', () => {
       expect(tooltip.textContent).toContain(groups[index].label);
       expect(tooltip.textContent).toContain(groups[index].condition.tags[0].label);
       expect(tooltip.textContent).toContain(groups[index].condition.description);
+      expect(fixture.nativeElement.querySelector('.tooltip-glass-overlay')).toBeNull();
     });
   });
 
@@ -190,6 +226,7 @@ describe('PatientDashboard timeline', () => {
       width: 350,
     });
     expect(dashboard.timelineGroupTooltipMaxHeight()).toBe(266.006);
+    expect(dashboard.tooltipGlassActive()).toBe(false);
   });
 
   it('adds a submitted problem as an expandable timeline group with undo support', () => {

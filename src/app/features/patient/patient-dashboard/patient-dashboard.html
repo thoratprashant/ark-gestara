@@ -904,7 +904,7 @@
         ></span>
 
         <div class="problem-timeline__axis-row">
-          <div class="problem-timeline__label problem-timeline__label--heading">Problem / Task</div>
+          <div class="problem-timeline__label problem-timeline__label--heading">Problem / Category</div>
           <div class="problem-timeline__axis">
             @for (week of weekTicks; track week) {
               <span class="problem-timeline__tick" [style.left.%]="weekTickPercent(week)"
@@ -914,123 +914,155 @@
           </div>
         </div>
 
-        @for (group of pregnancyTimeline().groups; track group.id) {
-          <article class="problem-timeline__group">
-            <div class="problem-timeline__group-header">
-              <button
-                class="problem-timeline__group-toggle"
-                type="button"
-                [attr.aria-expanded]="isTimelineGroupExpanded(group.id)"
-                [attr.aria-controls]="'timeline-group-' + group.id"
-                [attr.aria-describedby]="
-                  activeTimelineGroupTooltip()?.id === group.id
-                    ? 'timeline-condition-tooltip'
-                    : null
-                "
-                (mouseenter)="showTimelineGroupTooltip(group, $event)"
-                (mouseleave)="scheduleTimelineGroupTooltipHide()"
-                (focusin)="showTimelineGroupTooltip(group, $event)"
-                (focusout)="scheduleTimelineGroupTooltipHide()"
-                (click)="toggleTimelineGroup(group.id)"
-              >
-                <img
-                  class="problem-timeline__group-icon"
-                  [src]="
-                    isTimelineGroupExpanded(group.id)
-                      ? 'assets/timeline-routine.svg'
-                      : 'assets/timeline-gdm.svg'
-                  "
-                  alt=""
-                  aria-hidden="true"
-                />
-                <strong>{{ group.label }}</strong>
-              </button>
-
-              <button
-                class="problem-timeline__group-add"
-                type="button"
-                title="Add timeline item"
-                [attr.aria-label]="'Add timeline item to ' + group.label"
-                (click)="openTimelineItemDialog(group.id)"
-              >
-                +
-              </button>
-            </div>
-
-            <div
-              class="problem-timeline__group-motion"
-              [class.problem-timeline__group-motion--open]="isTimelineGroupExpanded(group.id)"
-              [attr.aria-hidden]="!isTimelineGroupExpanded(group.id)"
+        <div
+          class="problem-timeline__groups"
+          cdkDropList
+          cdkDropListLockAxis="y"
+          [cdkDropListData]="pregnancyTimeline().groups"
+          (cdkDropListDropped)="reorderTimelineGroup($event)"
+        >
+          @for (group of pregnancyTimeline().groups; track group.id; let groupIndex = $index) {
+            <article
+              class="problem-timeline__group"
+              cdkDrag
+              cdkDragLockAxis="y"
+              [cdkDragData]="group"
+              [attr.aria-label]="
+                group.label +
+                ', position ' +
+                (groupIndex + 1) +
+                ' of ' +
+                pregnancyTimeline().groups.length
+              "
+              (cdkDragStarted)="hideTimelineGroupTooltip()"
             >
-              <div
-                [id]="'timeline-group-' + group.id"
-                class="problem-timeline__group-motion-inner"
-                [attr.inert]="isTimelineGroupExpanded(group.id) ? null : ''"
-              >
-                @for (row of group.rows; track row.id) {
-                  <div class="problem-timeline__row">
-                    <div class="problem-timeline__label">{{ row.label }}</div>
+              <div class="problem-timeline__group-header">
+                <button
+                  class="problem-timeline__group-toggle"
+                  type="button"
+                  [attr.aria-expanded]="isTimelineGroupExpanded(group.id)"
+                  [attr.aria-controls]="'timeline-group-' + group.id"
+                  [attr.aria-describedby]="
+                    activeTimelineGroupTooltip()?.id === group.id
+                      ? 'timeline-condition-tooltip'
+                      : null
+                  "
+                  (mouseenter)="showTimelineGroupTooltip(group, $event)"
+                  (mouseleave)="scheduleTimelineGroupTooltipHide()"
+                  (focusin)="showTimelineGroupTooltip(group, $event)"
+                  (focusout)="scheduleTimelineGroupTooltipHide()"
+                  (click)="toggleTimelineGroup(group.id)"
+                >
+                  <img
+                    class="problem-timeline__group-icon"
+                    [src]="
+                      isTimelineGroupExpanded(group.id)
+                        ? 'assets/timeline-routine.svg'
+                        : 'assets/timeline-gdm.svg'
+                    "
+                    alt=""
+                    aria-hidden="true"
+                  />
+                  <strong>{{ group.label }}</strong>
+                </button>
 
-                    <div class="problem-timeline__track">
-                      @for (week of weekTicks; track week) {
-                        <span
-                          class="problem-timeline__grid-line"
-                          [style.left.%]="weekPercent(week)"
-                          aria-hidden="true"
-                        ></span>
-                      }
+                <button
+                  class="problem-timeline__group-add"
+                  type="button"
+                  title="Add timeline item"
+                  [attr.aria-label]="'Add timeline item to ' + group.label"
+                  (click)="openTimelineItemDialog(group.id)"
+                >
+                  +
+                </button>
 
-                      @for (chip of row.chips; track chip.id) {
-                        <div
-                          class="problem-timeline__chip"
-                          [attr.data-status]="chip.status"
-                          [style.left.%]="weekPercent(chip.startWeek)"
-                          [style.width.%]="weekPercent(chip.endWeek - chip.startWeek)"
-                          role="button"
-                          tabindex="0"
-                          [attr.aria-describedby]="
-                            activeTimelineStatusTooltip()?.chipId === chip.id
-                              ? 'timeline-status-tooltip'
-                              : null
-                          "
-                          [attr.aria-label]="
-                            timelineChipTooltip(chip) + '. Use left and right arrow keys to move.'
-                          "
-                          (mouseenter)="showTimelineStatusTooltip(chip, $event)"
-                          (mouseleave)="scheduleTimelineStatusTooltipHide()"
-                          (focusin)="showTimelineStatusTooltip(chip, $event)"
-                          (focusout)="scheduleTimelineStatusTooltipHide()"
-                          (pointerdown)="
-                            startChipInteraction($event, group.id, row.id, chip, 'move')
-                          "
-                          (keydown)="moveChipWithKeyboard($event, group.id, row.id, chip)"
-                        >
-                          <span
-                            class="problem-timeline__resize-handle problem-timeline__resize-handle--start"
-                            aria-hidden="true"
-                            (pointerdown)="
-                              startChipInteraction($event, group.id, row.id, chip, 'resize-start')
-                            "
-                          ></span>
-                          <span class="problem-timeline__chip-label">
-                            {{ timelineStatusLabel(chip.status) }}
-                          </span>
-                          <span
-                            class="problem-timeline__resize-handle problem-timeline__resize-handle--end"
-                            aria-hidden="true"
-                            (pointerdown)="
-                              startChipInteraction($event, group.id, row.id, chip, 'resize-end')
-                            "
-                          ></span>
-                        </div>
-                      }
-                    </div>
-                  </div>
-                }
+                <button
+                  class="problem-timeline__group-drag-handle"
+                  type="button"
+                  cdkDragHandle
+                  [attr.aria-label]="'Reorder ' + group.label + '. Use up and down arrow keys.'"
+                  [attr.title]="'Drag to reorder ' + group.label"
+                  (keydown)="moveTimelineGroupWithKeyboard($event, groupIndex)"
+                >
+                  <span aria-hidden="true"></span>
+                </button>
               </div>
-            </div>
-          </article>
-        }
+
+              <div
+                class="problem-timeline__group-motion"
+                [class.problem-timeline__group-motion--open]="isTimelineGroupExpanded(group.id)"
+                [attr.aria-hidden]="!isTimelineGroupExpanded(group.id)"
+              >
+                <div
+                  [id]="'timeline-group-' + group.id"
+                  class="problem-timeline__group-motion-inner"
+                  [attr.inert]="isTimelineGroupExpanded(group.id) ? null : ''"
+                >
+                  @for (row of group.rows; track row.id) {
+                    <div class="problem-timeline__row">
+                      <div class="problem-timeline__label">{{ row.label }}</div>
+
+                      <div class="problem-timeline__track">
+                        @for (week of weekTicks; track week) {
+                          <span
+                            class="problem-timeline__grid-line"
+                            [style.left.%]="weekPercent(week)"
+                            aria-hidden="true"
+                          ></span>
+                        }
+
+                        @for (chip of row.chips; track chip.id) {
+                          <div
+                            class="problem-timeline__chip"
+                            [attr.data-status]="chip.status"
+                            [style.left.%]="weekPercent(chip.startWeek)"
+                            [style.width.%]="weekPercent(chip.endWeek - chip.startWeek)"
+                            role="button"
+                            tabindex="0"
+                            [attr.aria-describedby]="
+                              activeTimelineStatusTooltip()?.chipId === chip.id
+                                ? 'timeline-status-tooltip'
+                                : null
+                            "
+                            [attr.aria-label]="
+                              timelineChipTooltip(chip) + '. Use left and right arrow keys to move.'
+                            "
+                            (mouseenter)="showTimelineStatusTooltip(chip, $event)"
+                            (mouseleave)="scheduleTimelineStatusTooltipHide()"
+                            (focusin)="showTimelineStatusTooltip(chip, $event)"
+                            (focusout)="scheduleTimelineStatusTooltipHide()"
+                            (pointerdown)="
+                              startChipInteraction($event, group.id, row.id, chip, 'move')
+                            "
+                            (keydown)="moveChipWithKeyboard($event, group.id, row.id, chip)"
+                          >
+                            <span
+                              class="problem-timeline__resize-handle problem-timeline__resize-handle--start"
+                              aria-hidden="true"
+                              (pointerdown)="
+                                startChipInteraction($event, group.id, row.id, chip, 'resize-start')
+                              "
+                            ></span>
+                            <span class="problem-timeline__chip-label">
+                              {{ timelineStatusLabel(chip.status) }}
+                            </span>
+                            <span
+                              class="problem-timeline__resize-handle problem-timeline__resize-handle--end"
+                              aria-hidden="true"
+                              (pointerdown)="
+                                startChipInteraction($event, group.id, row.id, chip, 'resize-end')
+                              "
+                            ></span>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+            </article>
+          }
+        </div>
       </div>
 
       <div class="problem-timeline__add-problem-row d-flex align-items-center">
