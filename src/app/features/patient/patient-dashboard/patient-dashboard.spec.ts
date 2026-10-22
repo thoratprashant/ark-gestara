@@ -72,7 +72,7 @@ describe('PatientDashboard timeline', () => {
     ).toEqual([originalGroupIds[1], originalGroupIds[0]]);
   });
 
-  it('opens the Material timeline dialog with enabled task and medication fields', () => {
+  it('opens the timeline dialog and flags duplicate categories within the selected problem', () => {
     const fixture = TestBed.createComponent(PatientDashboard);
     const dialog = TestBed.inject(MatDialog);
     fixture.detectChanges();
@@ -85,10 +85,21 @@ describe('PatientDashboard timeline', () => {
 
     expect(dialog.openDialogs).toHaveLength(1);
     const dialogComponent = dialog.openDialogs[0].componentInstance as TimelineItemDialog;
-    expect(dialogComponent.mode()).toBe('task');
+    expect(dialogComponent.mode()).toBe('category');
     expect(
-      Object.values(dialogComponent.taskForm.controls).every((control) => control.enabled),
+      Object.values(dialogComponent.categoryForm.controls).every((control) => control.enabled),
     ).toBe(true);
+
+    dialogComponent.categoryForm.controls.name.setValue(' labs ');
+    dialogComponent.submit();
+    fixture.detectChanges();
+
+    expect(dialogComponent.duplicateCategoryName()).toBe('Labs');
+    expect(
+      dialog.openDialogs[0].componentRef?.location.nativeElement.querySelector(
+        '.timeline-item-dialog__duplicate-error',
+      )?.textContent,
+    ).toContain('A category named "Labs" already exists under this problem.');
 
     dialogComponent.setMode('medication');
     expect(dialogComponent.mode()).toBe('medication');
@@ -105,7 +116,7 @@ describe('PatientDashboard timeline', () => {
         afterClosed: () =>
           of({
             endWeek: 32.5,
-            mode: 'task' as const,
+            mode: 'category' as const,
             name: 'Weekly glucose review',
             startWeek: 28.5,
           }),

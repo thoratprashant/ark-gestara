@@ -4,7 +4,7 @@
     mat-dialog-title
   >
     <h2 id="timeline-item-dialog-title" class="m-0 text-start text-nowrap fw-bold">
-      {{ mode() === 'task' ? 'Add New Task' : 'Add New Medication' }}
+      {{ mode() === 'category' ? 'Add New Category' : 'Add New Medication' }}
     </h2>
     <button
       class="d-flex align-items-center justify-content-center p-0 border-0"
@@ -15,7 +15,7 @@
       <img
         class="d-block"
         [src]="
-          mode() === 'task'
+          mode() === 'category'
             ? 'assets/timeline-dialog/close-task.svg'
             : 'assets/timeline-dialog/close-medication.svg'
         "
@@ -27,7 +27,7 @@
 
   <form
     class="w-100"
-    [formGroup]="mode() === 'task' ? taskForm : medicationForm"
+    [formGroup]="mode() === 'category' ? categoryForm : medicationForm"
     (ngSubmit)="submit()"
   >
     <mat-dialog-content class="timeline-item-dialog__body d-flex flex-column align-items-start">
@@ -41,11 +41,11 @@
           class="d-flex align-items-center justify-content-center text-center text-nowrap fw-semibold"
           type="button"
           role="tab"
-          [class.timeline-item-dialog__tab--active]="mode() === 'task'"
-          [attr.aria-selected]="mode() === 'task'"
-          (click)="setMode('task')"
+          [class.timeline-item-dialog__tab--active]="mode() === 'category'"
+          [attr.aria-selected]="mode() === 'category'"
+          (click)="setMode('category')"
         >
-          Task
+          Category
         </button>
         <button
           class="d-flex align-items-center justify-content-center text-center text-nowrap fw-semibold"
@@ -59,21 +59,55 @@
         </button>
       </div>
 
-      @if (mode() === 'task') {
+      @if (mode() === 'category') {
         <div class="timeline-item-dialog__field d-flex flex-column align-items-start w-100">
           <label class="w-100 text-start text-uppercase fw-semibold" for="timeline-task-name"
-            >Task Name</label
+            >Category Name</label
           >
           <input
             class="w-100 text-start fw-normal"
+            [class.timeline-item-dialog__input--error]="duplicateCategoryName()"
             id="timeline-task-name"
             type="text"
             formControlName="name"
             placeholder="e.g., Routine Prenatal Checkup"
+            [attr.aria-invalid]="duplicateCategoryName() ? 'true' : null"
+            [attr.aria-describedby]="
+              duplicateCategoryName() ? 'timeline-category-duplicate-error' : null
+            "
+            (input)="clearCategoryDuplicateError()"
           />
         </div>
 
-        <div class="timeline-item-dialog__field d-flex flex-column align-items-start w-100">
+        @if (duplicateCategoryName(); as duplicateName) {
+          <div
+            class="timeline-item-dialog__duplicate-error d-flex align-items-start w-100"
+            id="timeline-category-duplicate-error"
+            role="alert"
+          >
+            <svg class="flex-shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M12 9v4M12 17h.01"
+                stroke="currentColor"
+                stroke-width="1.75"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span
+              >A category named "{{ duplicateName }}" already exists under this problem. Choose a
+              different name.</span
+            >
+          </div>
+        }
+
+        <!-- <div class="timeline-item-dialog__field d-flex flex-column align-items-start w-100">
           <label class="w-100 text-start text-uppercase fw-semibold">Week Range</label>
           <div class="timeline-item-dialog__range d-flex align-items-center w-100">
             <input
@@ -96,7 +130,7 @@
               step="0.5"
             />
           </div>
-        </div>
+        </div> -->
       } @else {
         <div class="timeline-item-dialog__field d-flex flex-column align-items-start w-100">
           <label class="w-100 text-start text-uppercase fw-semibold" for="timeline-medication-name"
@@ -126,25 +160,42 @@
           />
         </div>
 
-        <div
-          class="timeline-item-dialog__field timeline-item-dialog__field--start-week d-flex flex-column align-items-start w-100"
-        >
-          <label class="w-100 text-start fw-semibold" for="timeline-medication-start-week"
-            ><span class="text-uppercase">Start Week</span
-            ><span class="timeline-item-dialog__optional">(Optional)</span></label
-          >
-          <input
-            class="text-start fw-normal"
-            id="timeline-medication-start-week"
-            type="number"
-            formControlName="startWeek"
-            min="0"
-            max="40"
-            step="0.5"
-          />
-          <small class="w-100 text-start fw-normal"
-            >Medication will continue until end of pregnancy (40 weeks).</small
-          >
+        <div class="timeline-item-dialog__week-fields d-flex align-items-start w-100">
+          <div class="timeline-item-dialog__field d-flex flex-column align-items-start">
+            <label class="w-100 text-start fw-semibold" for="timeline-medication-start-week"
+              ><span class="text-uppercase">Start Week</span
+              ><span class="timeline-item-dialog__optional">(Optional)</span></label
+            >
+            <input
+              class="w-100 text-start fw-normal"
+              id="timeline-medication-start-week"
+              type="number"
+              formControlName="startWeek"
+              min="0"
+              max="40"
+              step="0.5"
+            />
+            <small class="w-100 text-start fw-normal">Week of pregnancy (e.g., 28.5)</small>
+          </div>
+
+          <div class="timeline-item-dialog__field d-flex flex-column align-items-start">
+            <label class="w-100 text-start fw-semibold" for="timeline-medication-end-week"
+              ><span class="text-uppercase">End Week</span
+              ><span class="timeline-item-dialog__optional">(Optional)</span></label
+            >
+            <input
+              class="w-100 text-start fw-normal"
+              id="timeline-medication-end-week"
+              type="number"
+              formControlName="endWeek"
+              min="0"
+              max="40"
+              step="0.5"
+            />
+            <small class="w-100 text-start fw-normal"
+              >Leave blank to continue through end of pregnancy.</small
+            >
+          </div>
         </div>
       }
     </mat-dialog-content>
@@ -163,7 +214,7 @@
         class="timeline-item-dialog__submit d-flex align-items-center justify-content-center text-center text-nowrap fw-semibold"
         type="submit"
       >
-        {{ mode() === 'task' ? 'Add Task' : 'Add Medication' }}
+        {{ mode() === 'category' ? 'Add Category' : 'Add Medication' }}
       </button>
     </mat-dialog-actions>
   </form>

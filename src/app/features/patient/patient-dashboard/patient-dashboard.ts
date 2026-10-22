@@ -15,6 +15,7 @@ import { scaleLinear } from 'd3-scale';
 import { AddProblemDialog, AddProblemDialogResult } from './add-problem-dialog/add-problem-dialog';
 import {
   TimelineItemDialog,
+  TimelineItemDialogData,
   TimelineItemDialogResult,
 } from './timeline-item-dialog/timeline-item-dialog';
 
@@ -1675,15 +1676,23 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     }
 
     const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const existingCategoryNames =
+      this.pregnancyTimeline()
+        .groups.find((group) => group.id === groupId)
+        ?.rows.map((row) => row.label) ?? [];
 
     this.dialog
-      .open<TimelineItemDialog, void, TimelineItemDialogResult>(TimelineItemDialog, {
-        autoFocus: 'first-tabbable',
-        maxWidth: 'calc(100vw - 1.5rem)',
-        panelClass: 'timeline-item-dialog-panel',
-        restoreFocus: false,
-        width: '422px',
-      })
+      .open<TimelineItemDialog, TimelineItemDialogData, TimelineItemDialogResult>(
+        TimelineItemDialog,
+        {
+          autoFocus: 'first-tabbable',
+          data: { existingCategoryNames },
+          maxWidth: 'calc(100vw - 1.5rem)',
+          panelClass: 'timeline-item-dialog-panel',
+          restoreFocus: false,
+          width: '422px',
+        },
+      )
       .afterClosed()
       .subscribe((result) => {
         if (result) {
@@ -2086,7 +2095,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   private addTimelineItem(groupId: string, item: TimelineItemDialogResult): void {
     this.rememberTimeline();
     const itemId = `custom-timeline-item-${++this.timelineItemSequence}`;
-    const endWeek = item.mode === 'medication' ? 40 : item.endWeek;
+    const endWeek = item.endWeek;
     const label =
       item.mode === 'medication' && item.dosage ? `${item.name} (${item.dosage})` : item.name;
 

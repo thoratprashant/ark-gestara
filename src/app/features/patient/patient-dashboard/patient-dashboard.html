@@ -984,7 +984,13 @@
                   [attr.title]="'Drag to reorder ' + group.label"
                   (keydown)="moveTimelineGroupWithKeyboard($event, groupIndex)"
                 >
-                  <span aria-hidden="true"></span>
+                  <img
+                    class="problem-timeline__group-drag-icon"
+                    src="assets/timeline-drag.svg"
+                    alt=""
+                    aria-hidden="true"
+                    draggable="false"
+                  />
                 </button>
               </div>
 
@@ -1046,6 +1052,13 @@
                             <span class="problem-timeline__chip-label">
                               {{ timelineStatusLabel(chip.status) }}
                             </span>
+                            <img
+                              class="problem-timeline__chip-drag-icon"
+                              src="assets/timeline-drag.svg"
+                              alt=""
+                              aria-hidden="true"
+                              draggable="false"
+                            />
                             <span
                               class="problem-timeline__resize-handle problem-timeline__resize-handle--end"
                               aria-hidden="true"

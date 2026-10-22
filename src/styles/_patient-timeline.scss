@@ -295,34 +295,12 @@
   touch-action: none;
 }
 
-.problem-timeline__group-drag-handle span,
-.problem-timeline__group-drag-handle span::before,
-.problem-timeline__group-drag-handle span::after {
-  width: 0.1875rem;
-  height: 0.1875rem;
-  background: currentColor;
-  border-radius: 50%;
-}
-
-.problem-timeline__group-drag-handle span {
-  position: relative;
-  box-shadow: 0 0.3125rem currentColor;
-}
-
-.problem-timeline__group-drag-handle span::before,
-.problem-timeline__group-drag-handle span::after {
-  position: absolute;
-  top: 0;
-  content: '';
-  box-shadow: 0 0.3125rem currentColor;
-}
-
-.problem-timeline__group-drag-handle span::before {
-  left: -0.3125rem;
-}
-
-.problem-timeline__group-drag-handle span::after {
-  left: 0.3125rem;
+.problem-timeline__group-drag-icon {
+  display: block;
+  width: 0.5rem;
+  height: 0.875rem;
+  pointer-events: none;
+  user-select: none;
 }
 
 .problem-timeline__group-drag-handle:hover,
@@ -486,7 +464,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-width: 1.5rem;
+  min-width: 5rem;
   height: 1.5rem;
   overflow: hidden;
   color: #fff;
@@ -524,6 +502,17 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   pointer-events: none;
+}
+
+.problem-timeline__chip-drag-icon {
+  display: block;
+  flex: 0 0 0.5rem;
+  width: 0.5rem;
+  height: 0.875rem;
+  margin-right: 0.375rem;
+  margin-left: auto;
+  pointer-events: none;
+  user-select: none;
 }
 
 .problem-timeline__resize-handle {

@@ -135,6 +135,33 @@
   outline: none;
 }
 
+.timeline-item-dialog__field input.timeline-item-dialog__input--error,
+.timeline-item-dialog__field input.timeline-item-dialog__input--error:hover,
+.timeline-item-dialog__field input.timeline-item-dialog__input--error:focus {
+  border-color: #e11d48;
+  box-shadow: none;
+}
+
+.timeline-item-dialog__duplicate-error {
+  gap: 7.897px;
+  min-height: 51.99px;
+  padding: 13.162px;
+  color: #e11d48;
+  background: #fffaf7;
+  border: 0.987px solid #e11d48;
+  border-radius: 3.949px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 11.188px;
+  font-weight: 400;
+  line-height: 14.478px;
+}
+
+.timeline-item-dialog__duplicate-error svg {
+  width: 15.795px;
+  height: 15.795px;
+  margin-top: 0.658px;
+}
+
 .timeline-item-dialog__field input[type='number'] {
   appearance: textfield;
 }
@@ -158,8 +185,16 @@
   flex: 0 0 19.085px;
 }
 
-.timeline-item-dialog__field--start-week input {
-  width: 174.733px;
+.timeline-item-dialog__week-fields {
+  gap: 15.795px;
+}
+
+.timeline-item-dialog__week-fields .timeline-item-dialog__field {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.timeline-item-dialog__week-fields input {
   height: 36px;
 }
 
