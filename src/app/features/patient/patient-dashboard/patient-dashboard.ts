@@ -126,7 +126,15 @@ interface VitalCountValues {
   weightGain: number;
 }
 
-type TimelineStatus = 'completed' | 'not-reviewed' | 'ordered' | 'due-soon' | 'late' | 'abnormal' | 'superseded' | 'future';
+type TimelineStatus =
+  | 'completed'
+  | 'not-reviewed'
+  | 'ordered'
+  | 'due-soon'
+  | 'late'
+  | 'abnormal'
+  | 'superseded'
+  | 'future';
 type ChipInteractionMode = 'move' | 'resize-start' | 'resize-end';
 type TimelineStatusTooltipIcon = 'calendar' | 'clock';
 
@@ -997,6 +1005,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     weightGain: 0,
   });
   readonly pregnancyTimeline = signal(this.cloneTimeline(INITIAL_TIMELINE));
+  readonly hasActivePregnancy = computed(() => this.pregnancyTimeline().groups.length > 0);
   readonly expandedTimelineGroupIds = signal<ReadonlySet<string>>(
     new Set(INITIAL_TIMELINE.groups.slice(0, 5).map((group) => group.id)),
   );

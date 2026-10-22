@@ -16,6 +16,20 @@ describe('PatientDashboard timeline', () => {
     }).compileComponents();
   });
 
+  it('shows the empty state when there is no active pregnancy data', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dashboard = fixture.componentInstance;
+    dashboard.pregnancyTimeline.set({ ...dashboard.pregnancyTimeline(), groups: [] });
+    fixture.detectChanges();
+
+    const emptyState = fixture.nativeElement.querySelector('.pregnancy-empty-state') as HTMLElement;
+
+    expect(emptyState).toBeTruthy();
+    expect(emptyState.querySelector('img')?.getAttribute('src')).toBe('assets/not-found-img.png');
+    expect(emptyState.querySelector('h1')?.textContent?.trim()).toBe('No Active Pregnancy');
+    expect(fixture.nativeElement.querySelector('.patient-summary')).toBeNull();
+  });
+
   it('starts with five of ten groups expanded and toggles each group independently', () => {
     const dashboard = new PatientDashboard();
     const groups = dashboard.pregnancyTimeline().groups;
