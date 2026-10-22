@@ -184,8 +184,10 @@
 }
 
 .problem-timeline__add-problem-row {
+  justify-content: space-between;
+  gap: 1rem;
   min-width: 50rem;
-  padding: 1rem;
+  padding: 0.75rem 1.25rem;
   background: #fff;
 }
 
@@ -204,6 +206,264 @@
 .problem-timeline__canvas {
   position: relative;
   min-width: 50rem;
+}
+
+.problem-review {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 50rem;
+  padding: 0.75rem 1.25rem 0.875rem;
+  background: #fff;
+  color: #171f26;
+}
+
+.problem-review__suggested,
+.problem-review__history {
+  border: 1px solid #e5e1de;
+  border-radius: 0.75rem;
+}
+
+.problem-review__suggested {
+  padding: 0.6875rem 1.1875rem;
+  background: #f8f8f7;
+}
+
+.problem-review__suggested-header,
+.problem-review__title-row,
+.problem-review__history-toggle,
+.problem-review__history-label,
+.problem-review__problem-title,
+.problem-review__actions,
+.problem-review__footnote {
+  display: flex;
+  align-items: center;
+}
+
+.problem-review__suggested-header {
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.625rem;
+}
+
+.problem-review__title-row {
+  gap: 0.875rem;
+}
+
+.problem-review h3,
+.problem-review p {
+  margin: 0;
+}
+
+.problem-review h3,
+.problem-review__history-toggle strong,
+.problem-review__problem-title strong {
+  font-size: 0.8125rem;
+  line-height: 1rem;
+}
+
+.problem-review h3,
+.problem-review__history-toggle strong {
+  font-weight: 600;
+}
+
+.problem-review__title-row > span,
+.problem-review__problem-copy p,
+.problem-review__footnote,
+.problem-review__empty {
+  color: #73808c;
+  font-size: 0.6875rem;
+  line-height: 0.875rem;
+}
+
+.problem-review__cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.625rem;
+}
+
+.problem-review__cards--suggested {
+  margin-top: 0.625rem;
+}
+
+.problem-review__card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  min-width: 0;
+  min-height: 3.375rem;
+  padding: 0.75rem 0.6875rem;
+  background: #fff;
+  border: 1px solid #e3ded9;
+  border-radius: 0.75rem;
+}
+
+.problem-review__cards--suggested .problem-review__card {
+  min-height: 3.5rem;
+  padding-block: 0.6875rem;
+}
+
+.problem-review__problem-copy {
+  min-width: 0;
+}
+
+.problem-review__problem-title {
+  gap: 0.625rem;
+  min-width: 0;
+}
+
+.problem-review__problem-title strong {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.problem-review__problem-title span {
+  flex: 0 0 auto;
+  padding: 0.0625rem 0.5rem;
+  color: #245fd7;
+  background: #dce6ff;
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 600;
+  line-height: 0.875rem;
+}
+
+.problem-review__problem-copy p {
+  margin-top: 0.125rem;
+}
+
+.problem-review__metric strong {
+  color: #ef4444;
+  font-size: inherit;
+  font-weight: 700;
+}
+
+.problem-review__metric span + strong,
+.problem-review__metric strong + span {
+  margin-left: 0.1875rem;
+}
+
+.problem-review__actions {
+  flex: 0 0 auto;
+  gap: 0.5rem;
+}
+
+.problem-review__button {
+  min-height: 2.125rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 0.625rem;
+  font: 500 0.6875rem/0.875rem Inter, sans-serif;
+  white-space: nowrap;
+}
+
+.problem-review__button:focus-visible,
+.problem-review__history-toggle:focus-visible {
+  outline: 2px solid rgba(13, 148, 136, 0.35);
+  outline-offset: 2px;
+}
+
+.problem-review__button--primary {
+  color: #fff;
+  background: #0d9488;
+  border: 1px solid #0d9488;
+}
+
+.problem-review__button--primary:hover {
+  background: #0b8278;
+  border-color: #0b8278;
+}
+
+.problem-review__button--secondary {
+  color: #73808c;
+  background: #fff;
+  border: 1px solid #e3ded9;
+}
+
+.problem-review__button--secondary:hover {
+  color: #171f26;
+  background: #f8f8f7;
+}
+
+.problem-review__button--decline-all {
+  color: #ef4444;
+  background: #fff;
+  border: 1px solid #ff6464;
+}
+
+.problem-review__button--decline-all:hover {
+  background: #fff2f2;
+}
+
+.problem-review__history {
+  padding: 0.625rem 1.25rem 0.8125rem;
+  background: #fff5f4;
+  border: 1px solid #ead8d5;
+}
+
+.problem-review__history-toggle {
+  justify-content: space-between;
+  width: 100%;
+  min-height: 1.625rem;
+  padding: 0;
+  color: #171f26;
+  background: transparent;
+  border: 0;
+  text-align: left;
+}
+
+.problem-review__suggested-toggle {
+  min-height: 1.25rem;
+}
+
+.problem-review__history-label {
+  gap: 0.625rem;
+}
+
+.problem-review__return-icon,
+.problem-review__chevron,
+.problem-review__footnote svg {
+  flex: 0 0 auto;
+  fill: none;
+  stroke: #73808c;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.75;
+}
+
+.problem-review__return-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+.problem-review__chevron {
+  width: 0.875rem;
+  height: 0.875rem;
+  transition: transform 180ms ease;
+}
+
+.problem-review__history-toggle[aria-expanded='false'] .problem-review__chevron {
+  transform: rotate(-90deg);
+}
+
+.problem-review__cards--history {
+  margin-top: 0.75rem;
+}
+
+.problem-review__empty {
+  grid-column: 1 / -1;
+  padding: 0.5rem 0;
+}
+
+.problem-review__footnote {
+  gap: 0.375rem;
+  margin: 0;
+}
+
+.problem-review__footnote svg {
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
 .problem-timeline__axis-row,
@@ -618,6 +878,12 @@
 
   .problem-timeline__undo {
     align-self: flex-end;
+  }
+}
+
+@media (max-width: 47.999rem) {
+  .problem-review__cards {
+    grid-template-columns: 1fr;
   }
 }
 

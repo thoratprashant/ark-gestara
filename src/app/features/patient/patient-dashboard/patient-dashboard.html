@@ -1100,6 +1100,147 @@
           </div>
         </div>
 
+        <section class="problem-review" aria-label="Problem recommendations and history">
+          <div class="problem-review__suggested">
+            <button
+              class="problem-review__history-toggle problem-review__suggested-toggle"
+              type="button"
+              [attr.aria-expanded]="suggestedProblemsExpanded()"
+              aria-controls="suggested-problems-list"
+              (click)="suggestedProblemsExpanded.set(!suggestedProblemsExpanded())"
+            >
+              <strong>Suggested Problems</strong>
+              <svg class="problem-review__chevron" viewBox="0 0 14 14" aria-hidden="true">
+                <path d="m3.5 5.25 3.5 3.5 3.5-3.5" />
+              </svg>
+            </button>
+
+            @if (suggestedProblemsExpanded()) {
+              @if (suggestedProblems().length) {
+                <div id="suggested-problems-list" class="problem-review__cards problem-review__cards--suggested">
+                  @for (problem of suggestedProblems(); track problem.id) {
+                    <article class="problem-review__card">
+                      <div class="problem-review__problem-copy">
+                        <div class="problem-review__problem-title">
+                          <strong>{{ problem.name }}</strong>
+                          <span>{{ problem.icdCode }}</span>
+                        </div>
+                        <p class="problem-review__metric">
+                          <span>{{ problem.detailLabel }}</span>
+                          <strong>{{ problem.detailValue }}</strong>
+                          <span>{{ problem.detailReference }}</span>
+                        </p>
+                      </div>
+                      <div class="problem-review__actions">
+                        <button
+                          class="problem-review__button problem-review__button--primary"
+                          type="button"
+                          (click)="acceptSuggestedProblem(problem)"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          class="problem-review__button problem-review__button--secondary"
+                          type="button"
+                          (click)="declineSuggestedProblem(problem)"
+                        >
+                          Decline
+                        </button>
+                      </div>
+                    </article>
+                  }
+                </div>
+              } @else {
+                <p class="problem-review__empty">No new suggested problems.</p>
+              }
+            }
+          </div>
+
+          <section class="problem-review__history">
+            <button
+              class="problem-review__history-toggle"
+              type="button"
+              [attr.aria-expanded]="declinedProblemsExpanded()"
+              aria-controls="declined-problems-list"
+              (click)="declinedProblemsExpanded.set(!declinedProblemsExpanded())"
+            >
+              <span class="problem-review__history-label">
+                <strong>Declined Problems ({{ declinedProblems().length }})</strong>
+              </span>
+              <svg class="problem-review__chevron" viewBox="0 0 14 14" aria-hidden="true">
+                <path d="m3.5 5.25 3.5 3.5 3.5-3.5" />
+              </svg>
+            </button>
+            @if (declinedProblemsExpanded()) {
+              <div id="declined-problems-list" class="problem-review__cards problem-review__cards--history">
+                @for (problem of declinedProblems(); track problem.id) {
+                  <article class="problem-review__card">
+                    <div class="problem-review__problem-copy">
+                      <div class="problem-review__problem-title">
+                        <strong>{{ problem.name }}</strong>
+                        <span>{{ problem.icdCode }}</span>
+                      </div>
+                      <p class="problem-review__metric">
+                        <span>{{ problem.detailLabel }}</span>
+                        <strong>{{ problem.detailValue }}</strong>
+                        <span>{{ problem.detailReference }}</span>
+                      </p>
+                    </div>
+                    <button
+                      class="problem-review__button problem-review__button--primary"
+                      type="button"
+                      (click)="reactivateProblem(problem, 'declined')"
+                    >
+                      Accept
+                    </button>
+                  </article>
+                } @empty {
+                  <p class="problem-review__empty">No declined problems.</p>
+                }
+              </div>
+            }
+          </section>
+
+          <section class="problem-review__history">
+            <button
+              class="problem-review__history-toggle"
+              type="button"
+              [attr.aria-expanded]="deletedProblemsExpanded()"
+              aria-controls="deleted-problems-list"
+              (click)="deletedProblemsExpanded.set(!deletedProblemsExpanded())"
+            >
+              <strong>Deleted Problems ({{ deletedProblems().length }})</strong>
+              <svg class="problem-review__chevron" viewBox="0 0 14 14" aria-hidden="true">
+                <path d="m3.5 5.25 3.5 3.5 3.5-3.5" />
+              </svg>
+            </button>
+            @if (deletedProblemsExpanded()) {
+              <div id="deleted-problems-list" class="problem-review__cards problem-review__cards--history">
+                @for (problem of deletedProblems(); track problem.id) {
+                  <article class="problem-review__card">
+                    <div class="problem-review__problem-copy">
+                      <div class="problem-review__problem-title">
+                        <strong>{{ problem.name }}</strong>
+                        <span>{{ problem.icdCode }}</span>
+                      </div>
+                    </div>
+                    <button
+                      class="problem-review__button problem-review__button--primary"
+                      type="button"
+                      (click)="reactivateProblem(problem, 'deleted')"
+                    >
+                      Accept
+                    </button>
+                  </article>
+                } @empty {
+                  <p class="problem-review__empty">No deleted problems.</p>
+                }
+              </div>
+            }
+          </section>
+
+        </section>
+
         <div class="problem-timeline__add-problem-row d-flex align-items-center">
           <button
             class="problem-timeline__add-problem d-flex align-items-center justify-content-center text-nowrap"
@@ -1109,6 +1250,13 @@
             <img src="assets/problem-dialog/add.svg" alt="" aria-hidden="true" />
             Add Problem
           </button>
+          <p class="problem-review__footnote">
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <circle cx="8" cy="8" r="6.25" />
+              <path d="M8 7.2v4M8 4.7h.01" />
+            </svg>
+            Deleting removes from Gestara only, not from Epic.
+          </p>
         </div>
       </div>
     </section>
@@ -1349,17 +1497,17 @@
             <button
               class="timeline-condition-tooltip__resolve"
               type="button"
-              [disabled]="group.resolved"
-              (click)="resolveTimelineProblem(group.id)"
+              (click)="deleteTimelineProblem(group.id)"
             >
-              {{ group.resolved ? 'Resolved' : 'Resolve' }}
+              Delete
             </button>
             <button
               class="timeline-condition-tooltip__delete"
               type="button"
-              (click)="deleteTimelineProblem(group.id)"
+              [disabled]="group.resolved"
+              (click)="resolveTimelineProblem(group.id)"
             >
-              Delete
+              {{ group.resolved ? 'Resolved' : 'Resolve' }}
             </button>
           </footer>
         }
@@ -1424,7 +1572,10 @@
                   (click)="showResultTooltip('cbc', $event)"
                 >
                   <header>
-                    <h4>CBC</h4>
+                    <div class="result-card__title">
+                      <h4>CBC</h4>
+                      <span class="result-link-badge">Linked to Labs</span>
+                    </div>
                     <time datetime="2026-03-20">3/20/26</time>
                   </header>
                   <ul>
@@ -1433,10 +1584,7 @@
                     <li>Hct: 34%</li>
                     <li>Platelets: 245 K/uL</li>
                   </ul>
-                  <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">
-                    <img src="assets/visit-progress/visit-13.svg" alt="" aria-hidden="true" />
-                    Mark Reviewed
-                  </button>
+                  <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">Mark Reviewed</button>
                 </article>
 
                 <article
@@ -1451,17 +1599,21 @@
                   (click)="showResultTooltip('home-bp', $event)"
                 >
                   <header>
-                    <h4>Home BP Log</h4>
+                    <div class="result-card__title">
+                      <h4>Home BP Log</h4>
+                      <span class="result-link-badge result-link-badge--warning">Unlinked</span>
+                    </div>
                     <time datetime="2026-03-14">3/14–3/27</time>
                   </header>
                   <ul>
                     <li>Range: 128–148/82–92 mmHg (33% elevated)</li>
                     <li>Compliance: 14/14 days</li>
                   </ul>
-                  <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">
-                    <img src="assets/visit-progress/visit-13.svg" alt="" aria-hidden="true" />
-                    Mark Reviewed
-                  </button>
+                  <div class="result-card__actions">
+                    <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">Mark Reviewed</button>
+                    <button class="result-secondary-button" type="button" (click)="$event.stopPropagation()">Start New Task</button>
+                    <button class="result-secondary-button" type="button" (click)="$event.stopPropagation()">Link Existing Task</button>
+                  </div>
                 </article>
 
                 <article
@@ -1476,7 +1628,10 @@
                   (click)="showResultTooltip('blood-glucose', $event)"
                 >
                   <header>
-                    <h4>Blood Glucose Log</h4>
+                    <div class="result-card__title">
+                      <h4>Blood Glucose Log</h4>
+                      <span class="result-link-badge">Linked to Vital Signs</span>
+                    </div>
                     <time datetime="2026-03-14">3/14–3/27</time>
                   </header>
                   <ul>
@@ -1484,22 +1639,64 @@
                     <li>Post-prandial: 118–135 mg/dL (0% elevated)</li>
                     <li>Compliance: 56/56 checks</li>
                   </ul>
-                  <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">
-                    <img src="assets/visit-progress/visit-13.svg" alt="" aria-hidden="true" />
-                    Mark Reviewed
-                  </button>
+                  <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">Mark Reviewed</button>
                 </article>
               </div>
+
+              <section class="unmatched-results" aria-labelledby="unmatched-results-title">
+                <header>
+                  <h4 id="unmatched-results-title">Unmatched Epic Results <span class="info-icon" aria-hidden="true">i</span></h4>
+                  <p>Results returned from Epic that do not match a configured Problem or Task. Exploratory — pending real integration data.</p>
+                </header>
+                <div class="unmatched-results__list">
+                  <article class="unmatched-result">
+                    <div><strong>Thyroid Panel - TSH, Free T4</strong><time datetime="2026-03-25">Mar 25, 2026</time></div>
+                    <div><button type="button">Assign to Problem</button><button type="button">Create New</button></div>
+                  </article>
+                  <article class="unmatched-result">
+                    <div><strong>Vitamin D, 25-Hydroxy</strong><time datetime="2026-03-22">Mar 22, 2026</time></div>
+                    <div><button type="button">Assign to Problem</button><button type="button">Create New</button></div>
+                  </article>
+                  <article class="unmatched-result">
+                    <div><strong>Ferritin Level</strong><time datetime="2026-03-20">Mar 20, 2026</time></div>
+                    <div><button type="button">Assign to Problem</button><button type="button">Create New</button></div>
+                  </article>
+                </div>
+              </section>
             </section>
 
             <section class="visit-summary__column" aria-labelledby="orders-title">
-              <div class="visit-summary__column-heading visit-summary__column-heading--with-icon">
-                <h3 id="orders-title">
-                  <img src="assets/visit-progress/visit-05.svg" alt="" aria-hidden="true" />
-                  Orders Placed This Visit
-                </h3>
+              <div class="visit-summary__column-heading">
+                <h3 id="orders-title">Orders Placed This Visit</h3>
                 <p>March 28, 2026</p>
               </div>
+
+              <section class="order-picker" aria-label="Order library">
+                <div class="order-picker__search">
+                  <span class="search-icon" aria-hidden="true"></span>
+                  <input type="search" aria-label="Search order library" placeholder="Search order library..." />
+                  <button type="button">Add Order</button>
+                </div>
+                <div class="order-picker__category">
+                  <h4>Laboratory</h4>
+                  <button type="button"><i></i>Type &amp; Screen</button>
+                  <button type="button"><i></i>Hemoglobin A1C</button>
+                </div>
+                <div class="order-picker__category order-picker__category--imaging">
+                  <h4>Imaging</h4>
+                  <button type="button"><i></i>Fetal echocardiogram</button>
+                  <button type="button"><i></i>Cervical length ultrasound</button>
+                </div>
+                <div class="order-picker__category order-picker__category--testing">
+                  <h4>Testing</h4>
+                  <button type="button"><i></i>Glucose tolerance test (GTT)</button>
+                </div>
+              </section>
+
+              <article class="order-decision">
+                <header><h4><span aria-hidden="true">•</span> Type &amp; Screen</h4><span>Laboratory</span></header>
+                <div><button class="order-decision__approve" type="button">Order</button><button type="button">Decline</button></div>
+              </article>
 
               <div class="order-list">
                 <article class="order-card order-card--laboratory">
@@ -1516,9 +1713,14 @@
                       <img src="assets/visit-progress/visit-03.svg" alt="" aria-hidden="true" />
                     </button>
                   </div>
+                  <div class="order-card__links">
+                    <span><b aria-hidden="true">↗</b> Linked: GDM Monitoring, Gestational Hypertension</span>
+                    <em><b aria-hidden="true">↻</b> Status synced across: GDM Monitoring, Gestational Hypertension</em>
+                  </div>
                   <ul>
                     <li>
                       <span>CBC (STAT)</span>
+                      <small class="order-status order-status--ordered">Ordered</small>
                       <button
                         class="order-card__remove"
                         type="button"
@@ -1529,6 +1731,7 @@
                     </li>
                     <li>
                       <span>CMP (STAT)</span>
+                      <small class="order-status order-status--ordered">Ordered</small>
                       <button
                         class="order-card__remove"
                         type="button"
@@ -1539,6 +1742,7 @@
                     </li>
                     <li>
                       <span>LFTs (STAT)</span>
+                      <small class="order-status order-status--completed">Completed</small>
                       <button
                         class="order-card__remove"
                         type="button"
@@ -1549,6 +1753,7 @@
                     </li>
                     <li>
                       <span>Uric acid (STAT)</span>
+                      <small class="order-status order-status--reviewed">Reviewed</small>
                       <button
                         class="order-card__remove"
                         type="button"
@@ -1559,6 +1764,7 @@
                     </li>
                     <li>
                       <span>Urinalysis w/ protein/Cr ratio (STAT)</span>
+                      <small class="order-status order-status--ordered">Ordered</small>
                       <button
                         class="order-card__remove"
                         type="button"
@@ -1584,9 +1790,13 @@
                       <img src="assets/visit-progress/visit-01.svg" alt="" aria-hidden="true" />
                     </button>
                   </div>
+                  <div class="order-card__links">
+                    <span><b aria-hidden="true">↗</b> Linked: GDM Monitoring</span>
+                  </div>
                   <ul>
                     <li>
                       <span>Growth ultrasound (scheduled 32w)</span>
+                      <small class="order-status order-status--scheduled">Scheduled</small>
                       <button
                         class="order-card__remove"
                         type="button"

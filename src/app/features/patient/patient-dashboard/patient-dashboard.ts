@@ -214,6 +214,16 @@ interface PregnancyTimeline {
   groups: TimelineGroup[];
 }
 
+interface SuggestedProblem {
+  detailLabel?: string;
+  detailReference?: string;
+  detailValue?: string;
+  id: string;
+  name: string;
+  icdCode: string;
+  detectionReason: string;
+}
+
 interface ActiveChipInteraction {
   groupId: string;
   rowId: string;
@@ -1007,6 +1017,63 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   });
   readonly pregnancyTimeline = signal(this.cloneTimeline(INITIAL_TIMELINE));
   readonly hasActivePregnancy = computed(() => this.pregnancyTimeline().groups.length > 0);
+  readonly suggestedProblems = signal<readonly SuggestedProblem[]>([
+    {
+      id: 'suggested-gestational-hypertension',
+      name: 'Gestational Hypertension',
+      icdCode: 'ICD-10 O13.3',
+      detectionReason: 'BP: 159/109 (140/90)',
+      detailLabel: 'BP:',
+      detailValue: '159/109',
+      detailReference: '(140/90)',
+    },
+    {
+      id: 'suggested-advanced-maternal-age',
+      name: 'Advanced Maternal Age',
+      icdCode: 'ICD-10 O13.3',
+      detectionReason: 'Age: 36 (≥ 35)',
+      detailLabel: 'Age:',
+      detailValue: '36',
+      detailReference: '(≥ 35 )',
+    },
+  ]);
+  readonly declinedProblems = signal<readonly SuggestedProblem[]>([
+    {
+      id: 'declined-hemoglobin-electrophoresis',
+      name: 'Hemoglobin Electrophoresis',
+      icdCode: 'ICD-10 O13.3',
+      detectionReason: 'Result: 11.2 g/dL (11.5 - 15.5)',
+      detailLabel: 'Result:',
+      detailValue: '11.2 g/dL',
+      detailReference: '(11.5 - 15.5)',
+    },
+    {
+      id: 'declined-advanced-maternal-age',
+      name: 'Advanced Maternal Age',
+      icdCode: 'ICD-10 O13.3',
+      detectionReason: 'Age: 36 (≥ 35)',
+      detailLabel: 'Age:',
+      detailValue: '36',
+      detailReference: '(≥ 35 )',
+    },
+  ]);
+  readonly deletedProblems = signal<readonly SuggestedProblem[]>([
+    {
+      id: 'deleted-gestational-hypertension',
+      name: 'Gestational Hypertension',
+      icdCode: 'ICD-10 O13.3',
+      detectionReason: 'BP >140/90',
+    },
+    {
+      id: 'deleted-advanced-maternal-age',
+      name: 'Advanced Maternal Age',
+      icdCode: 'ICD-10 O13.3',
+      detectionReason: 'age ≥35',
+    },
+  ]);
+  readonly suggestedProblemsExpanded = signal(true);
+  readonly declinedProblemsExpanded = signal(true);
+  readonly deletedProblemsExpanded = signal(true);
   readonly expandedTimelineGroupIds = signal<ReadonlySet<string>>(
     new Set(INITIAL_TIMELINE.groups.slice(0, 5).map((group) => group.id)),
   );
@@ -1660,6 +1727,43 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   isTimelineGroupExpanded(groupId: string): boolean {
     return this.expandedTimelineGroupIds().has(groupId);
+  }
+
+  acceptSuggestedProblem(problem: SuggestedProblem): void {
+    this.suggestedProblems.update((problems) =>
+      problems.filter((item) => item.id !== problem.id),
+    );
+    this.addTimelineProblem(problem.name);
+  }
+
+  declineSuggestedProblem(problem: SuggestedProblem): void {
+    this.suggestedProblems.update((problems) =>
+      problems.filter((item) => item.id !== problem.id),
+    );
+    this.declinedProblems.update((problems) => [
+      ...problems,
+      { ...problem, id: `declined-${problem.id}` },
+    ]);
+  }
+
+  declineAllSuggestedProblems(): void {
+    const suggestions = this.suggestedProblems();
+
+    if (!suggestions.length) {
+      return;
+    }
+
+    this.declinedProblems.update((problems) => [
+      ...problems,
+      ...suggestions.map((problem) => ({ ...problem, id: `declined-${problem.id}` })),
+    ]);
+    this.suggestedProblems.set([]);
+  }
+
+  reactivateProblem(problem: SuggestedProblem, source: 'declined' | 'deleted'): void {
+    const sourceProblems = source === 'declined' ? this.declinedProblems : this.deletedProblems;
+    sourceProblems.update((problems) => problems.filter((item) => item.id !== problem.id));
+    this.addTimelineProblem(problem.name);
   }
 
   reorderTimelineGroup(event: CdkDragDrop<TimelineGroup[]>): void {
