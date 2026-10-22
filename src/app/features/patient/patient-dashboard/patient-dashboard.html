@@ -1273,6 +1273,9 @@
       <aside
         id="timeline-status-tooltip"
         class="timeline-status-tooltip"
+        [class.timeline-status-tooltip--submitted-results]="
+          activeStatusTooltip.tooltip.resultsSubmitted
+        "
         role="dialog"
         [attr.aria-label]="activeStatusTooltip.tooltip.badgeLabel + ' timeline details'"
         [attr.data-placement]="timelineStatusTooltipPosition().placement"
@@ -1307,7 +1310,12 @@
 
           <div class="timeline-status-tooltip__divider"></div>
 
-          <div class="timeline-status-tooltip__schedule">
+          <div
+            class="timeline-status-tooltip__schedule"
+            [class.timeline-status-tooltip__schedule--reviewed]="
+              activeStatusTooltip.tooltip.resultsSubmitted
+            "
+          >
             @for (scheduleRow of activeStatusTooltip.tooltip.schedule; track scheduleRow.label) {
               <div class="timeline-status-tooltip__schedule-row">
                 <span
@@ -1320,7 +1328,170 @@
                 >
               </div>
             }
+            @if (activeStatusTooltip.tooltip.resultsSubmitted) {
+              <div class="timeline-status-tooltip__schedule-row">
+                <span
+                  class="timeline-status-tooltip__icon"
+                  data-icon="reviewed-calendar"
+                  aria-hidden="true"
+                ></span>
+                <span>Reviewed: <strong>10-15-25</strong></span>
+              </div>
+            }
           </div>
+
+          @if (activeStatusTooltip.tooltip.resultsSubmitted) {
+            <section class="timeline-status-tooltip__received-results">
+              <header class="timeline-status-tooltip__section-header">
+                <h3>Results received from Epic:</h3>
+                <span class="timeline-status-tooltip__result-date">
+                  <span
+                    class="timeline-status-tooltip__icon"
+                    data-icon="reviewed-calendar"
+                    aria-hidden="true"
+                  ></span>
+                  Date: 10-15-25
+                </span>
+              </header>
+
+              <div class="timeline-status-tooltip__received-card">
+                <div class="timeline-status-tooltip__received-test">
+                  <span
+                    class="timeline-status-tooltip__icon"
+                    data-icon="test-tube"
+                    aria-hidden="true"
+                  ></span>
+                  <div>
+                    <strong>Hemoglobin Electrophoresis</strong>
+                    <p>
+                      Result: <b>{{ submittedTimelineTooltipResult() }}</b>
+                      <span> (11.5 - 15.5)</span>
+                    </p>
+                    <small>Recommended problem: <b>Anemia in Pregnancy</b></small>
+                  </div>
+                </div>
+                @if (timelineTooltipResultReviewState('hemoglobin'); as reviewState) {
+                  <span
+                    class="timeline-status-tooltip__review-chip"
+                    [attr.data-review-state]="reviewState"
+                  >
+                    <img
+                      [src]="
+                        reviewState === 'added'
+                          ? 'assets/timeline-status-tooltip/result-added.svg'
+                          : 'assets/timeline-status-tooltip/result-dismissed.svg'
+                      "
+                      alt=""
+                      aria-hidden="true"
+                    />
+                    {{ reviewState === 'added' ? 'Added to Problem List' : 'Dissmissed Problem' }}
+                  </span>
+                } @else {
+                  <div class="timeline-status-tooltip__result-actions">
+                    <button
+                      type="button"
+                      (click)="setTimelineTooltipResultReviewState('hemoglobin', 'dismissed')"
+                    >
+                      Dismiss
+                    </button>
+                    <button
+                      type="button"
+                      (click)="setTimelineTooltipResultReviewState('hemoglobin', 'added')"
+                    >
+                      Add to Problem List
+                    </button>
+                  </div>
+                }
+                <div class="timeline-status-tooltip__received-divider"></div>
+                <div class="timeline-status-tooltip__received-test">
+                  <span
+                    class="timeline-status-tooltip__icon"
+                    data-icon="test-tube"
+                    aria-hidden="true"
+                  ></span>
+                  <div>
+                    <strong>Spinal Muscular Atrophy</strong>
+                    <p>Result: Negative</p>
+                  </div>
+                </div>
+                <div class="timeline-status-tooltip__received-divider"></div>
+                <div class="timeline-status-tooltip__received-test">
+                  <span
+                    class="timeline-status-tooltip__icon"
+                    data-icon="test-tube"
+                    aria-hidden="true"
+                  ></span>
+                  <div>
+                    <strong>Fragile X</strong>
+                    <p>Result: <b>9.8 g/dL</b><span> (11.5 - 15.5)</span></p>
+                    <small>Recommended problem: <b>Anemia in Pregnancy</b></small>
+                  </div>
+                </div>
+                @if (timelineTooltipResultReviewState('fragile-x'); as reviewState) {
+                  <span
+                    class="timeline-status-tooltip__review-chip"
+                    [attr.data-review-state]="reviewState"
+                  >
+                    <img
+                      [src]="
+                        reviewState === 'added'
+                          ? 'assets/timeline-status-tooltip/result-added.svg'
+                          : 'assets/timeline-status-tooltip/result-dismissed.svg'
+                      "
+                      alt=""
+                      aria-hidden="true"
+                    />
+                    {{ reviewState === 'added' ? 'Added to Problem List' : 'Dissmissed Problem' }}
+                  </span>
+                } @else {
+                  <div class="timeline-status-tooltip__result-actions">
+                    <button
+                      type="button"
+                      (click)="setTimelineTooltipResultReviewState('fragile-x', 'dismissed')"
+                    >
+                      Dismiss
+                    </button>
+                    <button
+                      type="button"
+                      (click)="setTimelineTooltipResultReviewState('fragile-x', 'added')"
+                    >
+                      Add to Problem List
+                    </button>
+                  </div>
+                }
+              </div>
+
+              <button class="timeline-status-tooltip__mark-reviewed" type="button">
+                Mark as Reviewed
+              </button>
+            </section>
+
+            <section class="timeline-status-tooltip__outstanding-orders">
+              <h3>Orders without results:</h3>
+              @for (order of ['Manual Order']; track order) {
+                <div class="timeline-status-tooltip__outstanding-order">
+                  <div class="timeline-status-tooltip__outstanding-order-name">
+                    <span
+                      class="timeline-status-tooltip__icon"
+                      data-icon="test-tube"
+                      aria-hidden="true"
+                    ></span>
+                    <span>{{ order }}</span>
+                  </div>
+                  <div class="timeline-status-tooltip__outstanding-order-actions">
+                    <input type="text" placeholder="Add order result" />
+                    <button type="button" aria-label="Remove outstanding order">
+                      <img
+                        src="assets/timeline-status-tooltip/cross-future.svg"
+                        alt=""
+                        aria-hidden="true"
+                      />
+                    </button>
+                  </div>
+                </div>
+              }
+            </section>
+          }
 
           @if (activeStatusTooltip.tooltip.tests?.length) {
             <div class="timeline-status-tooltip__divider"></div>
@@ -1398,6 +1569,8 @@
                         type="text"
                         placeholder="Add order result"
                         [attr.aria-label]="'Add order result for ' + test.label"
+                        [value]="test.orderResult || ''"
+                        (input)="setTimelineTooltipOrderResult(test, $event)"
                       />
                     }
                   </div>
@@ -1503,7 +1676,14 @@
 
           @if (activeStatusTooltip.tooltip.showBulkActions) {
             <div class="timeline-status-tooltip__bulk-actions">
-              <button class="timeline-status-tooltip__order-all" type="button">
+              <button
+                class="timeline-status-tooltip__order-all"
+                type="button"
+                [disabled]="
+                  activeStatusTooltip.tooltip.submitLabel && !canSubmitTimelineTooltipResults()
+                "
+                (click)="submitTimelineTooltipResults()"
+              >
                 {{ activeStatusTooltip.tooltip.submitLabel || 'Order All' }}
               </button>
               @if (!activeStatusTooltip.tooltip.submitLabel) {

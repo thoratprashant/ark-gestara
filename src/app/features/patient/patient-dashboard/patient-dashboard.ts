@@ -137,6 +137,7 @@ type TimelineStatus =
   | 'future';
 type ChipInteractionMode = 'move' | 'resize-start' | 'resize-end';
 type TimelineStatusTooltipIcon = 'calendar' | 'clock';
+type TimelineResultReviewState = 'added' | 'dismissed';
 
 interface TimelineStatusTooltipScheduleRow {
   icon: TimelineStatusTooltipIcon;
@@ -147,6 +148,7 @@ interface TimelineStatusTooltipScheduleRow {
 interface TimelineStatusTooltipTest {
   actionState?: 'active' | 'ordered' | 'declined';
   label: string;
+  orderResult?: string;
   result?: string;
   removed?: boolean;
   showActions?: boolean;
@@ -159,6 +161,8 @@ interface TimelineStatusTooltip {
   notesPlaceholder?: string;
   otherPlaceholder?: string;
   removedTests?: TimelineStatusTooltipTest[];
+  resultReviewStates?: Record<string, TimelineResultReviewState>;
+  resultsSubmitted?: boolean;
   schedule: TimelineStatusTooltipScheduleRow[];
   showBulkActions?: boolean;
   submitLabel?: string;
@@ -709,7 +713,7 @@ const TIMELINE_STATUS_TOOLTIPS: Record<TimelineStatus, TimelineStatusTooltip> = 
     submitLabel: 'Submit',
     subtitle: 'Routine Prenatal Care',
     tests: [
-      { label: "White Blood Cells", showActions: true },
+      { label: 'White Blood Cells', showActions: true },
       { label: 'Red Blood Cells', showActions: true },
       { label: 'Platelets', showActions: true },
       { label: 'Kidney Function', showActions: true },
@@ -1623,6 +1627,69 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
         tests: tooltip.tests?.map((item) => (item === test ? orderedTest : item)),
       };
     });
+  }
+
+  setTimelineTooltipOrderResult(test: TimelineStatusTooltipTest, event: Event): void {
+    const input = event.target as HTMLInputElement;
+
+    this.updateFutureTimelineTooltip((tooltip) => ({
+      ...tooltip,
+      tests: tooltip.tests?.map((item) =>
+        item === test ? { ...item, orderResult: input.value } : item,
+      ),
+    }));
+  }
+
+  canSubmitTimelineTooltipResults(): boolean {
+    return Boolean(
+      this.activeTimelineStatusTooltip()?.tooltip.tests?.some(
+        (test) => test.actionState === 'ordered' && test.orderResult?.trim(),
+      ),
+    );
+  }
+
+  submittedTimelineTooltipResult(): string {
+    return (
+      this.activeTimelineStatusTooltip()
+        ?.tooltip.tests?.find((test) => test.actionState === 'ordered' && test.orderResult?.trim())
+        ?.orderResult?.trim() || '11.2 g/dL'
+    );
+  }
+
+  submitTimelineTooltipResults(): void {
+    if (!this.canSubmitTimelineTooltipResults()) {
+      return;
+    }
+
+    this.updateFutureTimelineTooltip((tooltip) => ({
+      ...tooltip,
+      badgeLabel: 'Completed/Not Reviewed',
+      resultsSubmitted: true,
+    }));
+
+    window.requestAnimationFrame(() => {
+      const content = document.querySelector<HTMLElement>(
+        '#timeline-status-tooltip .timeline-status-tooltip__content',
+      );
+
+      if (content) {
+        content.scrollTop = 0;
+      }
+    });
+  }
+
+  setTimelineTooltipResultReviewState(resultId: string, state: TimelineResultReviewState): void {
+    this.updateFutureTimelineTooltip((tooltip) => ({
+      ...tooltip,
+      resultReviewStates: {
+        ...tooltip.resultReviewStates,
+        [resultId]: state,
+      },
+    }));
+  }
+
+  timelineTooltipResultReviewState(resultId: string): TimelineResultReviewState | undefined {
+    return this.activeTimelineStatusTooltip()?.tooltip.resultReviewStates?.[resultId];
   }
 
   removeTimelineTooltipTest(test: TimelineStatusTooltipTest, fromRemoved = false): void {
