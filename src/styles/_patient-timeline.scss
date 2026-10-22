@@ -271,6 +271,7 @@
   align-items: center;
   width: 100%;
   background: rgba(13, 148, 136, 0.05);
+  padding-left: 10px;
 }
 
 .problem-timeline__groups {
@@ -348,7 +349,7 @@
   gap: 0.5rem;
   width: auto;
   min-height: 2.5rem;
-  padding: 0.625rem 0.25rem 0.625rem 1.25rem;
+  padding: 0.625rem 0.25rem 0.625rem 0.25rem;
   color: #171f26;
   background: transparent;
   border: 0;

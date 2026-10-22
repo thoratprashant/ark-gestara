@@ -954,6 +954,22 @@
               >
                 <div class="problem-timeline__group-header">
                   <button
+                    class="problem-timeline__group-drag-handle"
+                    type="button"
+                    cdkDragHandle
+                    [attr.aria-label]="'Reorder ' + group.label + '. Use up and down arrow keys.'"
+                    [attr.title]="'Drag to reorder ' + group.label"
+                    (keydown)="moveTimelineGroupWithKeyboard($event, groupIndex)"
+                  >
+                    <img
+                      class="problem-timeline__group-drag-icon"
+                      src="assets/timeline-drag.svg"
+                      alt=""
+                      aria-hidden="true"
+                      draggable="false"
+                    />
+                  </button>
+                  <button
                     class="problem-timeline__group-toggle"
                     type="button"
                     [attr.aria-expanded]="isTimelineGroupExpanded(group.id)"
@@ -990,23 +1006,6 @@
                     (click)="openTimelineItemDialog(group.id)"
                   >
                     +
-                  </button>
-
-                  <button
-                    class="problem-timeline__group-drag-handle"
-                    type="button"
-                    cdkDragHandle
-                    [attr.aria-label]="'Reorder ' + group.label + '. Use up and down arrow keys.'"
-                    [attr.title]="'Drag to reorder ' + group.label"
-                    (keydown)="moveTimelineGroupWithKeyboard($event, groupIndex)"
-                  >
-                    <img
-                      class="problem-timeline__group-drag-icon"
-                      src="assets/timeline-drag.svg"
-                      alt=""
-                      aria-hidden="true"
-                      draggable="false"
-                    />
                   </button>
                 </div>
 
@@ -1262,8 +1261,14 @@
       <aside
         id="timeline-condition-tooltip"
         class="timeline-condition-tooltip"
-        role="dialog"
-        [attr.aria-label]="group.label + ' condition details'"
+        [class.timeline-condition-tooltip--remove]="timelineProblemPendingRemoval()"
+        [attr.role]="timelineProblemPendingRemoval() ? 'alertdialog' : 'dialog'"
+        [attr.aria-label]="
+          timelineProblemPendingRemoval()
+            ? 'Remove ' + group.label + ' confirmation'
+            : group.label + ' condition details'
+        "
+        [attr.aria-modal]="timelineProblemPendingRemoval() ? 'true' : null"
         [style.left.px]="timelineGroupTooltipPosition().left"
         [style.top.px]="timelineGroupTooltipPosition().top"
         [style.width.px]="timelineGroupTooltipPosition().width"
@@ -1273,50 +1278,91 @@
         (focusin)="keepTimelineGroupTooltipOpen()"
         (focusout)="scheduleTimelineGroupTooltipHide()"
       >
-        <header class="timeline-condition-tooltip__header">
-          <h2>{{ group.label }}</h2>
-          <button
-            type="button"
-            [attr.aria-label]="'Close ' + group.label + ' details'"
-            (click)="hideTimelineGroupTooltip()"
-          >
-            <img src="assets/timeline-condition-tooltip/close.svg" alt="" aria-hidden="true" />
-          </button>
-        </header>
+        @if (timelineProblemPendingRemoval()) {
+          <header class="timeline-condition-tooltip__header">
+            <h2>Remove Problem?</h2>
+            <button
+              type="button"
+              [attr.aria-label]="'Close remove ' + group.label + ' confirmation'"
+              (click)="cancelTimelineProblemRemoval()"
+            >
+              <img src="assets/timeline-condition-tooltip/close.svg" alt="" aria-hidden="true" />
+            </button>
+          </header>
 
-        <div class="timeline-condition-tooltip__body">
-          <section class="timeline-condition-tooltip__tags" aria-label="Condition tags">
-            <h3>Tags</h3>
-            <div>
-              @for (tag of group.condition.tags; track tag.label) {
-                <span [attr.data-tone]="tag.tone">{{ tag.label }}</span>
-              }
+          <div class="timeline-condition-tooltip__remove-body">
+            <div class="timeline-condition-tooltip__problem">
+              <span>Problem to remove</span>
+              <strong>{{ group.condition.tags[0].label }} - {{ group.label }}</strong>
             </div>
-          </section>
+            <p>
+              This will remove the problem from the Gestara dashboard. It will remain in the
+              patient’s Epic chart.
+            </p>
+          </div>
 
-          <section class="timeline-condition-tooltip__description">
-            <h3>ICD - 10 Technical Description</h3>
-            <p>{{ group.condition.description }}</p>
-          </section>
-        </div>
+          <footer class="timeline-condition-tooltip__footer">
+            <button
+              class="timeline-condition-tooltip__cancel"
+              type="button"
+              (click)="cancelTimelineProblemRemoval()"
+            >
+              Cancel
+            </button>
+            <button
+              class="timeline-condition-tooltip__remove"
+              type="button"
+              (click)="confirmTimelineProblemRemoval(group.id)"
+            >
+              Remove
+            </button>
+          </footer>
+        } @else {
+          <header class="timeline-condition-tooltip__header">
+            <h2>{{ group.label }}</h2>
+            <button
+              type="button"
+              [attr.aria-label]="'Close ' + group.label + ' details'"
+              (click)="hideTimelineGroupTooltip()"
+            >
+              <img src="assets/timeline-condition-tooltip/close.svg" alt="" aria-hidden="true" />
+            </button>
+          </header>
 
-        <footer class="timeline-condition-tooltip__footer">
-          <button
-            class="timeline-condition-tooltip__resolve"
-            type="button"
-            [disabled]="group.resolved"
-            (click)="resolveTimelineProblem(group.id)"
-          >
-            {{ group.resolved ? 'Resolved' : 'Resolve' }}
-          </button>
-          <button
-            class="timeline-condition-tooltip__delete"
-            type="button"
-            (click)="deleteTimelineProblem(group.id)"
-          >
-            Delete
-          </button>
-        </footer>
+          <div class="timeline-condition-tooltip__body">
+            <section class="timeline-condition-tooltip__tags" aria-label="Condition tags">
+              <h3>Tags</h3>
+              <div>
+                @for (tag of group.condition.tags; track tag.label) {
+                  <span [attr.data-tone]="tag.tone">{{ tag.label }}</span>
+                }
+              </div>
+            </section>
+
+            <section class="timeline-condition-tooltip__description">
+              <h3>ICD - 10 Technical Description</h3>
+              <p>{{ group.condition.description }}</p>
+            </section>
+          </div>
+
+          <footer class="timeline-condition-tooltip__footer">
+            <button
+              class="timeline-condition-tooltip__resolve"
+              type="button"
+              [disabled]="group.resolved"
+              (click)="resolveTimelineProblem(group.id)"
+            >
+              {{ group.resolved ? 'Resolved' : 'Resolve' }}
+            </button>
+            <button
+              class="timeline-condition-tooltip__delete"
+              type="button"
+              (click)="deleteTimelineProblem(group.id)"
+            >
+              Delete
+            </button>
+          </footer>
+        }
       </aside>
     }
 

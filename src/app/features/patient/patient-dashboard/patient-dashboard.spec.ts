@@ -219,6 +219,59 @@ describe('PatientDashboard timeline', () => {
     });
   });
 
+  it('confirms before removing a timeline problem', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    fixture.detectChanges();
+
+    const dashboard = fixture.componentInstance;
+    const group = dashboard.pregnancyTimeline().groups[0];
+    const toggle = fixture.nativeElement.querySelector(
+      '.problem-timeline__group-toggle',
+    ) as HTMLButtonElement;
+
+    toggle.dispatchEvent(new MouseEvent('mouseenter'));
+    fixture.detectChanges();
+
+    const deleteButton = fixture.nativeElement.querySelector(
+      '.timeline-condition-tooltip__delete',
+    ) as HTMLButtonElement;
+    deleteButton.click();
+    fixture.detectChanges();
+
+    const confirmation = fixture.nativeElement.querySelector(
+      '.timeline-condition-tooltip--remove',
+    ) as HTMLElement;
+    expect(confirmation.getAttribute('role')).toBe('alertdialog');
+    expect(confirmation.textContent).toContain('Remove Problem?');
+    expect(confirmation.textContent).toContain(`${group.condition.tags[0].label} - ${group.label}`);
+    expect(dashboard.pregnancyTimeline().groups.some((item) => item.id === group.id)).toBe(true);
+
+    const cancelButton = confirmation.querySelector(
+      '.timeline-condition-tooltip__cancel',
+    ) as HTMLButtonElement;
+    cancelButton.click();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.timeline-condition-tooltip--remove')).toBeNull();
+    expect(dashboard.pregnancyTimeline().groups.some((item) => item.id === group.id)).toBe(true);
+
+    const reopenedDeleteButton = fixture.nativeElement.querySelector(
+      '.timeline-condition-tooltip__delete',
+    ) as HTMLButtonElement;
+    reopenedDeleteButton.click();
+    fixture.detectChanges();
+
+    const removeButton = fixture.nativeElement.querySelector(
+      '.timeline-condition-tooltip__remove',
+    ) as HTMLButtonElement;
+    removeButton.click();
+    fixture.detectChanges();
+
+    expect(dashboard.pregnancyTimeline().groups.some((item) => item.id === group.id)).toBe(false);
+    expect(fixture.nativeElement.querySelector('#timeline-condition-tooltip')).toBeNull();
+    expect(dashboard.canUndoTimeline()).toBe(true);
+  });
+
   it('keeps the full Figma tooltip visible by opening above groups near the viewport edge', () => {
     const dashboard = new PatientDashboard();
     const toggle = document.createElement('button');

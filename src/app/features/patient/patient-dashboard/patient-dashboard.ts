@@ -950,6 +950,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     },
   ];
   readonly activeTimelineGroupTooltip = signal<TimelineGroup | null>(null);
+  readonly timelineProblemPendingRemoval = signal<TimelineGroup | null>(null);
   readonly timelineGroupTooltipPosition = signal<VitalTooltipPosition>({
     left: 0,
     top: 0,
@@ -1348,6 +1349,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   showTimelineGroupTooltip(group: TimelineGroup, event: Event): void {
     this.cancelTimelineGroupTooltipHide();
+    this.timelineProblemPendingRemoval.set(null);
     this.hideVitalTooltip();
     this.hideResultTooltip();
     this.hideRiskAssessment();
@@ -1385,10 +1387,15 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   hideTimelineGroupTooltip(): void {
     this.cancelTimelineGroupTooltipHide();
+    this.timelineProblemPendingRemoval.set(null);
     this.activeTimelineGroupTooltip.set(null);
   }
 
   scheduleTimelineGroupTooltipHide(): void {
+    if (this.timelineProblemPendingRemoval()) {
+      return;
+    }
+
     this.cancelTimelineGroupTooltipHide();
     this.timelineGroupTooltipHideTimer = window.setTimeout(() => {
       this.activeTimelineGroupTooltip.set(null);
@@ -1519,6 +1526,21 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   }
 
   deleteTimelineProblem(groupId: string): void {
+    const group = this.pregnancyTimeline().groups.find((item) => item.id === groupId);
+
+    if (!group) {
+      return;
+    }
+
+    this.cancelTimelineGroupTooltipHide();
+    this.timelineProblemPendingRemoval.set(group);
+  }
+
+  cancelTimelineProblemRemoval(): void {
+    this.timelineProblemPendingRemoval.set(null);
+  }
+
+  confirmTimelineProblemRemoval(groupId: string): void {
     this.rememberTimeline();
     this.pregnancyTimeline.update((timeline) => ({
       ...timeline,
