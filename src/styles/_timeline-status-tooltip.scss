@@ -53,8 +53,8 @@
 }
 
 .timeline-status-tooltip[data-status='future'] {
-  --timeline-status-tooltip-accent: #8b5cf6;
-  --timeline-status-tooltip-soft: #f5f3ff;
+  --timeline-status-tooltip-accent: #f59e0b;
+  --timeline-status-tooltip-soft: #fef7ea;
 }
 
 .timeline-status-tooltip[data-status='not-reviewed'] {
@@ -336,8 +336,14 @@
 
 .timeline-status-tooltip__decline {
   color: #ef4444;
-  background: #fef2f2;
-  border: 1px solid #fee2e2;
+  background: #fff;
+  border: 1px solid #ef4444;
+}
+
+.timeline-status-tooltip__reactivate {
+  color: #0d9488;
+  background: rgba(13, 148, 136, 0.1);
+  border: 1px solid #0d9488;
 }
 
 .timeline-status-tooltip__test-actions .timeline-status-tooltip__remove {
@@ -370,6 +376,231 @@
   font-family: Inter, sans-serif;
   font-size: 0.75rem;
   line-height: 1rem;
+}
+
+.timeline-status-tooltip__notes--editable textarea {
+  min-height: 5rem;
+  color: #171f26;
+  font-style: normal;
+  resize: vertical;
+}
+
+.timeline-status-tooltip__notes--editable textarea::placeholder {
+  color: #6b7280;
+  font-style: normal;
+}
+
+.timeline-status-tooltip__enter-hint {
+  position: absolute;
+  right: 0.625rem;
+  bottom: 0.6875rem;
+  display: inline-flex;
+  gap: 0.1875rem;
+  align-items: center;
+  color: #64748b;
+  font-size: 0.625rem;
+  font-weight: 400;
+  line-height: 0.75rem;
+  pointer-events: none;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__content {
+  gap: 1rem;
+  padding: 1.25rem;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__header {
+  position: relative;
+  gap: 0.125rem;
+  padding-right: 6.5rem;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__header h2 {
+  font-size: 1rem;
+  line-height: 1.25rem;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__header p,
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__schedule-row,
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__test-name {
+  color: #6b7280;
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__test-name {
+  color: #171f26;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__badge {
+  position: absolute;
+  top: 0.25rem;
+  right: 0;
+  min-height: 1.3125rem;
+  margin: 0;
+  padding: 0.25rem 0.625rem;
+  border-color: #ffdfa9;
+  border-radius: 0.5rem;
+  text-transform: uppercase;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__status-icon {
+  display: none;
+}
+
+.timeline-status-tooltip[data-status='future']
+  .timeline-status-tooltip__icon[data-icon='calendar'] {
+  width: 0.75rem;
+  height: 0.75rem;
+  background: url('../../public/assets/timeline-status-tooltip/calendar-future.svg') center /
+    contain no-repeat;
+  mask: none;
+}
+
+.timeline-status-tooltip[data-status='future']
+  .timeline-status-tooltip__icon[data-icon='test-tube'] {
+  width: 0.75rem;
+  height: 0.75rem;
+  background: url('../../public/assets/timeline-status-tooltip/test-tube-future.svg') center /
+    contain no-repeat;
+  mask: none;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__tests {
+  gap: 0.75rem;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__test-list {
+  gap: 0.75rem;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__test {
+  min-height: 1.3125rem;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__test--ordered {
+  flex-wrap: wrap;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__order-result-input {
+  box-sizing: border-box;
+  flex: 0 0 100%;
+  width: 100%;
+  height: 1.75rem;
+  min-height: 1.75rem;
+  padding: 0 0.625rem;
+  color: #171f26;
+  background: #faf9f6;
+  border: 1px solid #e3ded9;
+  border-radius: 0.5rem;
+  font-family: Inter, sans-serif;
+  font-size: 0.625rem;
+  font-weight: 400;
+  line-height: 0.75rem;
+}
+
+.timeline-status-tooltip[data-status='future']
+  .timeline-status-tooltip__order-result-input::placeholder {
+  color: #6b7280;
+  opacity: 1;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__test--declined {
+  opacity: 0.6;
+}
+
+.timeline-status-tooltip[data-status='future']
+  .timeline-status-tooltip__test--declined
+  .timeline-status-tooltip__test-name {
+  text-decoration: line-through;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__test-actions {
+  gap: 0.375rem;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__test-actions button {
+  min-height: 1.3125rem;
+}
+
+.timeline-status-tooltip[data-status='future']
+  .timeline-status-tooltip__test-actions
+  .timeline-status-tooltip__remove {
+  width: 1.3125rem;
+  min-height: 1.3125rem;
+  background: url('../../public/assets/timeline-status-tooltip/cross-future.svg') center / 1.3125rem
+    no-repeat;
+}
+
+.timeline-status-tooltip[data-status='future']
+  .timeline-status-tooltip__remove
+  .timeline-status-tooltip__icon {
+  display: none;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__removed-orders {
+  padding-top: 0;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__field {
+  position: relative;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.timeline-status-tooltip[data-status='future']
+  .timeline-status-tooltip__field
+  .timeline-status-tooltip__input {
+  box-sizing: border-box;
+  height: 2.25rem;
+  min-height: 2.25rem;
+  padding: 0.5rem 4rem 0.5rem 0.625rem;
+  color: #171f26;
+  background: #faf9f6;
+  border-color: #e3ded9;
+  border-radius: 0.5rem;
+  font-family: Inter, sans-serif;
+  font-size: 0.8125rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.125rem;
+}
+
+.timeline-status-tooltip[data-status='future']
+  .timeline-status-tooltip__field
+  .timeline-status-tooltip__input::placeholder {
+  color: #6b7280;
+  font-style: normal;
+  opacity: 1;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__notes {
+  gap: 0.75rem;
+  padding-top: 0;
+  border-top: 0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__notes textarea {
+  border-color: #e3ded9;
+  border-radius: 0.5rem;
+  font-family: Inter, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.125rem;
+  text-transform: none;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__bulk-actions {
+  grid-template-columns: 1fr;
+}
+
+.timeline-status-tooltip[data-status='future'] .timeline-status-tooltip__order-all {
+  width: 100%;
 }
 
 .timeline-status-tooltip__input {

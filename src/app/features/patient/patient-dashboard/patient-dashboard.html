@@ -1117,7 +1117,10 @@
 
             @if (suggestedProblemsExpanded()) {
               @if (suggestedProblems().length) {
-                <div id="suggested-problems-list" class="problem-review__cards problem-review__cards--suggested">
+                <div
+                  id="suggested-problems-list"
+                  class="problem-review__cards problem-review__cards--suggested"
+                >
                   @for (problem of suggestedProblems(); track problem.id) {
                     <article class="problem-review__card">
                       <div class="problem-review__problem-copy">
@@ -1172,7 +1175,10 @@
               </svg>
             </button>
             @if (declinedProblemsExpanded()) {
-              <div id="declined-problems-list" class="problem-review__cards problem-review__cards--history">
+              <div
+                id="declined-problems-list"
+                class="problem-review__cards problem-review__cards--history"
+              >
                 @for (problem of declinedProblems(); track problem.id) {
                   <article class="problem-review__card">
                     <div class="problem-review__problem-copy">
@@ -1215,7 +1221,10 @@
               </svg>
             </button>
             @if (deletedProblemsExpanded()) {
-              <div id="deleted-problems-list" class="problem-review__cards problem-review__cards--history">
+              <div
+                id="deleted-problems-list"
+                class="problem-review__cards problem-review__cards--history"
+              >
                 @for (problem of deletedProblems(); track problem.id) {
                   <article class="problem-review__card">
                     <div class="problem-review__problem-copy">
@@ -1238,7 +1247,6 @@
               </div>
             }
           </section>
-
         </section>
 
         <div class="problem-timeline__add-problem-row d-flex align-items-center">
@@ -1278,6 +1286,9 @@
         "
         (mouseenter)="keepTimelineStatusTooltipOpen()"
         (mouseleave)="scheduleTimelineStatusTooltipHide()"
+        (pointerdown)="beginTimelineStatusTooltipInteraction()"
+        (pointerup)="endTimelineStatusTooltipInteraction()"
+        (pointercancel)="endTimelineStatusTooltipInteraction()"
         (focusin)="keepTimelineStatusTooltipOpen()"
         (focusout)="onTimelineStatusTooltipFocusOut($event)"
       >
@@ -1320,6 +1331,10 @@
                   <div
                     class="timeline-status-tooltip__test"
                     [class.timeline-status-tooltip__test--removed]="test.removed"
+                    [class.timeline-status-tooltip__test--declined]="
+                      test.actionState === 'declined'
+                    "
+                    [class.timeline-status-tooltip__test--ordered]="test.actionState === 'ordered'"
                     [class.timeline-status-tooltip__test--result]="test.result"
                   >
                     <span
@@ -1335,26 +1350,55 @@
                     </div>
                     @if (test.showActions) {
                       <div class="timeline-status-tooltip__test-actions">
-                        @if (activeStatusTooltip.tooltip.status !== 'ordered') {
-                          <button class="timeline-status-tooltip__order" type="button">
-                            Order
+                        @if (test.actionState === 'declined') {
+                          <button
+                            class="timeline-status-tooltip__reactivate"
+                            type="button"
+                            (click)="setTimelineTooltipTestState(test, 'active')"
+                          >
+                            Reactivate
                           </button>
-                          <button class="timeline-status-tooltip__decline" type="button">
-                            Decline
+                        } @else {
+                          @if (test.actionState !== 'ordered') {
+                            @if (activeStatusTooltip.tooltip.status !== 'ordered') {
+                              <button
+                                class="timeline-status-tooltip__order"
+                                type="button"
+                                (click)="orderTimelineTooltipTest(test)"
+                              >
+                                Order
+                              </button>
+                            }
+                            <button
+                              class="timeline-status-tooltip__decline"
+                              type="button"
+                              (click)="declineTimelineTooltipTest(test)"
+                            >
+                              Decline
+                            </button>
+                          }
+                          <button
+                            class="timeline-status-tooltip__remove"
+                            type="button"
+                            aria-label="Remove test"
+                            (click)="removeTimelineTooltipTest(test)"
+                          >
+                            <span
+                              class="timeline-status-tooltip__icon"
+                              data-icon="close"
+                              aria-hidden="true"
+                            ></span>
                           </button>
                         }
-                        <button
-                          class="timeline-status-tooltip__remove"
-                          type="button"
-                          aria-label="Remove test"
-                        >
-                          <span
-                            class="timeline-status-tooltip__icon"
-                            data-icon="close"
-                            aria-hidden="true"
-                          ></span>
-                        </button>
                       </div>
+                    }
+                    @if (test.actionState === 'ordered') {
+                      <input
+                        class="timeline-status-tooltip__order-result-input"
+                        type="text"
+                        placeholder="Add order result"
+                        [attr.aria-label]="'Add order result for ' + test.label"
+                      />
                     }
                   </div>
                 }
@@ -1371,23 +1415,102 @@
             </section>
           }
 
+          @if (activeStatusTooltip.tooltip.removedTests?.length) {
+            <section
+              class="timeline-status-tooltip__tests timeline-status-tooltip__removed-orders"
+              aria-label="Removed orders"
+            >
+              <h3>Removed Orders:</h3>
+              <div class="timeline-status-tooltip__test-list">
+                @for (test of activeStatusTooltip.tooltip.removedTests; track test.label) {
+                  <div
+                    class="timeline-status-tooltip__test"
+                    [class.timeline-status-tooltip__test--declined]="
+                      test.actionState === 'declined'
+                    "
+                    [class.timeline-status-tooltip__test--ordered]="test.actionState === 'ordered'"
+                  >
+                    <span
+                      class="timeline-status-tooltip__icon"
+                      data-icon="test-tube"
+                      aria-hidden="true"
+                    ></span>
+                    <div class="timeline-status-tooltip__test-content">
+                      <span class="timeline-status-tooltip__test-name">{{ test.label }}</span>
+                    </div>
+                    <div class="timeline-status-tooltip__test-actions">
+                      @if (test.actionState === 'declined') {
+                        <button
+                          class="timeline-status-tooltip__reactivate"
+                          type="button"
+                          (click)="setTimelineTooltipTestState(test, 'active')"
+                        >
+                          Reactivate
+                        </button>
+                      } @else {
+                        @if (test.actionState !== 'ordered') {
+                          <button
+                            class="timeline-status-tooltip__order"
+                            type="button"
+                            (click)="orderTimelineTooltipTest(test, true)"
+                          >
+                            Order
+                          </button>
+                          <button
+                            class="timeline-status-tooltip__decline"
+                            type="button"
+                            (click)="declineTimelineTooltipTest(test, true)"
+                          >
+                            Decline
+                          </button>
+                        }
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </section>
+          }
+
           @if (activeStatusTooltip.tooltip.otherPlaceholder) {
             <label class="timeline-status-tooltip__field">
               <span>Other</span>
               <input
+                #otherTestInput
                 class="timeline-status-tooltip__input"
                 type="text"
                 [placeholder]="activeStatusTooltip.tooltip.otherPlaceholder"
+                (keydown.enter)="
+                  addTimelineTooltipTest(otherTestInput.value, otherTestInput);
+                  $event.preventDefault()
+                "
               />
+              <span class="timeline-status-tooltip__enter-hint" aria-hidden="true"
+                >&#x21b5; Enter</span
+              >
+            </label>
+          }
+
+          @if (activeStatusTooltip.tooltip.notesPlaceholder) {
+            <label class="timeline-status-tooltip__notes timeline-status-tooltip__notes--editable">
+              <span>Notes:</span>
+              <textarea
+                rows="3"
+                [placeholder]="activeStatusTooltip.tooltip.notesPlaceholder"
+              ></textarea>
             </label>
           }
 
           @if (activeStatusTooltip.tooltip.showBulkActions) {
             <div class="timeline-status-tooltip__bulk-actions">
-              <button class="timeline-status-tooltip__order-all" type="button">Order All</button>
-              <button class="timeline-status-tooltip__decline-all" type="button">
-                Decline All
+              <button class="timeline-status-tooltip__order-all" type="button">
+                {{ activeStatusTooltip.tooltip.submitLabel || 'Order All' }}
               </button>
+              @if (!activeStatusTooltip.tooltip.submitLabel) {
+                <button class="timeline-status-tooltip__decline-all" type="button">
+                  Decline All
+                </button>
+              }
             </div>
           }
 
@@ -1584,7 +1707,9 @@
                     <li>Hct: 34%</li>
                     <li>Platelets: 245 K/uL</li>
                   </ul>
-                  <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">Mark Reviewed</button>
+                  <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">
+                    Mark Reviewed
+                  </button>
                 </article>
 
                 <article
@@ -1610,9 +1735,27 @@
                     <li>Compliance: 14/14 days</li>
                   </ul>
                   <div class="result-card__actions">
-                    <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">Mark Reviewed</button>
-                    <button class="result-secondary-button" type="button" (click)="$event.stopPropagation()">Start New Task</button>
-                    <button class="result-secondary-button" type="button" (click)="$event.stopPropagation()">Link Existing Task</button>
+                    <button
+                      class="reviewed-button"
+                      type="button"
+                      (click)="$event.stopPropagation()"
+                    >
+                      Mark Reviewed
+                    </button>
+                    <button
+                      class="result-secondary-button"
+                      type="button"
+                      (click)="$event.stopPropagation()"
+                    >
+                      Start New Task
+                    </button>
+                    <button
+                      class="result-secondary-button"
+                      type="button"
+                      (click)="$event.stopPropagation()"
+                    >
+                      Link Existing Task
+                    </button>
                   </div>
                 </article>
 
@@ -1639,27 +1782,51 @@
                     <li>Post-prandial: 118–135 mg/dL (0% elevated)</li>
                     <li>Compliance: 56/56 checks</li>
                   </ul>
-                  <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">Mark Reviewed</button>
+                  <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">
+                    Mark Reviewed
+                  </button>
                 </article>
               </div>
 
               <section class="unmatched-results" aria-labelledby="unmatched-results-title">
                 <header>
-                  <h4 id="unmatched-results-title">Unmatched Epic Results <span class="info-icon" aria-hidden="true">i</span></h4>
-                  <p>Results returned from Epic that do not match a configured Problem or Task. Exploratory — pending real integration data.</p>
+                  <h4 id="unmatched-results-title">
+                    Unmatched Epic Results <span class="info-icon" aria-hidden="true">i</span>
+                  </h4>
+                  <p>
+                    Results returned from Epic that do not match a configured Problem or Task.
+                    Exploratory — pending real integration data.
+                  </p>
                 </header>
                 <div class="unmatched-results__list">
                   <article class="unmatched-result">
-                    <div><strong>Thyroid Panel - TSH, Free T4</strong><time datetime="2026-03-25">Mar 25, 2026</time></div>
-                    <div><button type="button">Assign to Problem</button><button type="button">Create New</button></div>
+                    <div>
+                      <strong>Thyroid Panel - TSH, Free T4</strong
+                      ><time datetime="2026-03-25">Mar 25, 2026</time>
+                    </div>
+                    <div>
+                      <button type="button">Assign to Problem</button
+                      ><button type="button">Create New</button>
+                    </div>
                   </article>
                   <article class="unmatched-result">
-                    <div><strong>Vitamin D, 25-Hydroxy</strong><time datetime="2026-03-22">Mar 22, 2026</time></div>
-                    <div><button type="button">Assign to Problem</button><button type="button">Create New</button></div>
+                    <div>
+                      <strong>Vitamin D, 25-Hydroxy</strong
+                      ><time datetime="2026-03-22">Mar 22, 2026</time>
+                    </div>
+                    <div>
+                      <button type="button">Assign to Problem</button
+                      ><button type="button">Create New</button>
+                    </div>
                   </article>
                   <article class="unmatched-result">
-                    <div><strong>Ferritin Level</strong><time datetime="2026-03-20">Mar 20, 2026</time></div>
-                    <div><button type="button">Assign to Problem</button><button type="button">Create New</button></div>
+                    <div>
+                      <strong>Ferritin Level</strong><time datetime="2026-03-20">Mar 20, 2026</time>
+                    </div>
+                    <div>
+                      <button type="button">Assign to Problem</button
+                      ><button type="button">Create New</button>
+                    </div>
                   </article>
                 </div>
               </section>
@@ -1674,7 +1841,11 @@
               <section class="order-picker" aria-label="Order library">
                 <div class="order-picker__search">
                   <span class="search-icon" aria-hidden="true"></span>
-                  <input type="search" aria-label="Search order library" placeholder="Search order library..." />
+                  <input
+                    type="search"
+                    aria-label="Search order library"
+                    placeholder="Search order library..."
+                  />
                   <button type="button">Add Order</button>
                 </div>
                 <div class="order-picker__category">
@@ -1694,8 +1865,14 @@
               </section>
 
               <article class="order-decision">
-                <header><h4><span aria-hidden="true">•</span> Type &amp; Screen</h4><span>Laboratory</span></header>
-                <div><button class="order-decision__approve" type="button">Order</button><button type="button">Decline</button></div>
+                <header>
+                  <h4><span aria-hidden="true">•</span> Type &amp; Screen</h4>
+                  <span>Laboratory</span>
+                </header>
+                <div>
+                  <button class="order-decision__approve" type="button">Order</button
+                  ><button type="button">Decline</button>
+                </div>
               </article>
 
               <div class="order-list">
@@ -1714,8 +1891,14 @@
                     </button>
                   </div>
                   <div class="order-card__links">
-                    <span><b aria-hidden="true">↗</b> Linked: GDM Monitoring, Gestational Hypertension</span>
-                    <em><b aria-hidden="true">↻</b> Status synced across: GDM Monitoring, Gestational Hypertension</em>
+                    <span
+                      ><b aria-hidden="true">↗</b> Linked: GDM Monitoring, Gestational
+                      Hypertension</span
+                    >
+                    <em
+                      ><b aria-hidden="true">↻</b> Status synced across: GDM Monitoring, Gestational
+                      Hypertension</em
+                    >
                   </div>
                   <ul>
                     <li>

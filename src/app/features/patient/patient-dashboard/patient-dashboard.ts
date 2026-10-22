@@ -145,6 +145,7 @@ interface TimelineStatusTooltipScheduleRow {
 }
 
 interface TimelineStatusTooltipTest {
+  actionState?: 'active' | 'ordered' | 'declined';
   label: string;
   result?: string;
   removed?: boolean;
@@ -155,9 +156,12 @@ interface TimelineStatusTooltip {
   badgeLabel: string;
   notes?: string;
   notePlaceholder?: string;
+  notesPlaceholder?: string;
   otherPlaceholder?: string;
+  removedTests?: TimelineStatusTooltipTest[];
   schedule: TimelineStatusTooltipScheduleRow[];
   showBulkActions?: boolean;
+  submitLabel?: string;
   status: TimelineStatus;
   subtitle: string;
   tests?: TimelineStatusTooltipTest[];
@@ -695,17 +699,22 @@ const TIMELINE_STATUS_TOOLTIPS: Record<TimelineStatus, TimelineStatusTooltip> = 
     title: 'Aneuploidy screening',
   },
   future: {
-    badgeLabel: 'Future',
-    schedule: [{ icon: 'calendar', label: 'Scheduled:', value: 'Week 28-32' }],
+    badgeLabel: 'Incomplete',
+    notesPlaceholder:
+      'Add clinical notes about ordered, declined, or previously tested genetic panel items...',
+    otherPlaceholder: 'Enter test name...',
+    schedule: [{ icon: 'calendar', label: 'Scheduled:', value: 'Week 0-13' }],
     showBulkActions: true,
     status: 'future',
+    submitLabel: 'Submit',
     subtitle: 'Routine Prenatal Care',
     tests: [
-      { label: 'CBC', showActions: true },
-      { label: 'Antibody Screen (Repeat)', showActions: true },
-      { label: '1-hour Glucose (if not done)', removed: true },
+      { label: "White Blood Cells", showActions: true },
+      { label: 'Red Blood Cells', showActions: true },
+      { label: 'Platelets', showActions: true },
+      { label: 'Kidney Function', showActions: true },
     ],
-    title: 'Labs (Repeat)',
+    title: 'Carrier Screening Panel',
   },
   superseded: {
     badgeLabel: 'Superseded',
@@ -1100,6 +1109,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   private pregnancyHistoryTooltipHideTimer: number | null = null;
   private timelineGroupTooltipHideTimer: number | null = null;
   private timelineStatusTooltipHideTimer: number | null = null;
+  private timelineStatusTooltipInteractionActive = false;
   private timelineItemSequence = 0;
   private timelineProblemSequence = 0;
 
@@ -1503,13 +1513,20 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       return;
     }
 
-    const tooltip = TIMELINE_STATUS_TOOLTIPS[chip.status];
+    const sourceTooltip = TIMELINE_STATUS_TOOLTIPS[chip.status];
+    const tooltip: TimelineStatusTooltip = {
+      ...sourceTooltip,
+      removedTests: sourceTooltip.removedTests?.map((test) => ({ ...test })),
+      schedule: sourceTooltip.schedule.map((row) => ({ ...row })),
+      tests: sourceTooltip.tests?.map((test) => ({ ...test })),
+    };
     const triggerBounds = trigger.getBoundingClientRect();
-    const width = Math.min(320, Math.max(260, window.innerWidth - 24));
+    const preferredWidth = chip.status === 'future' ? 380 : 320;
+    const width = Math.min(preferredWidth, Math.max(260, window.innerWidth - 24));
     const preferredHeight: Record<TimelineStatus, number> = {
       abnormal: 490,
       completed: 380,
-      future: 400,
+      future: 657,
       late: 650,
       'not-reviewed': 380,
       ordered: 440,
@@ -1548,6 +1565,91 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.activeTimelineStatusTooltip.set({ chipId: chip.id, tooltip });
   }
 
+  addTimelineTooltipTest(value: string, input: HTMLInputElement): void {
+    const label = value.trim();
+
+    if (!label) {
+      return;
+    }
+
+    this.updateFutureTimelineTooltip((tooltip) => ({
+      ...tooltip,
+      tests: [...(tooltip.tests ?? []), { label, showActions: true }],
+    }));
+    input.value = '';
+  }
+
+  setTimelineTooltipTestState(
+    test: TimelineStatusTooltipTest,
+    actionState: TimelineStatusTooltipTest['actionState'],
+  ): void {
+    this.updateFutureTimelineTooltip((tooltip) => ({
+      ...tooltip,
+      removedTests: tooltip.removedTests?.map((item) =>
+        item === test ? { ...item, actionState } : item,
+      ),
+      tests: tooltip.tests?.map((item) => (item === test ? { ...item, actionState } : item)),
+    }));
+  }
+
+  declineTimelineTooltipTest(test: TimelineStatusTooltipTest, fromRemoved = false): void {
+    this.updateFutureTimelineTooltip((tooltip) => {
+      const source = fromRemoved ? tooltip.removedTests : tooltip.tests;
+      const reordered = [
+        ...(source?.filter((item) => item !== test) ?? []),
+        { ...test, actionState: 'declined' as const },
+      ];
+
+      return fromRemoved
+        ? { ...tooltip, removedTests: reordered }
+        : { ...tooltip, tests: reordered };
+    });
+  }
+
+  orderTimelineTooltipTest(test: TimelineStatusTooltipTest, fromRemoved = false): void {
+    this.updateFutureTimelineTooltip((tooltip) => {
+      const orderedTest = { ...test, actionState: 'ordered' as const };
+
+      if (fromRemoved) {
+        return {
+          ...tooltip,
+          removedTests: tooltip.removedTests?.filter((item) => item !== test),
+          tests: [...(tooltip.tests ?? []), orderedTest],
+        };
+      }
+
+      return {
+        ...tooltip,
+        tests: tooltip.tests?.map((item) => (item === test ? orderedTest : item)),
+      };
+    });
+  }
+
+  removeTimelineTooltipTest(test: TimelineStatusTooltipTest, fromRemoved = false): void {
+    this.updateFutureTimelineTooltip((tooltip) => {
+      if (fromRemoved) {
+        return {
+          ...tooltip,
+          removedTests: tooltip.removedTests?.filter((item) => item !== test),
+        };
+      }
+
+      return {
+        ...tooltip,
+        removedTests: [...(tooltip.removedTests ?? []), { ...test, actionState: 'active' }],
+        tests: tooltip.tests?.filter((item) => item !== test),
+      };
+    });
+  }
+
+  private updateFutureTimelineTooltip(
+    update: (tooltip: TimelineStatusTooltip) => TimelineStatusTooltip,
+  ): void {
+    this.activeTimelineStatusTooltip.update((active) =>
+      active?.tooltip.status === 'future' ? { ...active, tooltip: update(active.tooltip) } : active,
+    );
+  }
+
   hideTimelineStatusTooltip(): void {
     this.cancelTimelineStatusTooltipHide();
     this.activeTimelineStatusTooltip.set(null);
@@ -1555,8 +1657,13 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   scheduleTimelineStatusTooltipHide(): void {
     this.cancelTimelineStatusTooltipHide();
+
+    if (this.timelineStatusTooltipInteractionActive) {
+      return;
+    }
+
     this.timelineStatusTooltipHideTimer = window.setTimeout(() => {
-      if (this.timelineStatusTooltipHasFocus()) {
+      if (this.timelineStatusTooltipInteractionActive || this.timelineStatusTooltipHasFocus()) {
         this.timelineStatusTooltipHideTimer = null;
         return;
       }
@@ -1570,11 +1677,30 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.cancelTimelineStatusTooltipHide();
   }
 
+  beginTimelineStatusTooltipInteraction(): void {
+    this.timelineStatusTooltipInteractionActive = true;
+    this.cancelTimelineStatusTooltipHide();
+  }
+
+  endTimelineStatusTooltipInteraction(): void {
+    window.setTimeout(() => {
+      this.timelineStatusTooltipInteractionActive = false;
+      const tooltip = document.getElementById('timeline-status-tooltip');
+
+      if (!tooltip?.matches(':hover') && !this.timelineStatusTooltipHasFocus()) {
+        this.scheduleTimelineStatusTooltipHide();
+      }
+    });
+  }
+
   onTimelineStatusTooltipFocusOut(event: FocusEvent): void {
     const tooltip = event.currentTarget as HTMLElement | null;
     const nextTarget = event.relatedTarget as Node | null;
 
-    if (tooltip && nextTarget && tooltip.contains(nextTarget)) {
+    if (
+      this.timelineStatusTooltipInteractionActive ||
+      (tooltip && nextTarget && tooltip.contains(nextTarget))
+    ) {
       return;
     }
 
@@ -1730,16 +1856,12 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   }
 
   acceptSuggestedProblem(problem: SuggestedProblem): void {
-    this.suggestedProblems.update((problems) =>
-      problems.filter((item) => item.id !== problem.id),
-    );
+    this.suggestedProblems.update((problems) => problems.filter((item) => item.id !== problem.id));
     this.addTimelineProblem(problem.name);
   }
 
   declineSuggestedProblem(problem: SuggestedProblem): void {
-    this.suggestedProblems.update((problems) =>
-      problems.filter((item) => item.id !== problem.id),
-    );
+    this.suggestedProblems.update((problems) => problems.filter((item) => item.id !== problem.id));
     this.declinedProblems.update((problems) => [
       ...problems,
       { ...problem, id: `declined-${problem.id}` },

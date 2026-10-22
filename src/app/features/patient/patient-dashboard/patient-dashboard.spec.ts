@@ -375,7 +375,7 @@ describe('PatientDashboard timeline', () => {
     const expectedBadges: Record<string, string> = {
       abnormal: 'Abnormal Finding',
       completed: 'Completed/Reviewed',
-      future: 'Future',
+      future: 'Incomplete',
       late: 'Late',
       'not-reviewed': 'Completed/Not Reviewed',
       ordered: 'Ordered',
