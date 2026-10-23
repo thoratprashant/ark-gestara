@@ -1340,8 +1340,21 @@
 .order-decision .order-decision__approve {
   color: #fff;
   border-color: #0d9488;
+  background-color: #0d9488;
 }
 
+.order-decision .order-decision__approve:hover, 
+.order-decision .order-decision__approve:focus-visible {
+  background: #087f76;
+  outline: 2px solid rgb(13 148 136 / 25%);
+  outline-offset: 2px;
+}
+
+.order-decision .order-decision__decline:hover, 
+.order-decision .order-decision__decline:focus-visible {
+  outline: 2px solid rgba(194, 203, 202, 0.25);
+  outline-offset: 2px;
+}
 .reviewed-button img {
   width: 1rem;
   height: 1rem;
