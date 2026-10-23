@@ -1911,7 +1911,6 @@
                   <header>
                     <div class="result-card__title">
                       <h4>CBC</h4>
-                      <span class="result-link-badge">Linked to Labs</span>
                     </div>
                     <time datetime="2026-03-20">3/20/26</time>
                   </header>
@@ -1940,7 +1939,6 @@
                   <header>
                     <div class="result-card__title">
                       <h4>Home BP Log</h4>
-                      <span class="result-link-badge result-link-badge--warning">Unlinked</span>
                     </div>
                     <time datetime="2026-03-14">3/14–3/27</time>
                   </header>
@@ -1948,29 +1946,9 @@
                     <li>Range: 128–148/82–92 mmHg (33% elevated)</li>
                     <li>Compliance: 14/14 days</li>
                   </ul>
-                  <div class="result-card__actions">
-                    <button
-                      class="reviewed-button"
-                      type="button"
-                      (click)="$event.stopPropagation()"
-                    >
-                      Mark Reviewed
-                    </button>
-                    <button
-                      class="result-secondary-button"
-                      type="button"
-                      (click)="$event.stopPropagation()"
-                    >
-                      Start New Task
-                    </button>
-                    <button
-                      class="result-secondary-button"
-                      type="button"
-                      (click)="$event.stopPropagation()"
-                    >
-                      Link Existing Task
-                    </button>
-                  </div>
+                  <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">
+                    Mark Reviewed
+                  </button>
                 </article>
 
                 <article
@@ -1987,7 +1965,6 @@
                   <header>
                     <div class="result-card__title">
                       <h4>Blood Glucose Log</h4>
-                      <span class="result-link-badge">Linked to Vital Signs</span>
                     </div>
                     <time datetime="2026-03-14">3/14–3/27</time>
                   </header>
@@ -2004,45 +1981,58 @@
 
               <section class="unmatched-results" aria-labelledby="unmatched-results-title">
                 <header>
-                  <h4 id="unmatched-results-title">
-                    Unmatched Epic Results <span class="info-icon" aria-hidden="true">i</span>
-                  </h4>
+                  <div class="unmatched-results__heading">
+                    <h4 id="unmatched-results-title">
+                      Unmatched Epic Results <span class="info-icon" aria-hidden="true">i</span>
+                    </h4>
+                    <time datetime="2026-10-19">Date: 10-19-26</time>
+                  </div>
                   <p>
                     Results returned from Epic that do not match a configured Problem or Task.
-                    Exploratory — pending real integration data.
                   </p>
                 </header>
                 <div class="unmatched-results__list">
                   <article class="unmatched-result">
                     <div>
-                      <strong>Thyroid Panel - TSH, Free T4</strong
-                      ><time datetime="2026-03-25">Mar 25, 2026</time>
+                      <strong>Thyroid Panel - TSH, Free T4</strong>
+                      <small>0.4 to 4.5 mIU/L</small>
+                      <time datetime="2026-03-25">Mar 25, 2026</time>
                     </div>
                     <div>
-                      <button type="button">Assign to Problem</button
-                      ><button type="button">Create New</button>
-                    </div>
-                  </article>
-                  <article class="unmatched-result">
-                    <div>
-                      <strong>Vitamin D, 25-Hydroxy</strong
-                      ><time datetime="2026-03-22">Mar 22, 2026</time>
-                    </div>
-                    <div>
-                      <button type="button">Assign to Problem</button
-                      ><button type="button">Create New</button>
+                      <button type="button" (click)="openAssignProblemDialog('thyroid-panel')">
+                        Assign to Problem
+                      </button>
                     </div>
                   </article>
                   <article class="unmatched-result">
                     <div>
-                      <strong>Ferritin Level</strong><time datetime="2026-03-20">Mar 20, 2026</time>
+                      <strong>Vitamin D, 25-Hydroxy</strong>
+                      <small>30 to 100 ng/mL</small>
+                      <time datetime="2026-03-22">Mar 22, 2026</time>
                     </div>
                     <div>
-                      <button type="button">Assign to Problem</button
-                      ><button type="button">Create New</button>
+                      <button type="button" (click)="openAssignProblemDialog('vitamin-d')">
+                        Assign to Problem
+                      </button>
+                    </div>
+                  </article>
+                  <article class="unmatched-result">
+                    <div>
+                      <strong>Ferritin Level</strong>
+                      <small>15 to 205 ng/mL</small>
+                      <time datetime="2026-03-20">Mar 20, 2026</time>
+                    </div>
+                    <div>
+                      <button type="button" (click)="openAssignProblemDialog('ferritin')">
+                        Assign to Problem
+                      </button>
                     </div>
                   </article>
                 </div>
+                <p class="unmatched-results__note">
+                  **Note: If the problem/category/task is not available then kindly create one first
+                  and then assign the result to it.
+                </p>
               </section>
             </section>
 
@@ -2422,167 +2412,262 @@
       </aside>
     }
 
-    <section class="clinical-section progress-note" aria-labelledby="progress-note-title">
-      <header class="clinical-section__header progress-note__header">
-        <div class="clinical-section__title">
-          <span class="clinical-section__title-icon clinical-section__title-icon--red">
-            <img src="assets/visit-progress/progress-00.svg" alt="" aria-hidden="true" />
-          </span>
-          <h2 id="progress-note-title">Progress Note</h2>
-        </div>
-        <div class="progress-note__header-actions">
-          <button class="review-systems-button" type="button">Review of Systems</button>
-          <button
-            class="clinical-section__toggle"
-            type="button"
-            aria-controls="progress-note-content"
-            [attr.aria-expanded]="progressNoteExpanded()"
-            (click)="toggleProgressNote()"
-          >
-            <span class="visually-hidden">
-              {{ progressNoteExpanded() ? 'Collapse' : 'Expand' }} Progress Note
+    <section
+      class="clinical-section progress-note"
+      [class.progress-note--empty]="progressNoteState() === 'empty'"
+      [class.progress-note--draft]="progressNoteState() === 'draft'"
+      [class.progress-note--submitted]="progressNoteState() === 'submitted'"
+      aria-labelledby="progress-note-title"
+    >
+      <p class="visually-hidden" aria-live="polite">{{ progressNoteAnnouncement() }}</p>
+
+      @if (progressNoteState() === 'empty') {
+        <header class="progress-note__empty-header">
+          <div class="progress-note__empty-heading">
+            <span class="clinical-section__title-icon clinical-section__title-icon--teal">
+              <img src="assets/visit-progress/progress-note-teal.svg" alt="" aria-hidden="true" />
             </span>
-            <img
-              class="clinical-section__chevron"
-              [class.clinical-section__chevron--collapsed]="!progressNoteExpanded()"
-              src="assets/visit-progress/progress-01.svg"
-              alt=""
-              aria-hidden="true"
-            />
+            <span>
+              <h2 id="progress-note-title">Progress Note</h2>
+              <p>No active note for this visit <i aria-hidden="true"></i> Today: March 28, 2026</p>
+            </span>
+          </div>
+          <button class="progress-note__primary-button" type="button" (click)="startProgressNote()">
+            <span aria-hidden="true">+</span> Start Progress Note
           </button>
-        </div>
-      </header>
+        </header>
+      } @else {
+        <header class="clinical-section__header progress-note__header">
+          <div class="clinical-section__title progress-note__title-wrap">
+            <span class="clinical-section__title-icon clinical-section__title-icon--red">
+              <img src="assets/visit-progress/progress-00.svg" alt="" aria-hidden="true" />
+            </span>
+            <h2 id="progress-note-title">Progress Note</h2>
+            @if (progressNoteState() === 'draft') {
+              <span class="progress-note__draft-badge">Draft</span>
+            }
+          </div>
+          <div class="progress-note__header-actions">
+            @if (progressNoteState() === 'submitted') {
+              <button
+                class="progress-note__primary-button"
+                type="button"
+                (click)="startProgressNote()"
+              >
+                <span aria-hidden="true">+</span> Start Progress Note
+              </button>
+            }
+            <button
+              class="clinical-section__toggle"
+              type="button"
+              aria-controls="progress-note-content"
+              [attr.aria-expanded]="progressNoteExpanded()"
+              (click)="toggleProgressNote()"
+            >
+              <span class="visually-hidden"
+                >{{ progressNoteExpanded() ? 'Collapse' : 'Expand' }} Progress Note</span
+              >
+              <img
+                class="clinical-section__chevron"
+                [class.clinical-section__chevron--collapsed]="!progressNoteExpanded()"
+                src="assets/visit-progress/progress-01.svg"
+                alt=""
+                aria-hidden="true"
+              />
+            </button>
+          </div>
+        </header>
 
-      <div
-        id="progress-note-content"
-        class="clinical-section__content-motion"
-        [class.clinical-section__content-motion--open]="progressNoteExpanded()"
-        [attr.aria-hidden]="!progressNoteExpanded()"
-      >
+        @if (progressNoteState() === 'draft') {
+          <p class="progress-note__draft-created">
+            Draft created: <time datetime="2026-03-28">March 28, 2026</time>
+          </p>
+        } @else {
+          <p class="progress-note__status">
+            Note submitted <span aria-hidden="true">•</span> March 28, 2026
+          </p>
+        }
+
         <div
-          class="clinical-section__content-motion-inner"
-          [attr.inert]="progressNoteExpanded() ? null : ''"
+          id="progress-note-content"
+          class="clinical-section__content-motion"
+          [class.clinical-section__content-motion--open]="progressNoteExpanded()"
+          [attr.aria-hidden]="!progressNoteExpanded()"
         >
-          <div class="clinical-section__body progress-note__body">
-            <div class="progress-note__toolbar">
-              <p>
-                <img src="assets/visit-progress/progress-02.svg" alt="" aria-hidden="true" />
-                <time datetime="2026-03-28">March 28, 2026</time>
+          <div
+            class="clinical-section__content-motion-inner"
+            [attr.inert]="progressNoteExpanded() ? null : ''"
+          >
+            <div class="clinical-section__body progress-note__body">
+              <p class="progress-note__patient">
+                <strong>Patient:</strong> Sarah Johnson, 32 year old female, G3P1011, 28w 4d
               </p>
-              <div>
-                <button type="button">
-                  <img src="assets/visit-progress/progress-03.svg" alt="" aria-hidden="true" />
-                  Edit
-                </button>
-                <button type="button">
-                  <img src="assets/visit-progress/progress-04.svg" alt="" aria-hidden="true" />
-                  Copy
-                </button>
-              </div>
+
+              <section class="note-block">
+                <h3>Subjective:</h3>
+                @if (progressNoteState() === 'draft') {
+                  <label class="visually-hidden" for="progress-note-subjective"
+                    >Subjective note</label
+                  >
+                  <textarea
+                    id="progress-note-subjective"
+                    rows="4"
+                    [value]="progressNoteSubjective()"
+                    (input)="updateProgressNoteSubjective($event)"
+                  ></textarea>
+                } @else {
+                  <p>{{ progressNoteSubjective() }}</p>
+                }
+              </section>
+
+              <section class="note-block">
+                <h3>Objective:</h3>
+                <p>
+                  <strong>Vital Signs:</strong
+                  ><span class="progress-note__alert"> BP 148/92 mmHg (elevated)</span>, Weight 165
+                  lbs (+22 lbs total gain), BMI 26.3
+                </p>
+                <p>
+                  <strong>Fetal Assessment:</strong> FHR 142 bpm, regular rhythm. Fundal height 28
+                  cm (appropriate for gestational age).
+                </p>
+                <p><strong>Cervical Exam:</strong> Closed, thick, -3 station</p>
+              </section>
+
+              <section class="note-block assessment-plan">
+                <h3>Assessment and Plan:</h3>
+                <article>
+                  <h4>1. Diet Controlled Gestational Diabetes Mellitus (O24.410)</h4>
+                  <ul>
+                    <li>
+                      Home blood glucose logs reviewed – fasting 82–95 mg/dL, postprandial 110–130
+                      mg/dL (well-controlled)
+                    </li>
+                    <li>Growth ultrasound scheduled for 32 weeks to assess for macrosomia</li>
+                    @if (progressNoteState() === 'submitted') {
+                      <li>Diet-controlled, good compliance with nutrition plan</li>
+                      <li>Continue current diabetic diet, check blood glucose QID</li>
+                      <li>Patient counseled on signs of hypo/hyperglycemia</li>
+                    }
+                  </ul>
+                </article>
+                <article>
+                  <h4>2. Gestational Hypertension (O13.9)</h4>
+                  <ul>
+                    <li>
+                      BP elevated today at 148/92 mmHg, home BP logs 135–142/85–90 mmHg (compliant
+                      with monitoring)
+                    </li>
+                    <li>Labs ordered today: CBC, CMP, LFTs, uric acid to rule out progression</li>
+                  </ul>
+                </article>
+                @if (progressNoteState() === 'submitted') {
+                  <article>
+                    <h4>3. Iron Deficiency Anemia (O99.019)</h4>
+                    <ul>
+                      <li>
+                        Most recent Hgb 11.2 g/dL at 25 weeks, improved from 9.8 g/dL at initial
+                        visit
+                      </li>
+                      <li>Continue ferrous sulfate 325mg daily with vitamin C</li>
+                      <li>Repeat CBC scheduled for 32 weeks</li>
+                      <li>Patient tolerating iron supplementation well</li>
+                    </ul>
+                  </article>
+                  <article>
+                    <h4>4. Intrauterine Pregnancy at 28w 4d (Z34.03)</h4>
+                    <ul>
+                      <li>
+                        Tdap vaccine administered today, right deltoid – patient tolerated well
+                      </li>
+                      <li>
+                        Reviewed anatomy ultrasound from 20 weeks – normal fetal anatomy, no
+                        anomalies detected
+                      </li>
+                      <li>GBS screening scheduled for 35–37 weeks</li>
+                      <li>Discussed labor precautions, when to call, signs of preterm labor</li>
+                    </ul>
+                  </article>
+                }
+              </section>
+
+              @if (progressNoteState() === 'submitted') {
+                <section class="note-block note-list-block">
+                  <h3>Labs/Studies Reviewed:</h3>
+                  <ul>
+                    <li>3-hour glucose tolerance test (1/29/26): Confirmed GDM diagnosis</li>
+                    <li>
+                      CBC (1/8/26): Hgb 11.2 g/dL, Hct 34% – improved with iron supplementation
+                    </li>
+                    <li>
+                      Anatomy ultrasound (11/20/25): Normal fetal anatomy, EFW 350g, 20th percentile
+                    </li>
+                    <li>Baseline metabolic panel (12/5/25): Within normal limits</li>
+                  </ul>
+                </section>
+                <section class="note-block note-list-block">
+                  <h3>Orders Placed:</h3>
+                  <ul>
+                    <li>CBC, CMP, LFTs, uric acid – STAT</li>
+                    <li>Urinalysis with reflex protein/creatinine ratio – STAT</li>
+                    <li>Growth ultrasound scheduled for 32 weeks</li>
+                    <li>Biweekly NST starting at 32 weeks</li>
+                    <li>Tdap vaccine administered</li>
+                  </ul>
+                </section>
+              }
             </div>
-
-            <p class="progress-note__patient">
-              <strong>Patient:</strong> Sarah Johnson, 32 year old female, G3P1011, 28w 4d
-            </p>
-
-            <section class="note-block">
-              <h3>Subjective:</h3>
-              <p>
-                Patient presents for routine prenatal visit. Reports overall feeling well with good
-                fetal movement. Compliant with home blood glucose monitoring and blood pressure
-                checks. Denies headache, visual changes, epigastric pain, contractions, vaginal
-                bleeding, or leakage of fluid. Following diabetic diet plan with good adherence.
-              </p>
-            </section>
-
-            <section class="note-block">
-              <h3>Objective:</h3>
-              <p>
-                <strong>Vital Signs:</strong> BP 148/92 mmHg (elevated), Weight 165 lbs (+22 lbs
-                total gain), BMI 26.3
-              </p>
-              <p>
-                <strong>Fetal Assessment:</strong> FHR 142 bpm, regular rhythm. Fundal height 28 cm
-                (appropriate for gestational age).
-              </p>
-              <p><strong>Cervical Exam:</strong> Closed, thick, -3 station</p>
-            </section>
-
-            <section class="note-block assessment-plan">
-              <h3>Assessment and Plan:</h3>
-              <article>
-                <h4>1. Diet Controlled Gestational Diabetes Mellitus (O24.410)</h4>
-                <ul>
-                  <li>
-                    Home blood glucose logs reviewed – fasting 82–95 mg/dL, postprandial 110–130
-                    mg/dL (well-controlled)
-                  </li>
-                  <li>Growth ultrasound scheduled for 32 weeks to assess for macrosomia</li>
-                  <li>Diet-controlled, good compliance with nutrition plan</li>
-                  <li>Continue current diabetic diet, check blood glucose QID</li>
-                  <li>Patient counseled on signs of hypo/hyperglycemia</li>
-                </ul>
-              </article>
-              <article>
-                <h4>2. Gestational Hypertension (O13.9)</h4>
-                <ul>
-                  <li>
-                    BP elevated today at 148/92 mmHg, home BP logs 135–142/85–90 mmHg (compliant
-                    with monitoring)
-                  </li>
-                  <li>Labs ordered today: CBC, CMP, LFTs, uric acid to rule out progression</li>
-                </ul>
-              </article>
-              <article>
-                <h4>3. Iron Deficiency Anemia (O99.019)</h4>
-                <ul>
-                  <li>
-                    Most recent Hgb 11.2 g/dL at 25 weeks, improved from 9.8 g/dL at initial visit
-                  </li>
-                  <li>Continue ferrous sulfate 325mg daily with vitamin C</li>
-                  <li>Repeat CBC scheduled for 32 weeks</li>
-                  <li>Patient tolerating iron supplementation well</li>
-                </ul>
-              </article>
-              <article>
-                <h4>4. Intrauterine Pregnancy at 28w 4d (Z34.03)</h4>
-                <ul>
-                  <li>Tdap vaccine administered today, right deltoid – patient tolerated well</li>
-                  <li>
-                    Reviewed anatomy ultrasound from 20 weeks – normal fetal anatomy, no anomalies
-                    detected
-                  </li>
-                  <li>GBS screening scheduled for 35–37 weeks</li>
-                  <li>Discussed labor precautions, when to call, signs of preterm labor</li>
-                </ul>
-              </article>
-            </section>
-
-            <section class="note-block note-list-block">
-              <h3>Labs/Studies Reviewed:</h3>
-              <ul>
-                <li>3-hour glucose tolerance test (1/29/26): Confirmed GDM diagnosis</li>
-                <li>CBC (1/8/26): Hgb 11.2 g/dL, Hct 34% – improved with iron supplementation</li>
-                <li>
-                  Anatomy ultrasound (11/20/25): Normal fetal anatomy, EFW 350g, 20th percentile
-                </li>
-                <li>Baseline metabolic panel (12/5/25): Within normal limits</li>
-              </ul>
-            </section>
-
-            <section class="note-block note-list-block">
-              <h3>Orders Placed:</h3>
-              <ul>
-                <li>CBC, CMP, LFTs, uric acid – STAT</li>
-                <li>Urinalysis with reflex protein/creatinine ratio – STAT</li>
-                <li>Growth ultrasound scheduled for 32 weeks</li>
-                <li>Biweekly NST starting at 32 weeks</li>
-                <li>Tdap vaccine administered</li>
-              </ul>
-            </section>
           </div>
         </div>
-      </div>
+
+        @if (progressNoteExpanded()) {
+          <footer class="progress-note__footer">
+            @if (progressNoteState() === 'draft') {
+              <button
+                class="progress-note__button progress-note__button--danger"
+                type="button"
+                (click)="discardProgressNote()"
+              >
+                Discard Note
+              </button>
+              <div>
+                <button class="progress-note__button" type="button" (click)="copyProgressNote()">
+                  <img src="assets/visit-progress/progress-04.svg" alt="" aria-hidden="true" /> Copy
+                </button>
+                <button
+                  class="progress-note__button"
+                  type="button"
+                  (click)="saveProgressNoteDraft()"
+                >
+                  Save Draft
+                </button>
+                <button
+                  class="progress-note__button progress-note__button--primary"
+                  type="button"
+                  (click)="submitProgressNote()"
+                >
+                  Submit Note
+                </button>
+              </div>
+            } @else {
+              <p>
+                <img src="assets/visit-progress/progress-02.svg" alt="" aria-hidden="true" /><time
+                  datetime="2026-03-28"
+                  >March 28, 2026</time
+                >
+              </p>
+              <div>
+                <button class="progress-note__button" type="button" (click)="editProgressNote()">
+                  <img src="assets/visit-progress/progress-03.svg" alt="" aria-hidden="true" /> Edit
+                </button>
+                <button class="progress-note__button" type="button" (click)="copyProgressNote()">
+                  <img src="assets/visit-progress/progress-04.svg" alt="" aria-hidden="true" /> Copy
+                </button>
+              </div>
+            }
+          </footer>
+        }
+      }
     </section>
   }
 </div>

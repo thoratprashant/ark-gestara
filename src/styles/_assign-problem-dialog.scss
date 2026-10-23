@@ -1,0 +1,19 @@
+.assign-problem-dialog-panel {
+  --mat-dialog-container-max-width: 18rem;
+  --mat-dialog-container-min-width: 0;
+  --mat-dialog-container-shape: 0.5rem;
+
+  .mat-mdc-dialog-surface {
+    overflow: hidden;
+    background: #fbfbfb;
+    border: 1px solid #e5e1dd;
+    box-shadow: 0 0.625rem 1.75rem rgb(23 36 43 / 14%);
+  }
+}
+
+.cdk-overlay-backdrop.cdk-overlay-dark-backdrop.assign-problem-dialog-backdrop {
+  background: rgb(23 36 43 / 15%);
+  box-shadow: none;
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+}

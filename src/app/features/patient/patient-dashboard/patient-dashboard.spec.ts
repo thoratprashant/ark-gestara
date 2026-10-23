@@ -7,6 +7,7 @@ import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { PatientDashboard } from './patient-dashboard';
 import { PatientDashboardModule } from './patient-dashboard.module';
 import { AddProblemDialog } from './add-problem-dialog/add-problem-dialog';
+import { AssignProblemDialog } from './assign-problem-dialog/assign-problem-dialog';
 import { TimelineItemDialog } from './timeline-item-dialog/timeline-item-dialog';
 
 describe('PatientDashboard timeline', () => {
@@ -171,6 +172,28 @@ describe('PatientDashboard timeline', () => {
     expect(dialog.openDialogs).toHaveLength(1);
     const dialogComponent = dialog.openDialogs[0].componentInstance as AddProblemDialog;
     expect(dialogComponent.form.controls.name.enabled).toBe(true);
+
+    dialog.closeAll();
+  });
+
+  it('opens the Assign Problem dialog with defaults for the selected Epic result', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dialog = TestBed.inject(MatDialog);
+    fixture.detectChanges();
+
+    const assignButton = fixture.nativeElement.querySelector(
+      '.unmatched-result button',
+    ) as HTMLButtonElement;
+    assignButton.click();
+    fixture.detectChanges();
+
+    expect(dialog.openDialogs).toHaveLength(1);
+    const dialogComponent = dialog.openDialogs[0].componentInstance as AssignProblemDialog;
+    expect(dialogComponent.form.getRawValue()).toEqual({
+      problem: 'Thyroid function',
+      category: 'Endocrine',
+      task: 'Review lab results',
+    });
 
     dialog.closeAll();
   });

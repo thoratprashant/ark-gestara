@@ -1,0 +1,53 @@
+<section class="assign-problem-dialog" aria-labelledby="assign-problem-dialog-title">
+  <header class="assign-problem-dialog__header" mat-dialog-title>
+    <h2 id="assign-problem-dialog-title">Assign Problem</h2>
+    <button type="button" mat-dialog-close aria-label="Close Assign Problem dialog">
+      <img src="assets/problem-dialog/close.svg" alt="" aria-hidden="true" />
+    </button>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-dialog-content class="assign-problem-dialog__body">
+      <label class="assign-problem-dialog__field" for="assign-problem-problem">
+        <span>Problem</span>
+        <span class="assign-problem-dialog__select">
+          <select id="assign-problem-problem" formControlName="problem">
+            @for (problem of problemOptions; track problem) {
+              <option [value]="problem">{{ problem }}</option>
+            }
+          </select>
+          <img src="assets/problem-dialog/chevron-down.svg" alt="" aria-hidden="true" />
+        </span>
+      </label>
+
+      <label class="assign-problem-dialog__field" for="assign-problem-category">
+        <span>Category</span>
+        <span class="assign-problem-dialog__select">
+          <select id="assign-problem-category" formControlName="category">
+            @for (category of categoryOptions; track category) {
+              <option [value]="category">{{ category }}</option>
+            }
+          </select>
+          <img src="assets/problem-dialog/chevron-down.svg" alt="" aria-hidden="true" />
+        </span>
+      </label>
+
+      <label class="assign-problem-dialog__field" for="assign-problem-task">
+        <span>Task</span>
+        <span class="assign-problem-dialog__select">
+          <select id="assign-problem-task" formControlName="task">
+            @for (task of taskOptions; track task) {
+              <option [value]="task">{{ task }}</option>
+            }
+          </select>
+          <img src="assets/problem-dialog/chevron-down.svg" alt="" aria-hidden="true" />
+        </span>
+      </label>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="assign-problem-dialog__footer">
+      <button class="assign-problem-dialog__cancel" type="button" mat-dialog-close>Cancel</button>
+      <button class="assign-problem-dialog__submit" type="submit">Assign</button>
+    </mat-dialog-actions>
+  </form>
+</section>

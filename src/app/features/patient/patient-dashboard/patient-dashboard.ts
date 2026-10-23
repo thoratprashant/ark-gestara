@@ -14,6 +14,11 @@ import { scaleLinear } from 'd3-scale';
 
 import { AddProblemDialog, AddProblemDialogResult } from './add-problem-dialog/add-problem-dialog';
 import {
+  AssignProblemDialog,
+  AssignProblemDialogData,
+  AssignProblemDialogResult,
+} from './assign-problem-dialog/assign-problem-dialog';
+import {
   TimelineItemDialog,
   TimelineItemDialogData,
   TimelineItemDialogResult,
@@ -138,6 +143,7 @@ type TimelineStatus =
 type ChipInteractionMode = 'move' | 'resize-start' | 'resize-end';
 type TimelineStatusTooltipIcon = 'calendar' | 'clock';
 type TimelineResultReviewState = 'added' | 'dismissed';
+type ProgressNoteState = 'empty' | 'draft' | 'submitted';
 
 interface TimelineStatusTooltipScheduleRow {
   icon: TimelineStatusTooltipIcon;
@@ -896,6 +902,11 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   readonly summarySticky = signal(false);
   readonly visitSummaryExpanded = signal(true);
   readonly progressNoteExpanded = signal(true);
+  readonly progressNoteState = signal<ProgressNoteState>('empty');
+  readonly progressNoteSubjective = signal(
+    'Patient presents for routine prenatal visit. Reports overall feeling well with good fetal movement. Compliant with home blood glucose monitoring and blood pressure checks. Denies headache, visual changes, epigastric pain, contractions, vaginal bleeding, or leakage of fluid. Following diabetic diet plan with good adherence.',
+  );
+  readonly progressNoteAnnouncement = signal('');
   readonly activeVitalTooltip = signal<VitalTooltip | null>(null);
   readonly activeVitalTooltipItems = computed(() => {
     const tooltip = this.activeVitalTooltip();
@@ -1145,6 +1156,44 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   toggleProgressNote(): void {
     this.progressNoteExpanded.update((expanded) => !expanded);
+  }
+
+  startProgressNote(): void {
+    this.progressNoteState.set('draft');
+    this.progressNoteExpanded.set(true);
+    this.progressNoteAnnouncement.set('Progress note draft started.');
+  }
+
+  updateProgressNoteSubjective(event: Event): void {
+    this.progressNoteSubjective.set((event.target as HTMLTextAreaElement).value);
+  }
+
+  saveProgressNoteDraft(): void {
+    this.progressNoteAnnouncement.set('Progress note draft saved.');
+  }
+
+  submitProgressNote(): void {
+    this.progressNoteState.set('submitted');
+    this.progressNoteExpanded.set(true);
+    this.progressNoteAnnouncement.set('Progress note submitted successfully.');
+  }
+
+  discardProgressNote(): void {
+    this.progressNoteState.set('empty');
+    this.progressNoteExpanded.set(true);
+    this.progressNoteAnnouncement.set('Progress note draft discarded.');
+  }
+
+  editProgressNote(): void {
+    this.progressNoteState.set('draft');
+    this.progressNoteExpanded.set(true);
+    this.progressNoteAnnouncement.set('Progress note opened for editing.');
+  }
+
+  copyProgressNote(): void {
+    const noteText = `Patient: Sarah Johnson, 32 year old female, G3P1011, 28w 4d\n\nSubjective:\n${this.progressNoteSubjective()}`;
+    void navigator.clipboard?.writeText(noteText);
+    this.progressNoteAnnouncement.set('Progress note copied to clipboard.');
   }
 
   showVitalTooltip(tooltipId: string, event: Event): void {
@@ -2015,6 +2064,48 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
         trigger?.focus({ preventScroll: true });
       });
+  }
+
+  openAssignProblemDialog(resultId: string): void {
+    if (!this.dialog) {
+      return;
+    }
+
+    const defaults: Record<string, Omit<AssignProblemDialogData, 'resultId'>> = {
+      'thyroid-panel': {
+        category: 'Endocrine',
+        problem: 'Thyroid function',
+        task: 'Review lab results',
+      },
+      'vitamin-d': {
+        category: 'Endocrine',
+        problem: 'Vitamin D deficiency',
+        task: 'Review lab results',
+      },
+      ferritin: {
+        category: 'Hematology',
+        problem: 'Iron deficiency anemia',
+        task: 'Review lab results',
+      },
+    };
+    const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const selection = defaults[resultId] ?? defaults['thyroid-panel'];
+
+    this.dialog
+      .open<AssignProblemDialog, AssignProblemDialogData, AssignProblemDialogResult>(
+        AssignProblemDialog,
+        {
+          autoFocus: 'select',
+          backdropClass: 'assign-problem-dialog-backdrop',
+          data: { resultId, ...selection },
+          maxWidth: 'calc(100vw - 1rem)',
+          panelClass: 'assign-problem-dialog-panel',
+          restoreFocus: false,
+          width: '288px',
+        },
+      )
+      .afterClosed()
+      .subscribe(() => trigger?.focus({ preventScroll: true }));
   }
 
   openTimelineItemDialog(groupId: string): void {

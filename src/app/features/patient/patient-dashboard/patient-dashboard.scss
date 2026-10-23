@@ -978,7 +978,7 @@
 .result-card li {
   font-size: clamp(0.6875rem, 0.833vw, 0.75rem);
   font-weight: 400;
-  line-height: 1rem;
+  line-height: 1.125rem;
 }
 
 .reviewed-button,
@@ -996,7 +996,7 @@
 .reviewed-button {
   min-height: 1.75rem;
   padding: 0.3rem 0.75rem;
-  border-radius: 0.75rem;
+  border-radius: 0.25rem;
   font-size: 0.6875rem;
   font-weight: 500;
   line-height: 1rem;
@@ -1039,6 +1039,21 @@
   line-height: 1.25rem;
 }
 
+.unmatched-results__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.unmatched-results__heading > time {
+  flex: 0 0 auto;
+  color: #71808b;
+  font-size: 0.625rem;
+  font-weight: 400;
+  line-height: 0.9375rem;
+}
+
 .unmatched-results > header p {
   margin: 0.25rem 0 0;
   color: #71808b;
@@ -1072,7 +1087,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  min-height: 3.5rem;
+  min-height: 4.625rem;
   padding: 0.625rem 0.75rem;
   background: #fafaf9;
   border: 1px solid #e3ded9;
@@ -1105,6 +1120,13 @@
   line-height: 0.875rem;
 }
 
+.unmatched-result small {
+  color: #71808b;
+  font-size: 0.625rem;
+  font-weight: 400;
+  line-height: 0.875rem;
+}
+
 .unmatched-result button {
   min-height: 1.75rem;
   padding: 0.25rem 0.75rem;
@@ -1120,6 +1142,13 @@
 .unmatched-result button:first-child {
   background: #fff;
   border: 1px solid #0d9488;
+}
+
+.unmatched-results__note {
+  margin: 0;
+  color: #71808b;
+  font-size: 0.6875rem;
+  line-height: 1rem;
 }
 
 .order-picker,
@@ -1174,7 +1203,9 @@
   background: transparent;
   border: 0;
   outline: 0;
-  font: 400 0.875rem/1.25rem Inter, sans-serif;
+  font:
+    400 0.875rem/1.25rem Inter,
+    sans-serif;
 }
 
 .order-picker__search input::placeholder {
@@ -1193,7 +1224,9 @@
   padding: 0 0.75rem;
   border: 0;
   border-radius: 0.625rem;
-  font: 500 0.6875rem/1rem Inter, sans-serif;
+  font:
+    500 0.6875rem/1rem Inter,
+    sans-serif;
   white-space: nowrap;
 }
 
@@ -1221,7 +1254,9 @@
   background: transparent;
   border: 0;
   border-radius: 0.75rem;
-  font: 400 0.875rem/1.25rem Inter, sans-serif;
+  font:
+    400 0.875rem/1.25rem Inter,
+    sans-serif;
   text-align: left;
 }
 
@@ -1297,7 +1332,9 @@
   background: #fff;
   border: 1px solid #e3ded9;
   border-radius: 999px;
-  font: 500 0.75rem/1rem Inter, sans-serif;
+  font:
+    500 0.75rem/1rem Inter,
+    sans-serif;
 }
 
 .order-decision .order-decision__approve {
@@ -1492,6 +1529,160 @@
   gap: clamp(0.75rem, 2vw, 1.875rem);
 }
 
+.progress-note__empty-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 4rem;
+  padding: 0.75rem 1rem;
+}
+
+.progress-note__empty-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.progress-note--empty {
+  border-radius: 1.125rem;
+}
+
+.progress-note--empty .clinical-section__title-icon {
+  flex-basis: 2rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.625rem;
+}
+
+.progress-note--empty .clinical-section__title-icon img {
+  width: 1rem;
+  height: 1rem;
+}
+
+.progress-note__empty-heading > span:last-child {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+}
+
+.progress-note__empty-heading h2 {
+  margin: 0;
+  color: #171f26;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.125rem;
+}
+
+.progress-note__empty-heading p {
+  margin: 0;
+  color: #73808c;
+  font-size: 0.625rem;
+  line-height: 0.875rem;
+}
+
+.progress-note__empty-heading i {
+  display: inline-block;
+  width: 0.25rem;
+  height: 0.25rem;
+  margin: 0 0.35rem 0.125rem;
+  background: #9aa4ad;
+  border-radius: 50%;
+}
+
+.progress-note__primary-button,
+.progress-note__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 0;
+  font-family: Inter, sans-serif;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.progress-note__primary-button {
+  min-height: 1.75rem;
+  padding: 0.375rem 0.75rem;
+  color: #fff;
+  background: #0d9488;
+  border-radius: 0.625rem;
+  font-size: 0.6875rem;
+  line-height: 1rem;
+}
+
+.progress-note__primary-button span {
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 0.75rem;
+}
+
+.progress-note__primary-button--compact {
+  min-height: 2rem;
+  padding: 0.45rem 0.875rem;
+  border-radius: 0.625rem;
+  font-size: 0.6875rem;
+  line-height: 1rem;
+}
+
+.progress-note__primary-button:hover,
+.progress-note__primary-button:focus-visible,
+.progress-note__button--primary:hover,
+.progress-note__button--primary:focus-visible {
+  background: #0f766e;
+}
+
+.progress-note__primary-button:focus-visible,
+.progress-note__button:focus-visible,
+.note-block textarea:focus-visible {
+  outline: 3px solid rgb(13 148 136 / 22%);
+  outline-offset: 2px;
+}
+
+.progress-note__title-wrap {
+  flex-wrap: wrap;
+}
+
+.progress-note__header {
+  padding-inline: 1rem;
+}
+
+.progress-note__draft-badge {
+  padding: 0.1875rem 0.5rem;
+  color: #d97706;
+  background: #fff7df;
+  border-radius: 0.375rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 0.875rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.progress-note__draft-created,
+.progress-note__status {
+  margin: -0.875rem 1rem 0.8125rem;
+  color: #87929c;
+  font-size: 0.6875rem;
+  line-height: 1rem;
+}
+
+.progress-note__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  width: fit-content;
+  margin: -0.75rem 1.25rem 0;
+  padding: 0.25rem 0.5rem;
+  color: #b7791f;
+  background: #fff8e6;
+  border-radius: 999px;
+}
+
 .review-systems-button {
   min-height: 2rem;
   padding: 0.5rem 0.75rem;
@@ -1505,12 +1696,26 @@
   --progress-note-list-indent: clamp(12rem, 20vw, 17.875rem);
 
   display: grid;
-  gap: clamp(0.875rem, 1.15vw, 1rem);
-  padding-top: 0;
+  gap: 1.125rem;
+  padding-top: 1rem;
   color: #73808c;
   font-size: clamp(0.6875rem, 0.833vw, 0.75rem);
   font-weight: 400;
   line-height: 1rem;
+}
+
+.progress-note--draft .progress-note__body {
+  gap: 1.125rem;
+  padding-bottom: 1.25rem;
+  border-top: 1px solid #e8e3df;
+}
+
+.progress-note--draft {
+  border-radius: 1.125rem;
+}
+
+.progress-note--submitted .progress-note__body {
+  padding-top: 1.25rem;
 }
 
 .progress-note__toolbar {
@@ -1571,6 +1776,12 @@
   color: #73808c;
 }
 
+.progress-note--draft .progress-note__patient {
+  margin-inline: calc(clamp(0.875rem, 1.5vw, 1.25rem) * -1);
+  padding: 0 clamp(0.875rem, 1.5vw, 1.25rem) 0.875rem;
+  border-bottom: 1px solid #e8e3df;
+}
+
 .progress-note__patient strong,
 .note-block p strong {
   color: #171f26;
@@ -1591,6 +1802,98 @@
   line-height: 1rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+}
+
+.note-block textarea {
+  display: block;
+  width: 100%;
+  min-height: 7.875rem;
+  padding: 0.75rem;
+  resize: vertical;
+  color: #303941;
+  background: #fff;
+  border: 1.5px solid #0d9488;
+  border-radius: 0.75rem;
+  font: inherit;
+  line-height: 1.6;
+}
+
+.progress-note__alert {
+  color: #f04444;
+  font-weight: 600;
+}
+
+.progress-note__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 4.5rem;
+  padding: 0.875rem 1rem;
+  border-top: 1px solid #e8e3df;
+}
+
+.progress-note__footer > div,
+.progress-note__footer > p {
+  display: flex;
+  align-items: center;
+  gap: 0.6875rem;
+}
+
+.progress-note__footer > p {
+  margin: 0;
+  color: #73808c;
+  font-size: 0.6875rem;
+}
+
+.progress-note__footer img,
+.progress-note__button img {
+  width: 1rem;
+  height: 1rem;
+}
+
+.progress-note__button {
+  min-height: 2.125rem;
+  padding: 0.5rem 0.875rem;
+  color: #303941;
+  background: #fff;
+  border: 1px solid #ddd8d3;
+  border-radius: 0.625rem;
+  font-size: 0.6875rem;
+  line-height: 1rem;
+}
+
+.progress-note__button--primary {
+  color: #fff;
+  background: #0d9488;
+  border-color: #0d9488;
+}
+
+.progress-note__button--primary:hover {
+  background: #0b8278;
+  border-color: #0b8278;
+}
+
+.progress-note__button--secondary {
+  color: #73808c;
+  background: #fff;
+}
+
+.progress-note__button--secondary:hover {
+  color: #171f26;
+  background: #f8f8f7;
+  border: 1px solid #e3ded9;
+}
+
+.progress-note__button--danger {
+  color: #fff;
+  background: #ef4444;
+  border-color: #ef4444;
+}
+
+.progress-note__button--danger:hover {
+  border-color: #dc2626;
+  background: #dc2626;
 }
 
 .assessment-plan {
@@ -1625,6 +1928,11 @@
   width: calc(100% - var(--progress-note-list-indent));
   min-width: 0;
   margin-left: auto;
+}
+
+.progress-note--draft .assessment-plan ul {
+  width: 100%;
+  margin-left: 0;
 }
 
 .assessment-plan li,
@@ -1793,6 +2101,24 @@
     justify-content: flex-end;
   }
 
+  .progress-note__empty-header {
+    min-height: 4rem;
+  }
+
+  .progress-note__body {
+    --progress-note-list-indent: 0;
+  }
+
+  .progress-note__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .progress-note__footer > div {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+  }
+
   .assessment-plan ul,
   .note-list-block ul {
     width: 100%;
@@ -1836,6 +2162,37 @@
 
   .review-systems-button {
     min-height: 2.25rem;
+  }
+
+  .progress-note__empty-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .progress-note__empty-header .progress-note__primary-button {
+    align-self: flex-end;
+  }
+
+  .progress-note__header-actions {
+    width: 100%;
+  }
+
+  .progress-note__primary-button--compact {
+    flex: 1 1 auto;
+  }
+
+  .progress-note__draft-created,
+  .progress-note__status {
+    margin-inline: 0.875rem;
+  }
+
+  .progress-note__footer > div {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .progress-note__footer .progress-note__button--primary {
+    grid-column: 1 / -1;
   }
 
   .visit-summary__column-heading {
