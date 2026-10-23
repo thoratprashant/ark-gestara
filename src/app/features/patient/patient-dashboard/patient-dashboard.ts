@@ -141,7 +141,7 @@ type TimelineStatus =
   | 'due-soon'
   | 'late'
   | 'abnormal'
-  | 'superseded'
+  | 'incomplete'
   | 'future';
 type ChipInteractionMode = 'move' | 'resize-start' | 'resize-end';
 type TimelineStatusTooltipIcon = 'calendar' | 'clock';
@@ -615,7 +615,7 @@ const ADDITIONAL_TIMELINE_GROUPS: TimelineGroup[] = [
     'due-soon',
     'late',
     'abnormal',
-    'superseded',
+    'incomplete',
     'future',
   ];
   const startWeek = 8 + ((index * 4) % 25);
@@ -743,11 +743,11 @@ const TIMELINE_STATUS_TOOLTIPS: Record<TimelineStatus, TimelineStatusTooltip> = 
     ],
     title: 'Carrier Screening Panel',
   },
-  superseded: {
-    badgeLabel: 'Superseded',
+  incomplete: {
+    badgeLabel: 'Incomplete',
     schedule: [{ icon: 'calendar', label: 'Scheduled:', value: 'Week 28-32' }],
     showBulkActions: true,
-    status: 'superseded',
+    status: 'incomplete',
     subtitle: 'Routine Prenatal Care',
     tests: [
       { label: 'CBC', showActions: true },
@@ -1127,7 +1127,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     { label: 'Due Soon', status: 'due-soon' },
     { label: 'Late', status: 'late' },
     { label: 'Abnormal', status: 'abnormal' },
-    { label: 'Superseded', status: 'superseded' },
+    { label: 'Incomplete', status: 'incomplete' },
     { label: 'Future', status: 'future' },
   ];
 
@@ -1608,7 +1608,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       late: 650,
       'not-reviewed': 380,
       ordered: 440,
-      superseded: 400,
+      incomplete: 400,
       'due-soon': 380,
     };
     const spaceBelow = window.innerHeight - triggerBounds.bottom - 12;

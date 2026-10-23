@@ -96,7 +96,7 @@
 }
 
 .problem-timeline [data-status='not-reviewed'] {
-  background: #DDF0EE;
+  background: #0D948899;
 }
 
 .problem-timeline [data-status='future'] {
@@ -104,19 +104,19 @@
 }
 
 .problem-timeline [data-status='ordered'] {
-  background: #DDCFEE;
+  background: #2961FF;
 }
 
 .problem-timeline [data-status='due-soon'] {
-  background: #FDD8C4;
+  background: #FF5900;
 }
 
-.problem-timeline [data-status='superseded'] {
-  background: #878787;
+.problem-timeline [data-status='incomplete'] {
+  background: #F59E0B;
 }
 
 .problem-timeline [data-status='late'] {
-  background: #f06a6a;
+  background: #AE3939;
 }
 
 .problem-timeline [data-status='abnormal'] {
