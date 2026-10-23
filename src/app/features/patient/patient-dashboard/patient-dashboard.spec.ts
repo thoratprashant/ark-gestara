@@ -661,6 +661,7 @@ describe('PatientDashboard timeline', () => {
     const tooltip = dashboard.activeVitalTooltip();
     const chart = tooltip?.charts?.[0];
     expect(tooltip?.title).toBe('Fetal Heart Rate Trend');
+    expect(chart?.unit).toBe('bpm');
     expect(dashboard.vitalTooltipPosition()).toEqual({ left: 120, top: 166, width: 520 });
     expect(dashboard.tooltipGlassFocusRect()).toEqual({
       left: 114,
@@ -679,6 +680,9 @@ describe('PatientDashboard timeline', () => {
         0,
       );
       expect(dashboard.vitalChartHover()).toEqual({ chartIndex: 0, pointIndex: 5 });
+      expect(dashboard.vitalChartTooltipHeading(chart.xLabels[5])).toBe('Week 28');
+      expect(dashboard.vitalChartTooltipLeft(5, chart.xLabels.length)).toBeCloseTo(86);
+      expect(dashboard.vitalChartTooltipTop(chart, 5)).toBeGreaterThan(0);
       dashboard.clearVitalChartHover(0);
       expect(dashboard.vitalChartHover()).toBeNull();
     }
@@ -687,6 +691,7 @@ describe('PatientDashboard timeline', () => {
       currentTarget: card,
     } as unknown as Event);
     const bloodPressureChart = dashboard.activeVitalTooltip()?.charts?.[0];
+    expect(bloodPressureChart?.unit).toBe('mmHg');
     expect(bloodPressureChart && dashboard.vitalChartViewBox(bloodPressureChart)).toBe(
       '0 0 420 120',
     );
@@ -732,7 +737,32 @@ describe('PatientDashboard timeline', () => {
       'Systolic',
       'Diastolic',
     ]);
+    const bloodPressureChart = dashboard.activeResultTooltip()?.chart;
+    expect(bloodPressureChart?.unit).toBe('mmHg');
+    expect(bloodPressureChart?.tooltipContexts?.[2]).toBe('Week 28');
     expect(dashboard.resultTooltipPosition()).toEqual({ left: 80, top: 200, width: 520 });
+
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    vi.spyOn(svg, 'getBoundingClientRect').mockReturnValue({ left: 0, width: 472 } as DOMRect);
+    if (bloodPressureChart) {
+      dashboard.updateResultChartHover(
+        {
+          currentTarget: svg,
+          clientX: dashboard.resultChartX(2, bloodPressureChart.xLabels.length),
+        } as unknown as MouseEvent,
+        bloodPressureChart,
+      );
+      expect(dashboard.resultChartHover()).toBe(2);
+      expect(
+        dashboard.resultChartTooltipHeading(
+          bloodPressureChart.xLabels[2],
+          bloodPressureChart.tooltipYear,
+        ),
+      ).toBe('Mar 24, 2026');
+      expect(dashboard.resultChartTooltipValue(bloodPressureChart, 2)).toBe('128/82');
+      dashboard.clearResultChartHover();
+      expect(dashboard.resultChartHover()).toBeNull();
+    }
 
     dashboard.showResultTooltip('blood-glucose', { currentTarget: card } as unknown as Event);
     expect(dashboard.activeResultTooltip()?.footer.map((item) => item.message)).toEqual([

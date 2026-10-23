@@ -51,6 +51,9 @@ interface VitalChart {
   series: VitalChartSeries[];
   showVerticalGrid?: boolean;
   thresholds?: VitalChartThreshold[];
+  tooltipContexts?: string[];
+  tooltipYear?: number;
+  unit?: string;
   xLabels: string[];
   yTicks: number[];
 }
@@ -270,6 +273,7 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
         xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
         normalRange: { min: 100, max: 140 },
         thresholds: [{ value: 140, label: 'Abn', color: '#ff595f' }],
+        unit: 'mmHg',
         series: [{ values: [114, 126, 128, 124, 136, 140, 147], color: '#5b65ed' }],
       },
       {
@@ -281,6 +285,7 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
         xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
         normalRange: { min: 60, max: 90 },
         thresholds: [{ value: 90, label: 'Abn', color: '#ff595f' }],
+        unit: 'mmHg',
         series: [{ values: [71, 77, 79, 81, 84, 87, 92], color: '#5b65ed' }],
       },
     ],
@@ -305,6 +310,7 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
           { value: 160, label: '', color: '#0d9488' },
         ],
         normalRange: { min: 110, max: 160 },
+        unit: 'bpm',
         series: [{ values: [166, 156, 149, 143, 140, 136], color: '#3b82f6' }],
       },
     ],
@@ -326,6 +332,7 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
         yTicks: [10, 17, 24, 35],
         xLabels: ['16w', '20w', '24w', '26w', '28w'],
         normalRange: { min: 16, max: 26, color: 'rgba(16, 185, 129, 0.1)' },
+        unit: 'cm',
         series: [{ values: [17, 20, 24, 26, 29], color: '#f59e0b' }],
       },
     ],
@@ -354,6 +361,7 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
         yTicks: [20, 23, 26, 30],
         xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
         showVerticalGrid: true,
+        unit: 'kg/m²',
         series: [{ values: [24.4, 24.8, 25, 25.7, 26.1, 27, 27.6], color: '#6366f1' }],
       },
     ],
@@ -370,6 +378,7 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
         yTicks: [140, 148, 156, 170],
         xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
         showVerticalGrid: true,
+        unit: 'lbs',
         series: [{ values: [141, 143, 146, 150, 155, 160, 163], color: '#0d9488' }],
       },
     ],
@@ -390,6 +399,7 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
           { value: 35, label: '', color: '#10b981' },
         ],
         showVerticalGrid: true,
+        unit: 'lbs',
         series: [
           {
             values: [0, 2, 5, 10, 15, 19, 22],
@@ -442,6 +452,9 @@ const RESULT_TOOLTIPS: ResultTooltip[] = [
         { value: 140, label: '', color: '#ff595f' },
         { value: 90, label: '', color: '#f58cb4' },
       ],
+      tooltipContexts: ['Week 27', 'Week 27', 'Week 28', 'Week 28', 'Week 28', 'Week 28'],
+      tooltipYear: 2026,
+      unit: 'mmHg',
       series: [
         { label: 'Systolic', values: [128, 138, 128, 148, 135, 142], color: '#e9298a' },
         { label: 'Diastolic', values: [82, 92, 82, 86, 86, 82], color: '#f58cb4' },
@@ -467,6 +480,9 @@ const RESULT_TOOLTIPS: ResultTooltip[] = [
         { value: 140, label: '', color: '#ff595f' },
         { value: 95, label: '', color: '#d99b00' },
       ],
+      tooltipContexts: ['Week 27', 'Week 27', 'Week 28', 'Week 28', 'Week 28', 'Week 28'],
+      tooltipYear: 2026,
+      unit: 'mg/dL',
       series: [
         {
           label: 'Glucose Level',
@@ -920,6 +936,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   });
   readonly resultTooltipPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 420 });
   readonly resultTooltipMaxHeight = signal(600);
+  readonly resultChartHover = signal<number | null>(null);
   readonly riskAssessmentOpen = signal(false);
   readonly riskAssessmentPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 600 });
   readonly riskAssessmentMaxHeight = signal(690);
@@ -1257,6 +1274,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.hideEddTooltip();
     this.hidePregnancyHistoryTooltip();
     this.hideTimelineGroupTooltip();
+    this.resultChartHover.set(null);
     const tooltip = RESULT_TOOLTIPS.find((item) => item.id === tooltipId);
     const card = event.currentTarget as HTMLElement | null;
 
@@ -1281,12 +1299,14 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   hideResultTooltip(): void {
     this.cancelResultTooltipHide();
+    this.resultChartHover.set(null);
     this.activeResultTooltip.set(null);
   }
 
   scheduleResultTooltipHide(): void {
     this.cancelResultTooltipHide();
     this.resultTooltipHideTimer = window.setTimeout(() => {
+      this.resultChartHover.set(null);
       this.activeResultTooltip.set(null);
       this.resultTooltipHideTimer = null;
     }, 180);
@@ -1943,13 +1963,24 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     }
   }
 
-  vitalChartValueLabelX(pointIndex: number, pointCount: number): number {
-    const pointX = this.vitalChartX(pointIndex, pointCount);
-    return pointIndex >= pointCount - 2 ? pointX - 36 : pointX + 7;
+  vitalChartTooltipLeft(pointIndex: number, pointCount: number): number {
+    return this.clamp((this.vitalChartX(pointIndex, pointCount) / 420) * 100, 14, 86);
   }
 
-  vitalChartValueLabelY(value: number, chart: VitalChart): number {
-    return this.clamp(this.vitalChartY(value, chart) - 10, 20, this.vitalChartBottom(chart) - 10);
+  vitalChartTooltipTop(chart: VitalChart, pointIndex: number): number {
+    const values = chart.series
+      .map((series) => series.values[pointIndex])
+      .filter((value): value is number => value !== undefined);
+    const highestPoint = values.length
+      ? Math.min(...values.map((value) => this.vitalChartY(value, chart)))
+      : this.vitalChartBottom(chart);
+
+    return (highestPoint / (chart.compact ? 120 : 160)) * 100;
+  }
+
+  vitalChartTooltipHeading(label: string): string {
+    const week = label.match(/^(\d+)w$/i);
+    return week ? `Week ${week[1]}` : label;
   }
 
   vitalChartPath(chart: VitalChart, series: VitalChartSeries): string {
@@ -1974,6 +2005,68 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
         return `${command}${this.resultChartX(index, series.values.length)},${this.vitalChartY(value, chart)}`;
       })
       .join(' ');
+  }
+
+  updateResultChartHover(event: MouseEvent, chart: VitalChart): void {
+    const svg = event.currentTarget as SVGSVGElement;
+    const bounds = svg.getBoundingClientRect();
+
+    if (!bounds.width || chart.xLabels.length === 0) {
+      return;
+    }
+
+    const chartX = ((event.clientX - bounds.left) / bounds.width) * 472;
+    const relativeX = this.clamp(chartX, 35, 469) - 35;
+    const pointIndex = Math.round((relativeX / 434) * Math.max(chart.xLabels.length - 1, 0));
+    this.resultChartHover.set(pointIndex);
+  }
+
+  clearResultChartHover(): void {
+    this.resultChartHover.set(null);
+  }
+
+  resultChartTooltipLeft(pointIndex: number, pointCount: number): number {
+    return this.clamp((this.resultChartX(pointIndex, pointCount) / 472) * 100, 14, 86);
+  }
+
+  resultChartTooltipTop(chart: VitalChart, pointIndex: number): number {
+    const values = chart.series
+      .map((series) => series.values[pointIndex])
+      .filter((value): value is number => value !== undefined);
+    const highestPoint = values.length
+      ? Math.min(...values.map((value) => this.vitalChartY(value, chart)))
+      : this.vitalChartBottom(chart);
+
+    return (highestPoint / 120) * 100;
+  }
+
+  resultChartTooltipHeading(label: string, year?: number): string {
+    const date = label.match(/^(\d{1,2})\/(\d{1,2})/);
+
+    if (!date || !year) {
+      return label;
+    }
+
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    const month = monthNames[Number(date[1]) - 1];
+    return month ? `${month} ${Number(date[2])}, ${year}` : label;
+  }
+
+  resultChartTooltipValue(chart: VitalChart, pointIndex: number): string {
+    return chart.series.map((series) => series.values[pointIndex]).join('/');
   }
 
   toggleTimelineGroup(groupId: string): void {

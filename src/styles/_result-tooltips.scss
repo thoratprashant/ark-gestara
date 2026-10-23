@@ -149,6 +149,10 @@
   overflow: visible;
 }
 
+.result-tooltip__chart-wrap {
+  position: relative;
+}
+
 .result-tooltip__grid-line {
   stroke: #e3ded9;
   stroke-width: 0.7;
@@ -180,6 +184,70 @@
   transform-box: fill-box;
   transform-origin: center;
   animation: result-chart-point-in 220ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.result-tooltip__hover-point {
+  stroke: #fff;
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: result-chart-hover-point-in 140ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.result-tooltip__data-tooltip {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  gap: 0.125rem;
+  min-width: 8.25rem;
+  padding: 0.625rem 0.75rem;
+  color: #171f26;
+  background: #fff;
+  border: 1px solid #e3ded9;
+  border-radius: 0.875rem;
+  box-shadow: 0 0.25rem 0.75rem rgb(23 36 43 / 12%);
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 0.75rem));
+  animation: result-chart-data-tooltip-in 140ms ease-out both;
+}
+
+.result-tooltip__data-tooltip::after {
+  position: absolute;
+  bottom: -0.375rem;
+  left: 50%;
+  width: 0.75rem;
+  height: 0.75rem;
+  background: #fff;
+  border-right: 1px solid #e3ded9;
+  border-bottom: 1px solid #e3ded9;
+  content: '';
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.result-tooltip__data-tooltip > strong {
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1rem;
+  white-space: nowrap;
+}
+
+.result-tooltip__data-context {
+  color: #73808c;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  line-height: 0.875rem;
+}
+
+.result-tooltip__data-value {
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1rem;
+  white-space: nowrap;
+}
+
+.result-tooltip__data-unit {
+  color: inherit;
+  font: inherit;
 }
 
 .result-tooltip__legend {
@@ -253,6 +321,28 @@
   }
 }
 
+@keyframes result-chart-hover-point-in {
+  from {
+    transform: scale(0.65);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes result-chart-data-tooltip-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 0.375rem)) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 0.75rem)) scale(1);
+  }
+}
+
 @media (max-width: 35.999rem) {
   .result-tooltip {
     gap: 0.625rem;
@@ -282,7 +372,9 @@
 @media (prefers-reduced-motion: reduce) {
   .result-tooltip,
   .result-tooltip__series,
-  .result-tooltip__point {
+  .result-tooltip__point,
+  .result-tooltip__hover-point,
+  .result-tooltip__data-tooltip {
     animation-duration: 1ms;
     animation-delay: 0ms;
     transition-duration: 1ms;
