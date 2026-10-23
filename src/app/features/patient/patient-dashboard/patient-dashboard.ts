@@ -2096,7 +2096,6 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
         AssignProblemDialog,
         {
           autoFocus: 'select',
-          backdropClass: 'assign-problem-dialog-backdrop',
           data: { resultId, ...selection },
           maxWidth: 'calc(100vw - 1rem)',
           panelClass: 'assign-problem-dialog-panel',

@@ -18,33 +18,30 @@ export type AssignProblemDialogResult = AssignProblemDialogData;
   styleUrl: './assign-problem-dialog.scss',
 })
 export class AssignProblemDialog {
-  private readonly data = inject<AssignProblemDialogData>(MAT_DIALOG_DATA);
-  private readonly dialogRef = inject<
-    MatDialogRef<AssignProblemDialog, AssignProblemDialogResult>
-  >(MatDialogRef);
+  private readonly dialogData = inject<AssignProblemDialogData>(MAT_DIALOG_DATA);
 
-  readonly problemOptions = [
-    'Thyroid function',
-    'Vitamin D deficiency',
-    'Iron deficiency anemia',
-  ];
+  readonly problemOptions = ['Thyroid function', 'Vitamin D deficiency', 'Iron deficiency anemia'];
   readonly categoryOptions = ['Endocrine', 'Hematology', 'Maternal health'];
   readonly taskOptions = ['Review lab results', 'Repeat laboratory test', 'Patient follow-up'];
 
   readonly form = new FormGroup({
-    problem: new FormControl(this.data.problem, {
+    problem: new FormControl(this.dialogData.problem, {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    category: new FormControl(this.data.category, {
+    category: new FormControl(this.dialogData.category, {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    task: new FormControl(this.data.task, {
+    task: new FormControl(this.dialogData.task, {
       nonNullable: true,
       validators: [Validators.required],
     }),
   });
+
+  constructor(
+    private readonly dialogRef: MatDialogRef<AssignProblemDialog, AssignProblemDialogResult>,
+  ) {}
 
   submit(): void {
     if (this.form.invalid) {
@@ -52,6 +49,6 @@ export class AssignProblemDialog {
       return;
     }
 
-    this.dialogRef.close({ resultId: this.data.resultId, ...this.form.getRawValue() });
+    this.dialogRef.close({ resultId: this.dialogData.resultId, ...this.form.getRawValue() });
   }
 }
