@@ -427,9 +427,16 @@
             </div>
             <h3>Blood Pressure</h3>
             <p>
-              <strong class="vital-card__value vital-card__value--pressure">
-                {{ vitalCounts().systolic }}/{{ vitalCounts().diastolic }}
-              </strong>
+              @if (
+                hasVitalValue(vitalCounts().systolic) &&
+                hasVitalValue(vitalCounts().diastolic)
+              ) {
+                <strong class="vital-card__value vital-card__value--pressure">
+                  {{ vitalCounts().systolic }}/{{ vitalCounts().diastolic }}
+                </strong>
+              } @else {
+                <strong class="vital-card__value vital-card__value--pressure">-</strong>
+              }
               <span>mmHg</span>
             </p>
           </article>
@@ -450,8 +457,12 @@
             </div>
             <h3>Fetal Heart Rate</h3>
             <p>
-              <strong class="vital-card__value">{{ vitalCounts().heartRate }}</strong>
-              <span>bpm</span>
+              @if (hasVitalValue(vitalCounts().heartRate)) {
+                <strong class="vital-card__value">{{ vitalCounts().heartRate }}</strong>
+                <span>bpm</span>
+              } @else {
+                <strong class="vital-card__value">-</strong>
+              }
             </p>
           </article>
 
@@ -471,7 +482,11 @@
             </div>
             <h3>Fundal Height</h3>
             <p>
-              <strong class="vital-card__value">{{ vitalCounts().fundalHeight }}</strong>
+              @if (hasVitalValue(vitalCounts().fundalHeight)) {
+                <strong class="vital-card__value">{{ vitalCounts().fundalHeight }}</strong>
+              } @else {
+                <strong class="vital-card__value">-</strong>
+              }
               <span>cm</span>
             </p>
           </article>
@@ -510,7 +525,9 @@
             </div>
             <h3>BMI</h3>
             <p>
-              <strong class="vital-card__value">{{ vitalCounts().bmi.toFixed(1) }}</strong>
+              <strong class="vital-card__value text-green">
+                {{ hasVitalValue(vitalCounts().bmi) ? vitalCounts().bmi.toFixed(1) : '-' }}
+              </strong>
             </p>
             <small>Pre-pregnancy BMI - 22.4</small>
           </article>
@@ -531,8 +548,12 @@
             </div>
             <h3>Current Weight</h3>
             <p>
-              <strong class="vital-card__value">{{ vitalCounts().currentWeight }}</strong>
-              <span>lbs</span>
+              @if (hasVitalValue(vitalCounts().currentWeight)) {
+                <strong class="vital-card__value text-green">{{ vitalCounts().currentWeight }}</strong>
+                <span>lbs</span>
+              } @else {
+                <strong class="vital-card__value text-green">-</strong>
+              }
             </p>
           </article>
 
@@ -552,8 +573,12 @@
             </div>
             <h3>Weight Gain</h3>
             <p>
-              <strong class="vital-card__value">+{{ vitalCounts().weightGain }}</strong>
-              <span>lbs</span>
+              @if (hasVitalValue(vitalCounts().weightGain)) {
+                <strong class="vital-card__value">+{{ vitalCounts().weightGain }}</strong>
+                <span>lbs</span>
+              } @else {
+                <strong class="vital-card__value">-</strong>
+              }
             </p>
           </article>
         </div>

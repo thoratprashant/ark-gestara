@@ -499,7 +499,7 @@ const VITAL_COUNT_TARGETS: VitalCountValues = {
   bmi: 26.3,
   currentWeight: 165,
   diastolic: 92,
-  fundalHeight: 28,
+  fundalHeight: 0,
   heartRate: 142,
   systolic: 148,
   weightGain: 22,
@@ -1264,6 +1264,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   keepVitalTooltipOpen(): void {
     this.cancelVitalTooltipHide();
+  }
+
+  hasVitalValue(value: number | null | undefined): value is number {
+    return value !== null && value !== undefined && value !== 0;
   }
 
   showResultTooltip(tooltipId: string, event: Event): void {

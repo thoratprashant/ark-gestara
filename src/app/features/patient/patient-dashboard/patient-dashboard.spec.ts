@@ -897,6 +897,49 @@ describe('PatientDashboard timeline', () => {
     });
   });
 
+  it('displays a dash for zero vital values and restores values with their units', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dashboard = fixture.componentInstance;
+    const vitalCard = (title: string): HTMLElement =>
+      Array.from(
+        fixture.nativeElement.querySelectorAll('.vital-card') as NodeListOf<HTMLElement>,
+      ).find((card) => card.querySelector('h3')?.textContent?.trim() === title) as HTMLElement;
+
+    fixture.detectChanges();
+
+    for (const title of [
+      'Blood Pressure',
+      'Fetal Heart Rate',
+      'Fundal Height',
+      'BMI',
+      'Current Weight',
+      'Weight Gain',
+    ]) {
+      expect(vitalCard(title).querySelector('p')?.textContent?.trim()).toBe('-');
+    }
+
+    dashboard.vitalCounts.set({
+      bmi: 26.3,
+      currentWeight: 165,
+      diastolic: 92,
+      fundalHeight: 28,
+      heartRate: 142,
+      systolic: 148,
+      weightGain: 22,
+    });
+    fixture.detectChanges();
+
+    expect(vitalCard('Blood Pressure').querySelector('p')?.textContent).toContain('148/92');
+    expect(vitalCard('Blood Pressure').querySelector('p span')?.textContent?.trim()).toBe('mmHg');
+    expect(vitalCard('Fetal Heart Rate').querySelector('p span')?.textContent?.trim()).toBe('bpm');
+    expect(vitalCard('Fundal Height').querySelector('p span')?.textContent?.trim()).toBe('cm');
+    expect(vitalCard('BMI').querySelector('.vital-card__value')?.textContent?.trim()).toBe('26.3');
+    expect(vitalCard('Current Weight').querySelector('p span')?.textContent?.trim()).toBe('lbs');
+    expect(vitalCard('Weight Gain').querySelector('.vital-card__value')?.textContent?.trim()).toBe(
+      '+22',
+    );
+  });
+
   it('uses scroll hysteresis when switching the summary to sticky mode', () => {
     const dashboard = new PatientDashboard();
     const summary = document.createElement('section');
