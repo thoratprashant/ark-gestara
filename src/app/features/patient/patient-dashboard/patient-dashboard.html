@@ -1489,13 +1489,15 @@
                 }
               </div>
 
-              <button
-                class="timeline-status-tooltip__mark-reviewed"
-                type="button"
-                (click)="markTimelineTooltipResultsReviewed()"
-              >
-                Mark as Reviewed
-              </button>
+              @if (!activeStatusTooltip.tooltip.resultsReviewed) {
+                <button
+                  class="timeline-status-tooltip__mark-reviewed"
+                  type="button"
+                  (click)="markTimelineTooltipResultsReviewed()"
+                >
+                  Mark as Reviewed
+                </button>
+              }
             </section>
 
             <section class="timeline-status-tooltip__outstanding-orders">
@@ -1557,7 +1559,7 @@
                           <button
                             class="timeline-status-tooltip__reactivate"
                             type="button"
-                            (click)="setTimelineTooltipTestState(test, 'active')"
+                            (click)="reactivateTimelineTooltipTest(test)"
                           >
                             Reactivate
                           </button>
@@ -1648,7 +1650,7 @@
                         <button
                           class="timeline-status-tooltip__reactivate"
                           type="button"
-                          (click)="setTimelineTooltipTestState(test, 'active')"
+                          (click)="reactivateTimelineTooltipTest(test, true)"
                         >
                           Reactivate
                         </button>

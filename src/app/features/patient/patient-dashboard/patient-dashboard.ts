@@ -1599,16 +1599,34 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   declineTimelineTooltipTest(test: TimelineStatusTooltipTest, fromRemoved = false): void {
     this.updateFutureTimelineTooltip((tooltip) => {
-      const source = fromRemoved ? tooltip.removedTests : tooltip.tests;
+      if (fromRemoved) {
+        return {
+          ...tooltip,
+          removedTests: tooltip.removedTests?.filter((item) => item.label !== test.label),
+          tests: [...(tooltip.tests ?? []), { ...test, actionState: 'declined' as const }],
+        };
+      }
+
       const reordered = [
-        ...(source?.filter((item) => item !== test) ?? []),
+        ...(tooltip.tests?.filter((item) => item.label !== test.label) ?? []),
         { ...test, actionState: 'declined' as const },
       ];
 
-      return fromRemoved
-        ? { ...tooltip, removedTests: reordered }
-        : { ...tooltip, tests: reordered };
+      return { ...tooltip, tests: reordered };
     });
+  }
+
+  reactivateTimelineTooltipTest(test: TimelineStatusTooltipTest, fromRemoved = false): void {
+    if (!fromRemoved) {
+      this.setTimelineTooltipTestState(test, 'active');
+      return;
+    }
+
+    this.updateFutureTimelineTooltip((tooltip) => ({
+      ...tooltip,
+      removedTests: tooltip.removedTests?.filter((item) => item.label !== test.label),
+      tests: [...(tooltip.tests ?? []), { ...test, actionState: 'active' }],
+    }));
   }
 
   orderTimelineTooltipTest(test: TimelineStatusTooltipTest, fromRemoved = false): void {
@@ -1618,8 +1636,8 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       if (fromRemoved) {
         return {
           ...tooltip,
-          removedTests: tooltip.removedTests?.filter((item) => item !== test),
-          tests: [...(tooltip.tests ?? []), orderedTest],
+          removedTests: tooltip.removedTests?.filter((item) => item.label !== test.label),
+          tests: [orderedTest, ...(tooltip.tests ?? [])],
         };
       }
 
