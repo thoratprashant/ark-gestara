@@ -1304,7 +1304,14 @@
               [attr.data-status]="activeStatusTooltip.tooltip.status"
             >
               <span class="timeline-status-tooltip__status-icon" aria-hidden="true"></span>
-              {{ activeStatusTooltip.tooltip.badgeLabel }}
+              @if (activeStatusTooltip.tooltip.badgeLabel === 'Completed/Not Reviewed') {
+                <span class="timeline-status-tooltip__badge-lines">
+                  <span>Completed/</span>
+                  <span>Not Reviewed</span>
+                </span>
+              } @else {
+                {{ activeStatusTooltip.tooltip.badgeLabel }}
+              }
             </span>
           </header>
 
@@ -1362,7 +1369,14 @@
                     aria-hidden="true"
                   ></span>
                   <div>
-                    <strong>Hemoglobin Electrophoresis</strong>
+                    <div class="timeline-status-tooltip__received-test-title">
+                      <strong>Hemoglobin Electrophoresis</strong>
+                      @if (activeStatusTooltip.tooltip.resultsReviewed) {
+                        <span class="timeline-status-tooltip__reviewed-tick" aria-hidden="true">
+                          <img src="assets/timeline-status-tooltip/reviewed-check.svg" alt="" />
+                        </span>
+                      }
+                    </div>
                     <p>
                       Result: <b>{{ submittedTimelineTooltipResult() }}</b>
                       <span> (11.5 - 15.5)</span>
@@ -1410,7 +1424,14 @@
                     aria-hidden="true"
                   ></span>
                   <div>
-                    <strong>Spinal Muscular Atrophy</strong>
+                    <div class="timeline-status-tooltip__received-test-title">
+                      <strong>Spinal Muscular Atrophy</strong>
+                      @if (activeStatusTooltip.tooltip.resultsReviewed) {
+                        <span class="timeline-status-tooltip__reviewed-tick" aria-hidden="true">
+                          <img src="assets/timeline-status-tooltip/reviewed-check.svg" alt="" />
+                        </span>
+                      }
+                    </div>
                     <p>Result: Negative</p>
                   </div>
                 </div>
@@ -1422,7 +1443,14 @@
                     aria-hidden="true"
                   ></span>
                   <div>
-                    <strong>Fragile X</strong>
+                    <div class="timeline-status-tooltip__received-test-title">
+                      <strong>Fragile X</strong>
+                      @if (activeStatusTooltip.tooltip.resultsReviewed) {
+                        <span class="timeline-status-tooltip__reviewed-tick" aria-hidden="true">
+                          <img src="assets/timeline-status-tooltip/reviewed-check.svg" alt="" />
+                        </span>
+                      }
+                    </div>
                     <p>Result: <b>9.8 g/dL</b><span> (11.5 - 15.5)</span></p>
                     <small>Recommended problem: <b>Anemia in Pregnancy</b></small>
                   </div>
@@ -1461,7 +1489,11 @@
                 }
               </div>
 
-              <button class="timeline-status-tooltip__mark-reviewed" type="button">
+              <button
+                class="timeline-status-tooltip__mark-reviewed"
+                type="button"
+                (click)="markTimelineTooltipResultsReviewed()"
+              >
                 Mark as Reviewed
               </button>
             </section>

@@ -162,6 +162,7 @@ interface TimelineStatusTooltip {
   otherPlaceholder?: string;
   removedTests?: TimelineStatusTooltipTest[];
   resultReviewStates?: Record<string, TimelineResultReviewState>;
+  resultsReviewed?: boolean;
   resultsSubmitted?: boolean;
   schedule: TimelineStatusTooltipScheduleRow[];
   showBulkActions?: boolean;
@@ -1690,6 +1691,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   timelineTooltipResultReviewState(resultId: string): TimelineResultReviewState | undefined {
     return this.activeTimelineStatusTooltip()?.tooltip.resultReviewStates?.[resultId];
+  }
+
+  markTimelineTooltipResultsReviewed(): void {
+    this.updateFutureTimelineTooltip((tooltip) => ({ ...tooltip, resultsReviewed: true }));
   }
 
   removeTimelineTooltipTest(test: TimelineStatusTooltipTest, fromRemoved = false): void {
