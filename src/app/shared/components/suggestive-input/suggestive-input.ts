@@ -36,10 +36,13 @@ export class SuggestiveInput implements ControlValueAccessor, OnDestroy {
   @Input({ required: true }) inputId = '';
   @Input() placeholder = '';
   @Input() iconSrc = '';
+  @Input() dropdownPlacement: 'auto' | 'above' | 'below' = 'auto';
   private listObserver?: ResizeObserver;
+  private suggestionsElement?: HTMLElement;
 
   @ViewChild('suggestions') set suggestions(ref: ElementRef<HTMLElement> | undefined) {
     this.listObserver?.disconnect();
+    this.suggestionsElement = ref?.nativeElement;
     if (!ref) return;
     const list = ref.nativeElement;
     const measure = () => {
@@ -58,6 +61,7 @@ export class SuggestiveInput implements ControlValueAccessor, OnDestroy {
                 .reduce((height, row) => height + row.getBoundingClientRect().height, 0) + spacing,
             ) + 'px'
           : 'none';
+      this.updateDropdownPlacement(list);
     };
     this.listObserver = new ResizeObserver(measure);
     this.listObserver.observe(list);
@@ -78,6 +82,7 @@ export class SuggestiveInput implements ControlValueAccessor, OnDestroy {
   isOpen = false;
   activeIndex = -1;
   filteredOptions: SuggestiveOption[] = [];
+  opensAbove = false;
 
   private onChange: (value: string) => void = () => undefined;
   private onTouched: () => void = () => undefined;
@@ -105,12 +110,14 @@ export class SuggestiveInput implements ControlValueAccessor, OnDestroy {
     this.filterOptions();
     this.isOpen = this.filteredOptions.length > 0;
     this.activeIndex = -1;
+    queueMicrotask(() => this.updateDropdownPlacement());
   }
 
   handleFocus(): void {
     if (this.disabled) return;
     this.filterOptions();
     this.isOpen = this.filteredOptions.length > 0;
+    queueMicrotask(() => this.updateDropdownPlacement());
   }
 
   handleBlur(): void {
@@ -156,6 +163,34 @@ export class SuggestiveInput implements ControlValueAccessor, OnDestroy {
     return `${this.inputId}-option-${index}`;
   }
 
+  private updateDropdownPlacement(list = this.suggestionsElement): void {
+    if (!list) {
+      return;
+    }
+
+    if (this.dropdownPlacement !== 'auto') {
+      this.opensAbove = this.dropdownPlacement === 'above';
+      return;
+    }
+
+    const host = this.elementRef?.nativeElement;
+    const input = host?.querySelector('input');
+    const boundary = host?.closest<HTMLElement>('mat-dialog-content');
+
+    if (!input || !boundary) {
+      this.opensAbove = false;
+      return;
+    }
+
+    const inputRect = input.getBoundingClientRect();
+    const boundaryRect = boundary.getBoundingClientRect();
+    const listHeight = Math.min(list.scrollHeight, 188);
+    const spaceBelow = boundaryRect.bottom - inputRect.bottom - 4;
+    const spaceAbove = inputRect.top - boundaryRect.top - 4;
+
+    this.opensAbove = spaceBelow < listHeight && spaceAbove > spaceBelow;
+  }
+
   private filterOptions(): void {
     const query = this.value.trim().toLocaleLowerCase();
     this.filteredOptions = this.options.filter((option) => {
@@ -166,4 +201,6 @@ export class SuggestiveInput implements ControlValueAccessor, OnDestroy {
       return `${option.value} ${option.label}`.toLocaleLowerCase().includes(query);
     });
   }
+
+  constructor(private readonly elementRef?: ElementRef<HTMLElement>) {}
 }

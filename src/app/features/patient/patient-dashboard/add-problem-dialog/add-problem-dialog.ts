@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 
@@ -52,6 +52,7 @@ export class AddProblemDialog {
   filteredProblemLibrary = this.problemLibrary;
   favoritesExpanded = true;
   saveToFavorites = false;
+  readonly selectedProblem = signal<ProblemOption | null>(null);
 
   readonly form = new FormGroup({
     name: new FormControl('', {
@@ -78,7 +79,27 @@ export class AddProblemDialog {
     this.saveToFavorites = !this.saveToFavorites;
   }
 
+  selectProblem(problem: ProblemOption): void {
+    this.selectedProblem.set(problem);
+    this.form.reset({ name: '', icd10Code: '' });
+  }
+
+  clearProblemSelection(): void {
+    this.selectedProblem.set(null);
+  }
+
   submit(): void {
+    const selectedProblem = this.selectedProblem();
+
+    if (selectedProblem) {
+      this.dialogRef.close({
+        name: selectedProblem.name,
+        icd10Code: selectedProblem.code,
+        saveToFavorites: this.saveToFavorites,
+      });
+      return;
+    }
+
     const name = this.form.controls.name.value.trim();
     const icd10Code = this.form.controls.icd10Code.value.trim();
 

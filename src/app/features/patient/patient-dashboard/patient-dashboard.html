@@ -73,11 +73,23 @@
                   aria-hidden="true"
                 />
                 <span>
-                  <small>Current Gestational Age</small>
-                  <strong>28w 4d</strong>
+                  <small>Prenatal visits completed</small>
+                  <strong>6</strong>
                 </span>
               </article>
-              <button
+              <article class="summary-fact">
+                <img
+                  class="summary-fact__icon"
+                  src="assets/calender-green.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
+                <span>
+                  <small>Prenatal visits scheduled</small>
+                  <strong>2</strong>
+                </span>
+              </article>
+              <!-- <button
                 class="summary-fact summary-fact--edd"
                 type="button"
                 aria-describedby="edd-tooltip"
@@ -120,7 +132,7 @@
                   <small>Recommended Delivery Window</small>
                   <strong>Week 36–39</strong>
                 </span>
-              </button>
+              </button> -->
               <button
                 class="summary-fact summary-fact--risk"
                 type="button"
@@ -428,8 +440,7 @@
             <h3>Blood Pressure</h3>
             <p>
               @if (
-                hasVitalValue(vitalCounts().systolic) &&
-                hasVitalValue(vitalCounts().diastolic)
+                hasVitalValue(vitalCounts().systolic) && hasVitalValue(vitalCounts().diastolic)
               ) {
                 <strong class="vital-card__value vital-card__value--pressure">
                   {{ vitalCounts().systolic }}/{{ vitalCounts().diastolic }}
@@ -549,7 +560,9 @@
             <h3>Current Weight</h3>
             <p>
               @if (hasVitalValue(vitalCounts().currentWeight)) {
-                <strong class="vital-card__value text-green">{{ vitalCounts().currentWeight }}</strong>
+                <strong class="vital-card__value text-green">{{
+                  vitalCounts().currentWeight
+                }}</strong>
                 <span>lbs</span>
               } @else {
                 <strong class="vital-card__value text-green">-</strong>
@@ -1019,7 +1032,7 @@
                     [attr.aria-label]="'Add timeline item to ' + group.label"
                     (click)="openTimelineItemDialog(group.id)"
                   >
-                    +
+                    <img src="assets/problem-dialog/plus.svg" alt="" aria-hidden="true" />
                   </button>
                 </div>
 
@@ -1035,7 +1048,75 @@
                   >
                     @for (row of group.rows; track row.id) {
                       <div class="problem-timeline__row">
-                        <div class="problem-timeline__label">{{ row.label }}</div>
+                        <div class="problem-timeline__label">
+                          @if (
+                            editingTimelineRow()?.groupId === group.id &&
+                            editingTimelineRow()?.rowId === row.id
+                          ) {
+                            <input
+                              class="problem-timeline__label-input"
+                              type="text"
+                              maxlength="80"
+                              [value]="editingTimelineRow()?.value"
+                              [attr.aria-label]="'Edit ' + row.label"
+                              (input)="updateTimelineRowEditValue($event)"
+                              (keydown)="handleTimelineRowEditKeydown($event)"
+                            />
+                            <button
+                              class="problem-timeline__label-action problem-timeline__label-action--confirm"
+                              type="button"
+                              title="Save label"
+                              aria-label="Save label"
+                              [disabled]="!editingTimelineRow()?.value?.trim()"
+                              (click)="saveTimelineRowEdit()"
+                            >
+                              <img
+                                src="assets/timeline-status-tooltip/reviewed-check.svg"
+                                alt=""
+                                aria-hidden="true"
+                              />
+                            </button>
+                            <button
+                              class="problem-timeline__label-action"
+                              type="button"
+                              title="Cancel editing"
+                              aria-label="Cancel editing"
+                              (click)="cancelTimelineRowEdit()"
+                            >
+                              <img
+                                src="assets/timeline-status-tooltip/close.svg"
+                                alt=""
+                                aria-hidden="true"
+                              />
+                            </button>
+                          } @else {
+                            <button
+                              class="problem-timeline__label-action problem-timeline__label-action--edit"
+                              type="button"
+                              [title]="'Edit ' + row.label"
+                              [attr.aria-label]="'Edit ' + row.label"
+                              (click)="beginTimelineRowEdit(group.id, row, $event)"
+                            >
+                              <img
+                                src="assets/problem-dialog/edit-inline.svg"
+                                alt=""
+                                aria-hidden="true"
+                              />
+                            </button>
+                            <span class="problem-timeline__label-text" [title]="row.label">
+                              {{ row.label }}
+                            </span>
+                            <button
+                              class="problem-timeline__label-action problem-timeline__label-action--add"
+                              type="button"
+                              [title]="'Add task to ' + row.label"
+                              [attr.aria-label]="'Add task to ' + row.label"
+                              (click)="openTimelineTaskDialog(group.id, row.id)"
+                            >
+                              <img src="assets/problem-dialog/plus.svg" alt="" aria-hidden="true" />
+                            </button>
+                          }
+                        </div>
 
                         <div class="problem-timeline__track">
                           @for (week of weekTicks; track week) {
@@ -2001,9 +2082,7 @@
                     </h4>
                     <time datetime="2026-10-19">Date: 10-19-26</time>
                   </div>
-                  <p>
-                    Results returned from Epic that do not match a configured Problem or Task.
-                  </p>
+                  <p>Results returned from Epic that do not match a configured Problem or Task.</p>
                 </header>
                 <div class="unmatched-results__list">
                   <article class="unmatched-result">

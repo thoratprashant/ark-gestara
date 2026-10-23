@@ -96,7 +96,7 @@
 }
 
 .problem-timeline [data-status='not-reviewed'] {
-  background: #0D948899;
+  background: #0d948899;
 }
 
 .problem-timeline [data-status='future'] {
@@ -104,19 +104,19 @@
 }
 
 .problem-timeline [data-status='ordered'] {
-  background: #2961FF;
+  background: #2961ff;
 }
 
 .problem-timeline [data-status='due-soon'] {
-  background: #FF5900;
+  background: #ff5900;
 }
 
 .problem-timeline [data-status='incomplete'] {
-  background: #F59E0B;
+  background: #f59e0b;
 }
 
 .problem-timeline [data-status='late'] {
-  background: #AE3939;
+  background: #ae3939;
 }
 
 .problem-timeline [data-status='abnormal'] {
@@ -354,7 +354,9 @@
   min-height: 2.125rem;
   padding: 0.375rem 0.625rem;
   border-radius: 0.625rem;
-  font: 500 0.6875rem/0.875rem Inter, sans-serif;
+  font:
+    500 0.6875rem/0.875rem Inter,
+    sans-serif;
   white-space: nowrap;
 }
 
@@ -494,6 +496,63 @@
   line-height: 1rem;
   text-overflow: ellipsis;
   white-space: nowrap;
+  gap: 2px;
+}
+
+.problem-timeline__label-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.problem-timeline__label-action {
+  display: grid;
+  place-items: center;
+  flex: 0 0 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0.25rem;
+}
+
+.problem-timeline__label-action img {
+  display: block;
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.problem-timeline__label-action:hover,
+.problem-timeline__label-action:focus-visible {
+  background: rgba(13, 148, 136, 0.1);
+  outline: none;
+}
+
+.problem-timeline__label-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.problem-timeline__label-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 0;
+  height: 2rem;
+  padding: 0.25rem 0.5rem;
+  color: #0d9488;
+  background: #fff;
+  border: 1px solid #ded9d4;
+  border-radius: 0.375rem;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  outline: none;
+}
+
+.problem-timeline__label-input:focus {
+  border-color: #0d9488;
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.12);
 }
 
 .problem-timeline__label--heading {

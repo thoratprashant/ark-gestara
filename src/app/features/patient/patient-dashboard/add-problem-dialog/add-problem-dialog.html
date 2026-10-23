@@ -46,7 +46,16 @@
             class="add-problem-dialog__list add-problem-dialog__list--favorites"
           >
             @for (problem of favorites; track problem.code) {
-              <div class="add-problem-dialog__problem-row d-flex align-items-center">
+              <button
+                class="add-problem-dialog__problem-row d-flex align-items-center w-100 text-start"
+                type="button"
+                [class.add-problem-dialog__problem-row--selected]="
+                  selectedProblem()?.code === problem.code
+                "
+                [attr.aria-pressed]="selectedProblem()?.code === problem.code"
+                [attr.aria-label]="'Select ' + problem.name"
+                (click)="selectProblem(problem)"
+              >
                 <img
                   class="add-problem-dialog__problem-star"
                   src="assets/problem-dialog/star-filled.svg"
@@ -57,14 +66,23 @@
                   problem.name
                 }}</span>
                 <span class="add-problem-dialog__badge fw-semibold">{{ problem.code }}</span>
-                <button
-                  class="add-problem-dialog__add d-flex align-items-center justify-content-center p-0 border-0"
-                  type="button"
-                  [attr.aria-label]="'Add ' + problem.name"
-                >
-                  <img src="assets/problem-dialog/plus.svg" alt="" aria-hidden="true" />
-                </button>
-              </div>
+                @if (selectedProblem()?.code === problem.code) {
+                  <span
+                    class="add-problem-dialog__selected-check d-flex align-items-center justify-content-center"
+                    aria-hidden="true"
+                  >
+                    <svg viewBox="0 0 12 12" fill="none">
+                      <path
+                        d="m2.4 6.1 2.15 2.15L9.7 3.6"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                }
+              </button>
             }
           </div>
         }
@@ -92,19 +110,43 @@
 
         <div class="add-problem-dialog__list add-problem-dialog__list--library">
           @for (problem of filteredProblemLibrary; track problem.code) {
-            <div class="add-problem-dialog__problem-row d-flex align-items-center">
+            <button
+              class="add-problem-dialog__problem-row d-flex align-items-center w-100 text-start"
+              type="button"
+              [class.add-problem-dialog__problem-row--selected]="
+                selectedProblem()?.code === problem.code
+              "
+              [attr.aria-pressed]="selectedProblem()?.code === problem.code"
+              [attr.aria-label]="'Select ' + problem.name"
+              (click)="selectProblem(problem)"
+            >
+              <img
+                class="add-problem-dialog__problem-star"
+                src="assets/problem-dialog/star-outline.svg"
+                alt=""
+                aria-hidden="true"
+              />
               <span class="add-problem-dialog__problem-name flex-grow-1 fw-semibold">{{
                 problem.name
               }}</span>
               <span class="add-problem-dialog__badge fw-semibold">{{ problem.code }}</span>
-              <button
-                class="add-problem-dialog__add d-flex align-items-center justify-content-center p-0 border-0"
-                type="button"
-                [attr.aria-label]="'Add ' + problem.name"
-              >
-                <img src="assets/problem-dialog/plus.svg" alt="" aria-hidden="true" />
-              </button>
-            </div>
+              @if (selectedProblem()?.code === problem.code) {
+                <span
+                  class="add-problem-dialog__selected-check d-flex align-items-center justify-content-center"
+                  aria-hidden="true"
+                >
+                  <svg viewBox="0 0 12 12" fill="none">
+                    <path
+                      d="m2.4 6.1 2.15 2.15L9.7 3.6"
+                      stroke="currentColor"
+                      stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              }
+            </button>
           } @empty {
             <p class="add-problem-dialog__empty m-0">No matching problems found.</p>
           }
@@ -127,6 +169,7 @@
               type="text"
               formControlName="name"
               placeholder="Type problem name..."
+              (input)="clearProblemSelection()"
             />
           </div>
           <div class="add-problem-dialog__field d-flex flex-column align-items-start w-100">

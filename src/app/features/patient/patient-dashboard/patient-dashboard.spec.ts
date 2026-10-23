@@ -9,6 +9,7 @@ import { PatientDashboardModule } from './patient-dashboard.module';
 import { AddProblemDialog } from './add-problem-dialog/add-problem-dialog';
 import { AssignProblemDialog } from './assign-problem-dialog/assign-problem-dialog';
 import { TimelineItemDialog } from './timeline-item-dialog/timeline-item-dialog';
+import { TimelineTaskDialog } from './timeline-task-dialog/timeline-task-dialog';
 
 describe('PatientDashboard timeline', () => {
   beforeAll(async () => {
@@ -158,6 +159,124 @@ describe('PatientDashboard timeline', () => {
     expect(dashboard.canUndoTimeline()).toBe(true);
   });
 
+  it('edits a timeline row label and keeps the change undoable', () => {
+    const dashboard = new PatientDashboard();
+    const group = dashboard.pregnancyTimeline().groups[0];
+    const row = group.rows[0];
+
+    dashboard.beginTimelineRowEdit(group.id, row);
+    dashboard.updateTimelineRowEditValue({
+      target: { value: 'Updated screening' },
+    } as unknown as Event);
+    dashboard.saveTimelineRowEdit();
+
+    expect(dashboard.pregnancyTimeline().groups[0].rows[0].label).toBe('Updated screening');
+    expect(dashboard.editingTimelineRow()).toBeNull();
+    expect(dashboard.canUndoTimeline()).toBe(true);
+
+    dashboard.undoTimelineChange();
+    expect(dashboard.pregnancyTimeline().groups[0].rows[0].label).toBe(row.label);
+  });
+
+  it('shows row edit controls and opens the add-task dialog from the row action', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dialog = TestBed.inject(MatDialog);
+    fixture.detectChanges();
+
+    const firstRow = fixture.nativeElement.querySelector('.problem-timeline__row') as HTMLElement;
+    const editButton = firstRow.querySelector(
+      '.problem-timeline__label-action--edit',
+    ) as HTMLButtonElement;
+    const addButton = firstRow.querySelector(
+      '.problem-timeline__label-action--add',
+    ) as HTMLButtonElement;
+
+    expect(editButton).toBeTruthy();
+    expect(addButton).toBeTruthy();
+
+    editButton.click();
+    fixture.detectChanges();
+    expect(firstRow.querySelector('.problem-timeline__label-input')).toBeTruthy();
+    expect(firstRow.querySelector('.problem-timeline__label-action--confirm')).toBeTruthy();
+
+    fixture.componentInstance.cancelTimelineRowEdit();
+    fixture.detectChanges();
+    (firstRow.querySelector('.problem-timeline__label-action--add') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    expect(dialog.openDialogs).toHaveLength(1);
+    expect(dialog.openDialogs[0].componentInstance).toBeInstanceOf(TimelineTaskDialog);
+
+    dialog.closeAll();
+  });
+
+  it('adds a submitted task to the selected row and keeps it undoable', () => {
+    const dialog = {
+      open: vi.fn(() => ({
+        afterClosed: () =>
+          of({
+            endWeek: 34,
+            name: 'Follow-up glucose screening',
+            startWeek: 30,
+          }),
+      })),
+    } as unknown as MatDialog;
+    const dashboard = new PatientDashboard(dialog);
+    const group = dashboard.pregnancyTimeline().groups[0];
+    const row = group.rows[0];
+    const originalChipCount = row.chips.length;
+
+    dashboard.openTimelineTaskDialog(group.id, row.id);
+
+    expect(dialog.open).toHaveBeenCalledWith(
+      TimelineTaskDialog,
+      expect.objectContaining({
+        panelClass: 'timeline-task-dialog-panel',
+        width: '422px',
+      }),
+    );
+    const updatedRow = dashboard.pregnancyTimeline().groups[0].rows[0];
+    expect(updatedRow.chips).toHaveLength(originalChipCount + 1);
+    expect(updatedRow.chips.at(-1)).toMatchObject({
+      endWeek: 34,
+      label: 'Follow-up glucose screening',
+      startWeek: 30,
+    });
+    expect(dashboard.canUndoTimeline()).toBe(true);
+  });
+
+  it('validates and submits the Add Task dialog fields', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dialog = TestBed.inject(MatDialog);
+    fixture.detectChanges();
+
+    const addButton = fixture.nativeElement.querySelector(
+      '.problem-timeline__label-action--add',
+    ) as HTMLButtonElement;
+    addButton.click();
+    fixture.detectChanges();
+
+    const dialogRef = dialog.openDialogs[0];
+    const closeSpy = vi.spyOn(dialogRef, 'close');
+    const taskDialog = dialog.openDialogs[0].componentInstance as TimelineTaskDialog;
+    taskDialog.form.setValue({
+      endWeek: 28,
+      name: 'Glucose screening',
+      startWeek: 30,
+    });
+    taskDialog.submit();
+    fixture.detectChanges();
+    expect(taskDialog.form.hasError('invalidWeekRange')).toBe(true);
+    expect(dialog.openDialogs).toHaveLength(1);
+
+    taskDialog.form.controls.endWeek.setValue(32);
+    taskDialog.submit();
+    expect(closeSpy).toHaveBeenCalledWith({
+      endWeek: 32,
+      name: 'Glucose screening',
+      startWeek: 30,
+    });
+  });
+
   it('opens the Add Problem Material dialog with an enabled problem-name field', () => {
     const fixture = TestBed.createComponent(PatientDashboard);
     const dialog = TestBed.inject(MatDialog);
@@ -174,6 +293,48 @@ describe('PatientDashboard timeline', () => {
     expect(dialogComponent.form.controls.name.enabled).toBe(true);
 
     dialog.closeAll();
+  });
+
+  it('selects favorite and library problems and submits the active selection', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dialog = TestBed.inject(MatDialog);
+    fixture.detectChanges();
+
+    const addProblemButton = fixture.nativeElement.querySelector(
+      '.problem-timeline__add-problem',
+    ) as HTMLButtonElement;
+    addProblemButton.click();
+    fixture.detectChanges();
+
+    const dialogRef = dialog.openDialogs[0];
+    const closeSpy = vi.spyOn(dialogRef, 'close');
+    const dialogElement = dialogRef.componentRef?.location.nativeElement as HTMLElement;
+    const dialogComponent = dialogRef.componentInstance as AddProblemDialog;
+    const favorite = dialogElement.querySelector(
+      '.add-problem-dialog__list--favorites .add-problem-dialog__problem-row',
+    ) as HTMLButtonElement;
+    const library = dialogElement.querySelector(
+      '.add-problem-dialog__list--library .add-problem-dialog__problem-row',
+    ) as HTMLButtonElement;
+
+    favorite.click();
+    fixture.detectChanges();
+    expect(favorite.getAttribute('aria-pressed')).toBe('true');
+    expect(favorite.querySelector('.add-problem-dialog__selected-check')).toBeTruthy();
+    expect(dialogComponent.form.getRawValue()).toEqual({ name: '', icd10Code: '' });
+
+    library.click();
+    fixture.detectChanges();
+    expect(favorite.getAttribute('aria-pressed')).toBe('false');
+    expect(library.getAttribute('aria-pressed')).toBe('true');
+    expect(dialogElement.querySelectorAll('.add-problem-dialog__selected-check')).toHaveLength(1);
+
+    dialogComponent.submit();
+    expect(closeSpy).toHaveBeenCalledWith({
+      icd10Code: 'J20.9',
+      name: 'Acute Bronchitis',
+      saveToFavorites: false,
+    });
   });
 
   it('opens the Assign Problem dialog with defaults for the selected Epic result', () => {

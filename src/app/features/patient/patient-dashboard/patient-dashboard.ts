@@ -23,6 +23,10 @@ import {
   TimelineItemDialogData,
   TimelineItemDialogResult,
 } from './timeline-item-dialog/timeline-item-dialog';
+import {
+  TimelineTaskDialog,
+  TimelineTaskDialogResult,
+} from './timeline-task-dialog/timeline-task-dialog';
 
 interface VitalChartSeries {
   color: string;
@@ -204,6 +208,12 @@ interface TimelineRow {
   id: string;
   label: string;
   chips: TimelineChip[];
+}
+
+interface TimelineRowEdit {
+  groupId: string;
+  rowId: string;
+  value: string;
 }
 
 type TimelineConditionTagTone = 'blue' | 'pink' | 'purple' | 'teal';
@@ -1058,6 +1068,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     weightGain: 0,
   });
   readonly pregnancyTimeline = signal(this.cloneTimeline(INITIAL_TIMELINE));
+  readonly editingTimelineRow = signal<TimelineRowEdit | null>(null);
   readonly hasActivePregnancy = computed(() => this.pregnancyTimeline().groups.length > 0);
   readonly suggestedProblems = signal<readonly SuggestedProblem[]>([
     {
@@ -1144,6 +1155,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   private timelineStatusTooltipHideTimer: number | null = null;
   private timelineStatusTooltipInteractionActive = false;
   private timelineItemSequence = 0;
+  private timelineTaskSequence = 0;
   private timelineProblemSequence = 0;
 
   constructor(private readonly dialog?: MatDialog) {}
@@ -2237,6 +2249,103 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       });
   }
 
+  openTimelineTaskDialog(groupId: string, rowId: string): void {
+    if (!this.dialog) {
+      return;
+    }
+
+    const trigger = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
+    this.dialog
+      .open<TimelineTaskDialog, void, TimelineTaskDialogResult>(TimelineTaskDialog, {
+        autoFocus: 'first-tabbable',
+        maxWidth: 'calc(100vw - 1.5rem)',
+        panelClass: 'timeline-task-dialog-panel',
+        restoreFocus: false,
+        width: '422px',
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result) {
+          this.addTimelineTask(groupId, rowId, result);
+        }
+
+        trigger?.focus({ preventScroll: true });
+      });
+  }
+
+  beginTimelineRowEdit(groupId: string, row: TimelineRow, event?: MouseEvent): void {
+    this.editingTimelineRow.set({ groupId, rowId: row.id, value: row.label });
+
+    const label = (event?.currentTarget as HTMLElement | null)?.closest('.problem-timeline__label');
+    window.setTimeout(() => {
+      const input = label?.querySelector<HTMLInputElement>('.problem-timeline__label-input');
+      input?.focus();
+      input?.select();
+    });
+  }
+
+  updateTimelineRowEditValue(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.editingTimelineRow.update((edit) => (edit ? { ...edit, value } : null));
+  }
+
+  saveTimelineRowEdit(): void {
+    const edit = this.editingTimelineRow();
+    const label = edit?.value.trim();
+
+    if (!edit || !label) {
+      return;
+    }
+
+    const row = this.pregnancyTimeline()
+      .groups.find((group) => group.id === edit.groupId)
+      ?.rows.find((item) => item.id === edit.rowId);
+
+    if (!row || row.label === label) {
+      this.editingTimelineRow.set(null);
+      return;
+    }
+
+    this.rememberTimeline();
+    this.pregnancyTimeline.update((timeline) => ({
+      ...timeline,
+      groups: timeline.groups.map((group) =>
+        group.id === edit.groupId
+          ? {
+              ...group,
+              rows: group.rows.map((item) =>
+                item.id === edit.rowId
+                  ? {
+                      ...item,
+                      label,
+                      chips: item.chips.map((chip) =>
+                        chip.label === item.label ? { ...chip, label } : chip,
+                      ),
+                    }
+                  : item,
+              ),
+            }
+          : group,
+      ),
+    }));
+    this.editingTimelineRow.set(null);
+  }
+
+  cancelTimelineRowEdit(): void {
+    this.editingTimelineRow.set(null);
+  }
+
+  handleTimelineRowEditKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.saveTimelineRowEdit();
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      this.cancelTimelineRowEdit();
+    }
+  }
+
   weekPercent(week: number): number {
     return (week / this.pregnancyTimeline().maxWeek) * 100;
   }
@@ -2660,6 +2769,39 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       ),
     }));
     this.expandedTimelineGroupIds.update((expandedIds) => new Set(expandedIds).add(groupId));
+  }
+
+  private addTimelineTask(groupId: string, rowId: string, task: TimelineTaskDialogResult): void {
+    this.rememberTimeline();
+    const taskId = `custom-timeline-task-${++this.timelineTaskSequence}`;
+
+    this.pregnancyTimeline.update((timeline) => ({
+      ...timeline,
+      groups: timeline.groups.map((group) =>
+        group.id === groupId
+          ? {
+              ...group,
+              rows: group.rows.map((row) =>
+                row.id === rowId
+                  ? {
+                      ...row,
+                      chips: [
+                        ...row.chips,
+                        {
+                          id: taskId,
+                          label: task.name,
+                          status: task.startWeek >= timeline.currentWeek ? 'future' : 'ordered',
+                          startWeek: task.startWeek,
+                          endWeek: task.endWeek,
+                        },
+                      ],
+                    }
+                  : row,
+              ),
+            }
+          : group,
+      ),
+    }));
   }
 
   private addTimelineProblem(name: string): void {

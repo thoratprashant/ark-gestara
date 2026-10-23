@@ -51,6 +51,11 @@
   box-shadow: 0 8px 8px rgba(0, 0, 0, 0.12);
 }
 
+.suggestive-input__dropdown--above {
+  top: auto;
+  bottom: calc(100% + 4px);
+}
+
 .suggestive-input__option {
   display: block;
   width: 100%;

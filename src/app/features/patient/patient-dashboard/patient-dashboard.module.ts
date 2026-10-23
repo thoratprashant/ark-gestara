@@ -10,6 +10,7 @@ import { PatientDashboard } from './patient-dashboard';
 import { AddProblemDialog } from './add-problem-dialog/add-problem-dialog';
 import { AssignProblemDialog } from './assign-problem-dialog/assign-problem-dialog';
 import { TimelineItemDialog } from './timeline-item-dialog/timeline-item-dialog';
+import { TimelineTaskDialog } from './timeline-task-dialog/timeline-task-dialog';
 
 const routes: Routes = [
   {
@@ -19,7 +20,13 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [AddProblemDialog, AssignProblemDialog, PatientDashboard, TimelineItemDialog],
+  declarations: [
+    AddProblemDialog,
+    AssignProblemDialog,
+    PatientDashboard,
+    TimelineItemDialog,
+    TimelineTaskDialog,
+  ],
   imports: [
     CommonModule,
     DragDropModule,

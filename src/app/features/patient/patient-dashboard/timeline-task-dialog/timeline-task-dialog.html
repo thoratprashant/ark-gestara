@@ -1,0 +1,104 @@
+<section class="timeline-task-dialog w-100" aria-labelledby="timeline-task-dialog-title">
+  <header
+    class="timeline-task-dialog__header d-flex align-items-center justify-content-between m-0"
+    mat-dialog-title
+  >
+    <h2 id="timeline-task-dialog-title" class="m-0 text-start text-nowrap fw-bold">Add Task</h2>
+    <button
+      class="d-flex align-items-center justify-content-center p-0 border-0"
+      type="button"
+      mat-dialog-close
+      aria-label="Close dialog"
+    >
+      <img src="assets/timeline-dialog/close-task.svg" alt="" aria-hidden="true" />
+    </button>
+  </header>
+
+  <form class="w-100" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-dialog-content class="timeline-task-dialog__body d-flex flex-column align-items-start">
+      <div class="timeline-task-dialog__field d-flex flex-column align-items-start w-100">
+        <label class="w-100 text-start text-uppercase fw-semibold" for="timeline-new-task-name">
+          Task Name
+        </label>
+        <input
+          class="w-100 text-start fw-normal"
+          id="timeline-new-task-name"
+          type="text"
+          maxlength="80"
+          formControlName="name"
+          placeholder="e.g., Glucose screening"
+        />
+      </div>
+
+      <div class="timeline-task-dialog__week-fields d-flex align-items-start w-100">
+        <div class="timeline-task-dialog__field d-flex flex-column align-items-start">
+          <label
+            class="w-100 text-start text-uppercase fw-semibold"
+            for="timeline-new-task-start-week"
+          >
+            Start Week
+          </label>
+          <div class="timeline-task-dialog__select-wrap w-100">
+            <select
+              class="w-100 text-start fw-normal"
+              id="timeline-new-task-start-week"
+              formControlName="startWeek"
+            >
+              <option [ngValue]="null" disabled>Select</option>
+              @for (week of weekOptions; track week) {
+                <option [ngValue]="week">{{ week }}</option>
+              }
+            </select>
+            <img src="assets/problem-dialog/chevron-down.svg" alt="" aria-hidden="true" />
+          </div>
+        </div>
+
+        <div class="timeline-task-dialog__field d-flex flex-column align-items-start">
+          <label
+            class="w-100 text-start text-uppercase fw-semibold"
+            for="timeline-new-task-end-week"
+          >
+            End Week
+          </label>
+          <div class="timeline-task-dialog__select-wrap w-100">
+            <select
+              class="w-100 text-start fw-normal"
+              id="timeline-new-task-end-week"
+              formControlName="endWeek"
+            >
+              <option [ngValue]="null" disabled>Select</option>
+              @for (week of weekOptions; track week) {
+                <option [ngValue]="week">{{ week }}</option>
+              }
+            </select>
+            <img src="assets/problem-dialog/chevron-down.svg" alt="" aria-hidden="true" />
+          </div>
+        </div>
+      </div>
+
+      @if (form.hasError('invalidWeekRange') && (form.touched || form.dirty)) {
+        <p class="timeline-task-dialog__error m-0" role="alert">
+          End week must be later than start week.
+        </p>
+      }
+    </mat-dialog-content>
+
+    <mat-dialog-actions
+      class="timeline-task-dialog__footer d-flex align-items-center justify-content-between flex-nowrap m-0"
+    >
+      <button
+        class="timeline-task-dialog__cancel d-flex align-items-center justify-content-center text-center text-nowrap fw-semibold"
+        type="button"
+        mat-dialog-close
+      >
+        Cancel
+      </button>
+      <button
+        class="timeline-task-dialog__submit d-flex align-items-center justify-content-center text-center text-nowrap fw-semibold"
+        type="submit"
+      >
+        Add Tasks
+      </button>
+    </mat-dialog-actions>
+  </form>
+</section>
