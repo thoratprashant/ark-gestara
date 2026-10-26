@@ -1,13 +1,12 @@
 .assign-problem-dialog-panel {
-  --mat-dialog-container-max-width: 18rem;
+  --mat-dialog-container-max-width: 26.375rem;
   --mat-dialog-container-min-width: 0;
-  --mat-dialog-container-shape: 0.5rem;
+  --mat-dialog-container-shape: 0.987rem;
 
   .mat-mdc-dialog-surface {
-    max-height: calc(100dvh - 1rem);
     overflow: hidden;
     background: #fff;
-    border: 1px solid #e5e1dd;
-    box-shadow: 0 0.625rem 1.75rem rgb(23 36 43 / 14%);
+    border: 0.658px solid #e3ded9;
+    box-shadow: 0 7.897px 21.059px rgba(0, 0, 0, 0.1);
   }
 }

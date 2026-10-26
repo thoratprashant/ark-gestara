@@ -2206,10 +2206,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
         {
           autoFocus: 'select',
           data: { resultId, ...selection },
-          maxWidth: 'calc(100vw - 1rem)',
+          maxWidth: 'calc(100vw - 1.5rem)',
           panelClass: 'assign-problem-dialog-panel',
           restoreFocus: false,
-          width: '288px',
+          width: '422px',
         },
       )
       .afterClosed()
