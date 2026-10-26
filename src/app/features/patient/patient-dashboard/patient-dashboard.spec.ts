@@ -734,6 +734,85 @@ describe('PatientDashboard timeline', () => {
     expect(resizedChip.endWeek).toBe(31);
   });
 
+  it('moves and resizes the delivery chip within the timeline track', () => {
+    const dashboard = new PatientDashboard();
+    const track = document.createElement('div');
+    const chipElement = document.createElement('div');
+    track.className = 'problem-timeline__delivery-track';
+    track.append(chipElement);
+    vi.spyOn(track, 'getBoundingClientRect').mockReturnValue({ width: 400 } as DOMRect);
+
+    dashboard.startDeliveryChipInteraction(
+      {
+        currentTarget: chipElement,
+        pointerId: 10,
+        clientX: 100,
+        preventDefault: vi.fn(),
+        stopPropagation: vi.fn(),
+      } as unknown as PointerEvent,
+      'move',
+    );
+    dashboard.onChipPointerMove({
+      pointerId: 10,
+      clientX: 80,
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent);
+    dashboard.endChipInteraction({ pointerId: 10 } as PointerEvent);
+
+    expect(dashboard.pregnancyTimeline().deliveryChip).toMatchObject({
+      startWeek: 35,
+      endWeek: 38,
+    });
+
+    dashboard.startDeliveryChipInteraction(
+      {
+        currentTarget: chipElement,
+        pointerId: 11,
+        clientX: 100,
+        preventDefault: vi.fn(),
+        stopPropagation: vi.fn(),
+      } as unknown as PointerEvent,
+      'resize-start',
+    );
+    dashboard.onChipPointerMove({
+      pointerId: 11,
+      clientX: 90,
+      preventDefault: vi.fn(),
+    } as unknown as PointerEvent);
+
+    expect(dashboard.pregnancyTimeline().deliveryChip.startWeek).toBe(34);
+    dashboard.undoTimelineChange();
+    expect(dashboard.pregnancyTimeline().deliveryChip.startWeek).toBe(35);
+  });
+
+  it('shows and edits the delivery window tooltip from the delivery chip', () => {
+    const dashboard = new PatientDashboard();
+    const trigger = document.createElement('div');
+    vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue({
+      bottom: 120,
+      height: 20,
+      left: 800,
+      right: 880,
+      top: 100,
+      width: 80,
+    } as DOMRect);
+
+    dashboard.showDeliveryChipTooltip({ currentTarget: trigger } as unknown as Event);
+
+    expect(dashboard.deliveryChipTooltipOpen()).toBe(true);
+    expect(dashboard.deliveryChipTooltipPosition().placement).toBe('below');
+    expect(dashboard.formatGestationalWeek(36.25)).toBe('36w 2d');
+
+    const startInput = document.createElement('input');
+    startInput.value = '36w 2d';
+    dashboard.updateDeliveryChipWeek('start', { target: startInput } as unknown as Event);
+    expect(dashboard.pregnancyTimeline().deliveryChip.startWeek).toBeCloseTo(36 + 2 / 7);
+
+    dashboard.cancelDeliveryChipTooltip();
+    expect(dashboard.pregnancyTimeline().deliveryChip.startWeek).toBe(37);
+    expect(dashboard.deliveryChipTooltipOpen()).toBe(false);
+  });
+
   it('switches only late and future chips when they move across the current-week line', () => {
     const dashboard = new PatientDashboard();
     const track = document.createElement('div');
@@ -965,6 +1044,13 @@ describe('PatientDashboard timeline', () => {
       dashboard.highRiskFactors.filter((factor) => factor.selected).map((factor) => factor.label),
     ).toEqual(['Chronic hypertension']);
     expect(dashboard.moderateRiskFactors).toHaveLength(5);
+    expect(dashboard.recommendedProblemState()).toBe('pending');
+
+    dashboard.addRecommendedProblem();
+    expect(dashboard.recommendedProblemState()).toBe('added');
+
+    dashboard.dismissRecommendedProblem();
+    expect(dashboard.recommendedProblemState()).toBe('dismissed');
 
     dashboard.scheduleRiskAssessmentHide();
     vi.advanceTimersByTime(100);

@@ -151,6 +151,7 @@ type ChipInteractionMode = 'move' | 'resize-start' | 'resize-end';
 type TimelineStatusTooltipIcon = 'calendar' | 'clock';
 type TimelineResultReviewState = 'added' | 'dismissed';
 type ProgressNoteState = 'empty' | 'draft' | 'submitted';
+type RecommendedProblemState = 'pending' | 'added' | 'dismissed';
 
 interface TimelineStatusTooltipScheduleRow {
   icon: TimelineStatusTooltipIcon;
@@ -238,6 +239,7 @@ interface TimelineGroup {
 
 interface PregnancyTimeline {
   currentWeek: number;
+  deliveryChip: Omit<TimelineChip, 'status'>;
   maxWeek: number;
   groups: TimelineGroup[];
 }
@@ -262,6 +264,14 @@ interface ActiveChipInteraction {
   trackWidth: number;
   startWeek: number;
   endWeek: number;
+  target: 'delivery' | 'timeline';
+}
+
+interface DeliveryChipTooltipSnapshot {
+  endWeek: number;
+  indication: string;
+  notes: string;
+  startWeek: number;
 }
 
 const VITAL_TOOLTIPS: VitalTooltip[] = [
@@ -770,6 +780,12 @@ const TIMELINE_STATUS_TOOLTIPS: Record<TimelineStatus, TimelineStatusTooltip> = 
 
 const INITIAL_TIMELINE: PregnancyTimeline = {
   currentWeek: 28,
+  deliveryChip: {
+    id: 'delivery-window',
+    label: 'Delivery',
+    startWeek: 37,
+    endWeek: 40,
+  },
   maxWeek: 40,
   groups: [
     {
@@ -785,17 +801,37 @@ const INITIAL_TIMELINE: PregnancyTimeline = {
               id: 'labs-1',
               label: 'Initial prenatal labs',
               status: 'completed',
-              startWeek: 4,
-              endWeek: 12,
+              startWeek: 11,
+              endWeek: 19,
             },
             {
               id: 'labs-2',
-              label: 'Third trimester labs',
+              label: 'second trimester labs',
               status: 'ordered',
-              startWeek: 24,
-              endWeek: 27,
+              startWeek: 20,
+              endWeek: 24,
             },
-            { id: 'labs-3', label: 'Final labs', status: 'future', startWeek: 36, endWeek: 40 },
+            {
+              id: 'labs-3',
+              label: 'Third trimester labs',
+              status: 'incomplete',
+              startWeek: 3,
+              endWeek: 10,
+            },
+            {
+              id: 'labs-4',
+              label: 'Final labs',
+              status: 'future',
+              startWeek: 36,
+              endWeek: 40,
+            },
+            {
+              id: 'labs-5',
+              label: 'Final labs',
+              status: 'due-soon',
+              startWeek: 25,
+              endWeek: 30,
+            },
           ],
         },
         {
@@ -948,6 +984,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   readonly resultTooltipMaxHeight = signal(600);
   readonly resultChartHover = signal<number | null>(null);
   readonly riskAssessmentOpen = signal(false);
+  readonly recommendedProblemState = signal<RecommendedProblemState>('pending');
   readonly riskAssessmentPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 600 });
   readonly riskAssessmentMaxHeight = signal(690);
   readonly deliveryWindowTooltipOpen = signal(false);
@@ -1028,6 +1065,21 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     width: 320,
   });
   readonly timelineStatusTooltipMaxHeight = signal(560);
+  readonly deliveryChipTooltipOpen = signal(false);
+  readonly deliveryChipTooltipPosition = signal<TimelineStatusTooltipPosition>({
+    left: 0,
+    notchLeft: 150,
+    placement: 'below',
+    top: 0,
+    width: 300,
+  });
+  readonly deliveryChipTooltipMaxHeight = signal(460);
+  readonly deliveryChipIndication = signal(
+    'GDM and gestational hypertension - recommend delivery at term.',
+  );
+  readonly deliveryChipNotes = signal(
+    'MFM consult 4/11; agrees with 39w induction pending BP control.',
+  );
   readonly tooltipGlassFocusRect = signal<TooltipGlassFocusRect>({
     bottom: 0,
     left: 0,
@@ -1153,7 +1205,9 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   private pregnancyHistoryTooltipHideTimer: number | null = null;
   private timelineGroupTooltipHideTimer: number | null = null;
   private timelineStatusTooltipHideTimer: number | null = null;
+  private deliveryChipTooltipHideTimer: number | null = null;
   private timelineStatusTooltipInteractionActive = false;
+  private deliveryChipTooltipSnapshot: DeliveryChipTooltipSnapshot | null = null;
   private timelineItemSequence = 0;
   private timelineTaskSequence = 0;
   private timelineProblemSequence = 0;
@@ -1177,6 +1231,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.cancelPregnancyHistoryTooltipHide();
     this.cancelTimelineGroupTooltipHide();
     this.cancelTimelineStatusTooltipHide();
+    this.cancelDeliveryChipTooltipHide();
   }
 
   toggleVisitSummary(): void {
@@ -1376,6 +1431,16 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   keepRiskAssessmentOpen(): void {
     this.cancelRiskAssessmentHide();
+  }
+
+  addRecommendedProblem(): void {
+    this.keepRiskAssessmentOpen();
+    this.recommendedProblemState.set('added');
+  }
+
+  dismissRecommendedProblem(): void {
+    this.keepRiskAssessmentOpen();
+    this.recommendedProblemState.set('dismissed');
   }
 
   showDeliveryWindowTooltip(event: Event): void {
@@ -1590,6 +1655,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   showTimelineStatusTooltip(chip: TimelineChip, event: Event): void {
     this.cancelTimelineStatusTooltipHide();
+    this.hideDeliveryChipTooltip();
     this.hideVitalTooltip();
     this.hideResultTooltip();
     this.hideRiskAssessment();
@@ -1653,6 +1719,148 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     });
     this.timelineStatusTooltipMaxHeight.set(maxHeight);
     this.activeTimelineStatusTooltip.set({ chipId: chip.id, tooltip });
+  }
+
+  showDeliveryChipTooltip(event: Event): void {
+    this.cancelDeliveryChipTooltipHide();
+    this.hideTimelineStatusTooltip();
+    const trigger = event.currentTarget as HTMLElement | null;
+
+    if (!trigger) {
+      return;
+    }
+
+    const triggerBounds = trigger.getBoundingClientRect();
+    const width = Math.min(300, Math.max(260, window.innerWidth - 24));
+    const preferredHeight = 430;
+    const spaceBelow = window.innerHeight - triggerBounds.bottom - 12;
+    const spaceAbove = triggerBounds.top - 12;
+    const placement =
+      spaceBelow >= Math.min(preferredHeight, 300) || spaceBelow >= spaceAbove ? 'below' : 'above';
+    const availableHeight = placement === 'below' ? spaceBelow : spaceAbove;
+    const maxHeight = Math.max(
+      220,
+      Math.min(preferredHeight, availableHeight - 10, window.innerHeight - 24),
+    );
+    const left = this.clamp(
+      triggerBounds.left + triggerBounds.width / 2 - width / 2,
+      12,
+      Math.max(12, window.innerWidth - width - 12),
+    );
+    const top =
+      placement === 'below'
+        ? triggerBounds.bottom + 10
+        : Math.max(12, triggerBounds.top - maxHeight - 10);
+
+    this.deliveryChipTooltipPosition.set({
+      left,
+      notchLeft: this.clamp(triggerBounds.left + triggerBounds.width / 2 - left, 18, width - 18),
+      placement,
+      top,
+      width,
+    });
+    this.deliveryChipTooltipMaxHeight.set(maxHeight);
+
+    if (!this.deliveryChipTooltipOpen()) {
+      const chip = this.pregnancyTimeline().deliveryChip;
+      this.deliveryChipTooltipSnapshot = {
+        endWeek: chip.endWeek,
+        indication: this.deliveryChipIndication(),
+        notes: this.deliveryChipNotes(),
+        startWeek: chip.startWeek,
+      };
+    }
+
+    this.deliveryChipTooltipOpen.set(true);
+  }
+
+  hideDeliveryChipTooltip(): void {
+    this.cancelDeliveryChipTooltipHide();
+    this.deliveryChipTooltipOpen.set(false);
+    this.deliveryChipTooltipSnapshot = null;
+  }
+
+  scheduleDeliveryChipTooltipHide(): void {
+    this.cancelDeliveryChipTooltipHide();
+    this.deliveryChipTooltipHideTimer = window.setTimeout(() => {
+      if (!this.deliveryChipTooltipHasFocus()) {
+        this.deliveryChipTooltipOpen.set(false);
+        this.deliveryChipTooltipSnapshot = null;
+      }
+      this.deliveryChipTooltipHideTimer = null;
+    }, 180);
+  }
+
+  keepDeliveryChipTooltipOpen(): void {
+    this.cancelDeliveryChipTooltipHide();
+  }
+
+  onDeliveryChipTooltipFocusOut(event: FocusEvent): void {
+    const tooltip = event.currentTarget as HTMLElement | null;
+    const nextTarget = event.relatedTarget as Node | null;
+
+    if (tooltip && nextTarget && tooltip.contains(nextTarget)) {
+      return;
+    }
+
+    this.scheduleDeliveryChipTooltipHide();
+  }
+
+  updateDeliveryChipWeek(boundary: 'start' | 'end', event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const parsedWeek = this.parseGestationalWeek(input.value);
+    const timeline = this.pregnancyTimeline();
+    const chip = timeline.deliveryChip;
+
+    if (parsedWeek === null) {
+      input.value = this.formatGestationalWeek(
+        boundary === 'start' ? chip.startWeek : chip.endWeek,
+      );
+      return;
+    }
+
+    this.rememberTimeline();
+    if (boundary === 'start') {
+      this.updateDeliveryChip(this.clamp(parsedWeek, 0, chip.endWeek - 1), chip.endWeek);
+    } else {
+      this.updateDeliveryChip(chip.startWeek, this.clamp(parsedWeek, chip.startWeek + 1, 40));
+    }
+  }
+
+  updateDeliveryChipIndication(event: Event): void {
+    this.deliveryChipIndication.set((event.target as HTMLTextAreaElement).value);
+  }
+
+  updateDeliveryChipNotes(event: Event): void {
+    this.deliveryChipNotes.set((event.target as HTMLTextAreaElement).value);
+  }
+
+  cancelDeliveryChipTooltip(): void {
+    const snapshot = this.deliveryChipTooltipSnapshot;
+
+    if (snapshot) {
+      this.updateDeliveryChip(snapshot.startWeek, snapshot.endWeek);
+      this.deliveryChipIndication.set(snapshot.indication);
+      this.deliveryChipNotes.set(snapshot.notes);
+    }
+
+    this.hideDeliveryChipTooltip();
+  }
+
+  saveDeliveryChipTooltip(): void {
+    this.hideDeliveryChipTooltip();
+  }
+
+  formatGestationalWeek(week: number): string {
+    let wholeWeeks = Math.floor(week);
+    let days = Math.round((week - wholeWeeks) * 7);
+
+    if (days === 7) {
+      wholeWeeks += 1;
+      days = 0;
+    }
+
+    return `${wholeWeeks}w ${days}d`;
   }
 
   addTimelineTooltipTest(value: string, input: HTMLInputElement): void {
@@ -2372,6 +2580,11 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     return `${chip.label}: ${range} - ${status}${currentWeekNote}`;
   }
 
+  deliveryChipTooltip(): string {
+    const chip = this.pregnancyTimeline().deliveryChip;
+    return `${chip.label}: ${this.formatWeek(chip.startWeek)} to ${this.formatWeek(chip.endWeek)}`;
+  }
+
   timelineStatusLabel(status: TimelineStatus): string {
     return this.timelineLegend.find((item) => item.status === status)?.label ?? status;
   }
@@ -2406,6 +2619,36 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       trackWidth,
       startWeek: chip.startWeek,
       endWeek: chip.endWeek,
+      target: 'timeline',
+    };
+  }
+
+  startDeliveryChipInteraction(event: PointerEvent, mode: ChipInteractionMode): void {
+    const track = (event.currentTarget as HTMLElement).closest<HTMLElement>(
+      '.problem-timeline__delivery-track',
+    );
+    const trackWidth = track?.getBoundingClientRect().width ?? 0;
+
+    if (!trackWidth) {
+      return;
+    }
+
+    this.hideDeliveryChipTooltip();
+    event.preventDefault();
+    event.stopPropagation();
+    this.rememberTimeline();
+    const chip = this.pregnancyTimeline().deliveryChip;
+    this.activeChipInteraction = {
+      groupId: '',
+      rowId: '',
+      chipId: chip.id,
+      mode,
+      pointerId: event.pointerId,
+      originX: event.clientX,
+      trackWidth,
+      startWeek: chip.startWeek,
+      endWeek: chip.endWeek,
+      target: 'delivery',
     };
   }
 
@@ -2443,14 +2686,21 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       );
     }
 
-    this.updateTimelineChip(
-      interaction.groupId,
-      interaction.rowId,
-      interaction.chipId,
-      this.roundToQuarterWeek(startWeek),
-      this.roundToQuarterWeek(endWeek),
-      interaction.mode === 'move',
-    );
+    const roundedStartWeek = this.roundToQuarterWeek(startWeek);
+    const roundedEndWeek = this.roundToQuarterWeek(endWeek);
+
+    if (interaction.target === 'delivery') {
+      this.updateDeliveryChip(roundedStartWeek, roundedEndWeek);
+    } else {
+      this.updateTimelineChip(
+        interaction.groupId,
+        interaction.rowId,
+        interaction.chipId,
+        roundedStartWeek,
+        roundedEndWeek,
+        interaction.mode === 'move',
+      );
+    }
   }
 
   @HostListener('document:pointerup', ['$event'])
@@ -2479,6 +2729,21 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     const direction = event.key === 'ArrowLeft' ? -0.5 : 0.5;
     const startWeek = this.clamp(chip.startWeek + direction, 0, maxWeek - duration);
     this.updateTimelineChip(groupId, rowId, chip.id, startWeek, startWeek + duration, true);
+  }
+
+  moveDeliveryChipWithKeyboard(event: KeyboardEvent): void {
+    if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+      return;
+    }
+
+    event.preventDefault();
+    this.rememberTimeline();
+    const timeline = this.pregnancyTimeline();
+    const chip = timeline.deliveryChip;
+    const duration = chip.endWeek - chip.startWeek;
+    const direction = event.key === 'ArrowLeft' ? -0.5 : 0.5;
+    const startWeek = this.clamp(chip.startWeek + direction, 0, timeline.maxWeek - duration);
+    this.updateDeliveryChip(startWeek, startWeek + duration);
   }
 
   undoTimelineChange(): void {
@@ -2544,6 +2809,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
     if (this.activeTimelineStatusTooltip() && !this.timelineStatusTooltipHasFocus()) {
       this.hideTimelineStatusTooltip();
+    }
+
+    if (this.deliveryChipTooltipOpen() && !this.deliveryChipTooltipHasFocus()) {
+      this.hideDeliveryChipTooltip();
     }
 
     const summary = this.patientSummary?.nativeElement;
@@ -2667,9 +2936,22 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     }
   }
 
+  private cancelDeliveryChipTooltipHide(): void {
+    if (this.deliveryChipTooltipHideTimer !== null) {
+      window.clearTimeout(this.deliveryChipTooltipHideTimer);
+      this.deliveryChipTooltipHideTimer = null;
+    }
+  }
+
   private timelineStatusTooltipHasFocus(): boolean {
     return document.activeElement instanceof HTMLElement
       ? document.activeElement.closest('.timeline-status-tooltip') !== null
+      : false;
+  }
+
+  private deliveryChipTooltipHasFocus(): boolean {
+    return document.activeElement instanceof HTMLElement
+      ? document.activeElement.closest('.delivery-chip-tooltip') !== null
       : false;
   }
 
@@ -2732,6 +3014,17 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
             }
           : group,
       ),
+    }));
+  }
+
+  private updateDeliveryChip(startWeek: number, endWeek: number): void {
+    this.pregnancyTimeline.update((timeline) => ({
+      ...timeline,
+      deliveryChip: {
+        ...timeline.deliveryChip,
+        startWeek,
+        endWeek,
+      },
     }));
   }
 
@@ -2865,6 +3158,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   private cloneTimeline(timeline: PregnancyTimeline): PregnancyTimeline {
     return {
       ...timeline,
+      deliveryChip: { ...timeline.deliveryChip },
       groups: timeline.groups.map((group) => ({
         ...group,
         condition: {
@@ -2889,5 +3183,15 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   private formatWeek(week: number): string {
     return Number.isInteger(week) ? `${week}w` : `${week.toFixed(2).replace(/0$/, '')}w`;
+  }
+
+  private parseGestationalWeek(value: string): number | null {
+    const match = value.trim().match(/^(\d{1,2})w(?:\s*([0-6])d)?$/i);
+
+    if (!match) {
+      return null;
+    }
+
+    return Number(match[1]) + Number(match[2] ?? 0) / 7;
   }
 }

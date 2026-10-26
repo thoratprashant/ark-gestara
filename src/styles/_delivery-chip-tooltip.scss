@@ -1,0 +1,204 @@
+.delivery-chip-tooltip {
+  --delivery-chip-tooltip-border: #e3ded9;
+
+  position: fixed;
+  z-index: 1300;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  overflow: visible;
+  color: #171f26;
+  background: #fff;
+  border: 1px solid var(--delivery-chip-tooltip-border);
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1rem rgba(23, 36, 43, 0.1);
+  font-family: Inter, sans-serif;
+  transform-origin: top center;
+  animation: delivery-chip-tooltip-open 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.delivery-chip-tooltip::before {
+  position: absolute;
+  left: var(--delivery-chip-tooltip-notch-left);
+  width: 0.75rem;
+  height: 0.75rem;
+  background: #fff;
+  content: '';
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.delivery-chip-tooltip[data-placement='below']::before {
+  top: -0.4375rem;
+  border-top: 1px solid var(--delivery-chip-tooltip-border);
+  border-left: 1px solid var(--delivery-chip-tooltip-border);
+}
+
+.delivery-chip-tooltip[data-placement='above']::before {
+  bottom: -0.4375rem;
+  border-right: 1px solid var(--delivery-chip-tooltip-border);
+  border-bottom: 1px solid var(--delivery-chip-tooltip-border);
+}
+
+.delivery-chip-tooltip__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  min-height: 0;
+  padding: 1.25rem;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: inherit;
+}
+
+.delivery-chip-tooltip__header h2,
+.delivery-chip-tooltip__header p,
+.delivery-chip-tooltip__help {
+  margin: 0;
+}
+
+.delivery-chip-tooltip__header h2 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+}
+
+.delivery-chip-tooltip__header p {
+  margin-top: 0.125rem;
+  color: #73808c;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.delivery-chip-tooltip__divider {
+  height: 1px;
+  background: var(--delivery-chip-tooltip-border);
+}
+
+.delivery-chip-tooltip__week-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.875rem;
+}
+
+.delivery-chip-tooltip label {
+  display: grid;
+  gap: 0.375rem;
+  min-width: 0;
+}
+
+.delivery-chip-tooltip label > span {
+  color: #73808c;
+  font-size: 0.5625rem;
+  font-weight: 600;
+  line-height: 0.75rem;
+  letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+.delivery-chip-tooltip input,
+.delivery-chip-tooltip textarea {
+  box-sizing: border-box;
+  width: 100%;
+  color: #53616d;
+  background: #fafafa;
+  border: 1px solid #e3ded9;
+  border-radius: 0.5rem;
+  font-family: Inter, sans-serif;
+  font-size: 0.625rem;
+  font-weight: 400;
+  line-height: 0.875rem;
+  outline: none;
+}
+
+.delivery-chip-tooltip input {
+  height: 2rem;
+  padding: 0.5rem 0.625rem;
+}
+
+.delivery-chip-tooltip textarea {
+  min-height: 2.5rem;
+  padding: 0.625rem;
+  resize: vertical;
+}
+
+.delivery-chip-tooltip__field--notes textarea {
+  min-height: 4.75rem;
+}
+
+.delivery-chip-tooltip input:focus,
+.delivery-chip-tooltip textarea:focus {
+  background: #fff;
+  border-color: #0d9488;
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.12);
+}
+
+.delivery-chip-tooltip__help {
+  color: #a0a9b1;
+  font-size: 0.5625rem;
+  font-style: italic;
+  line-height: 0.75rem;
+}
+
+.delivery-chip-tooltip__footer {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border-top: 1px solid var(--delivery-chip-tooltip-border);
+  border-radius: 0 0 1rem 1rem;
+}
+
+.delivery-chip-tooltip__footer button {
+  min-height: 2rem;
+  padding: 0.5rem 0.875rem;
+  color: #303941;
+  background: #fff;
+  border: 1px solid #e3ded9;
+  border-radius: 0.625rem;
+  font-family: Inter, sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1rem;
+  cursor: pointer;
+}
+
+.delivery-chip-tooltip__footer button:last-child {
+  min-width: 3.875rem;
+  color: #fff;
+  background: #0d9488;
+  border-color: #0d9488;
+}
+
+.delivery-chip-tooltip__footer button:hover,
+.delivery-chip-tooltip__footer button:focus-visible {
+  background: #f8f8f7;
+  outline: 2px solid rgba(13, 148, 136, 0.24);
+  outline-offset: 2px;
+}
+
+.delivery-chip-tooltip__footer button:last-child:hover,
+.delivery-chip-tooltip__footer button:last-child:focus-visible {
+  background: #0f766e;
+}
+
+@keyframes delivery-chip-tooltip-open {
+  from {
+    opacity: 0;
+    transform: translateY(-0.375rem) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .delivery-chip-tooltip {
+    animation-duration: 1ms;
+  }
+}

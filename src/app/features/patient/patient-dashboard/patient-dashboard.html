@@ -371,6 +371,51 @@
         </section>
 
         <div class="risk-assessment-tooltip__body">
+          <section
+            class="risk-assessment-tooltip__recommendation"
+            aria-labelledby="recommended-problem-title"
+          >
+            <header class="risk-assessment-tooltip__recommendation-header">
+              <span class="risk-assessment-tooltip__recommendation-icon" aria-hidden="true">+</span>
+              <span>
+                <h3 id="recommended-problem-title">Recommended problem</h3>
+                <p>Eligible because at least 1 high risk factor is selected.</p>
+              </span>
+            </header>
+
+            <div class="risk-assessment-tooltip__recommended-problem">
+              <span>
+                <strong>High risk for preeclampsia</strong>
+                <small>No ICD-10 code. Does not sync with Epic.</small>
+              </span>
+
+              @switch (recommendedProblemState()) {
+                @case ('pending') {
+                  <span class="risk-assessment-tooltip__recommendation-actions">
+                    <button type="button" (click)="dismissRecommendedProblem()">Dismiss</button>
+                    <button type="button" (click)="addRecommendedProblem()">Add</button>
+                  </span>
+                }
+                @case ('added') {
+                  <span
+                    class="risk-assessment-tooltip__recommendation-status risk-assessment-tooltip__recommendation-status--added"
+                    role="status"
+                  >
+                    <span aria-hidden="true">&#10003;</span> Added to Problem List
+                  </span>
+                }
+                @case ('dismissed') {
+                  <span
+                    class="risk-assessment-tooltip__recommendation-status risk-assessment-tooltip__recommendation-status--dismissed"
+                    role="status"
+                  >
+                    <span aria-hidden="true">&times;</span> Dismissed Problem
+                  </span>
+                }
+              }
+            </div>
+          </section>
+
           <fieldset class="risk-assessment-tooltip__factors risk-assessment-tooltip__factors--high">
             <legend>High Risk Factors (1)</legend>
             <div>
@@ -944,6 +989,58 @@
             [attr.aria-label]="'Current pregnancy week: ' + pregnancyTimeline().currentWeek"
           ></span>
 
+          <div class="problem-timeline__delivery-row">
+            <div class="problem-timeline__delivery-spacer" aria-hidden="true"></div>
+            <div class="problem-timeline__track problem-timeline__delivery-track">
+              <div
+                class="problem-timeline__delivery-chip"
+                [style.left.%]="weekPercent(pregnancyTimeline().deliveryChip.startWeek)"
+                [style.width.%]="
+                  weekPercent(
+                    pregnancyTimeline().deliveryChip.endWeek -
+                      pregnancyTimeline().deliveryChip.startWeek
+                  )
+                "
+                role="button"
+                tabindex="0"
+                [attr.aria-describedby]="deliveryChipTooltipOpen() ? 'delivery-chip-tooltip' : null"
+                [attr.aria-label]="
+                  deliveryChipTooltip() + '. Use left and right arrow keys to move.'
+                "
+                (pointerdown)="startDeliveryChipInteraction($event, 'move')"
+                (keydown)="moveDeliveryChipWithKeyboard($event)"
+                (mouseenter)="showDeliveryChipTooltip($event)"
+                (mouseleave)="scheduleDeliveryChipTooltipHide()"
+                (focusin)="showDeliveryChipTooltip($event)"
+                (focusout)="scheduleDeliveryChipTooltipHide()"
+              >
+                <span
+                  class="problem-timeline__resize-handle problem-timeline__resize-handle--start"
+                  aria-hidden="true"
+                  (pointerdown)="startDeliveryChipInteraction($event, 'resize-start')"
+                ></span>
+                <span class="problem-timeline__delivery-chip-label">Delivery</span>
+                <svg
+                  class="problem-timeline__delivery-chip-drag-icon"
+                  viewBox="0 0 8 14"
+                  aria-hidden="true"
+                >
+                  <circle cx="1.5" cy="1.5" r="1.5" />
+                  <circle cx="6.5" cy="1.5" r="1.5" />
+                  <circle cx="1.5" cy="7" r="1.5" />
+                  <circle cx="6.5" cy="7" r="1.5" />
+                  <circle cx="1.5" cy="12.5" r="1.5" />
+                  <circle cx="6.5" cy="12.5" r="1.5" />
+                </svg>
+                <span
+                  class="problem-timeline__resize-handle problem-timeline__resize-handle--end"
+                  aria-hidden="true"
+                  (pointerdown)="startDeliveryChipInteraction($event, 'resize-end')"
+                ></span>
+              </div>
+            </div>
+          </div>
+
           <div class="problem-timeline__axis-row">
             <div class="problem-timeline__label problem-timeline__label--heading">
               Problem / Category
@@ -1363,6 +1460,86 @@
         </div>
       </div>
     </section>
+
+    @if (deliveryChipTooltipOpen()) {
+      <aside
+        id="delivery-chip-tooltip"
+        class="delivery-chip-tooltip"
+        role="dialog"
+        aria-label="Suggested Delivery Window"
+        [attr.data-placement]="deliveryChipTooltipPosition().placement"
+        [style.left.px]="deliveryChipTooltipPosition().left"
+        [style.top.px]="deliveryChipTooltipPosition().top"
+        [style.width.px]="deliveryChipTooltipPosition().width"
+        [style.max-height.px]="deliveryChipTooltipMaxHeight()"
+        [style.--delivery-chip-tooltip-notch-left]="deliveryChipTooltipPosition().notchLeft + 'px'"
+        (mouseenter)="keepDeliveryChipTooltipOpen()"
+        (mouseleave)="scheduleDeliveryChipTooltipHide()"
+        (focusin)="keepDeliveryChipTooltipOpen()"
+        (focusout)="onDeliveryChipTooltipFocusOut($event)"
+      >
+        <div class="delivery-chip-tooltip__content">
+          <header class="delivery-chip-tooltip__header">
+            <h2>Suggested Delivery Window</h2>
+            <p>
+              {{ formatGestationalWeek(pregnancyTimeline().deliveryChip.startWeek) }} &ndash;
+              {{ formatGestationalWeek(pregnancyTimeline().deliveryChip.endWeek) }}
+            </p>
+          </header>
+
+          <div class="delivery-chip-tooltip__divider"></div>
+
+          <div class="delivery-chip-tooltip__week-fields">
+            <label>
+              <span>Start Week</span>
+              <input
+                type="text"
+                inputmode="text"
+                [value]="formatGestationalWeek(pregnancyTimeline().deliveryChip.startWeek)"
+                (change)="updateDeliveryChipWeek('start', $event)"
+              />
+            </label>
+            <label>
+              <span>End Week</span>
+              <input
+                type="text"
+                inputmode="text"
+                [value]="formatGestationalWeek(pregnancyTimeline().deliveryChip.endWeek)"
+                (change)="updateDeliveryChipWeek('end', $event)"
+              />
+            </label>
+          </div>
+
+          <label class="delivery-chip-tooltip__field">
+            <span>Indication</span>
+            <textarea
+              rows="2"
+              [value]="deliveryChipIndication()"
+              (input)="updateDeliveryChipIndication($event)"
+            ></textarea>
+          </label>
+
+          <label class="delivery-chip-tooltip__field delivery-chip-tooltip__field--notes">
+            <span>Notes</span>
+            <textarea
+              rows="4"
+              [value]="deliveryChipNotes()"
+              (input)="updateDeliveryChipNotes($event)"
+            ></textarea>
+          </label>
+
+          <p class="delivery-chip-tooltip__help">
+            Editing here also drags the corresponding marker on the timeline &mdash;<br />
+            and vice versa.
+          </p>
+        </div>
+
+        <footer class="delivery-chip-tooltip__footer">
+          <button type="button" (click)="cancelDeliveryChipTooltip()">Cancel</button>
+          <button type="button" (click)="saveDeliveryChipTooltip()">Save</button>
+        </footer>
+      </aside>
+    }
 
     @if (activeTimelineStatusTooltip(); as activeStatusTooltip) {
       <aside

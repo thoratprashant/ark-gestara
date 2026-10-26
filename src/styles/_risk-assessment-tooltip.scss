@@ -124,6 +124,165 @@
   padding: 1.5rem;
 }
 
+.risk-assessment-tooltip__recommendation {
+  padding: 1rem;
+  background: #effcf9;
+  border: 1px solid #a9e5dd;
+  border-radius: 0.75rem;
+}
+
+.risk-assessment-tooltip__recommendation-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.risk-assessment-tooltip__recommendation-header > span:last-child {
+  display: grid;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.risk-assessment-tooltip__recommendation-icon {
+  display: grid;
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 2rem;
+  color: #fff;
+  background: #0d9488;
+  border-radius: 50%;
+  font-family: Inter, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1;
+  place-items: center;
+}
+
+.risk-assessment-tooltip__recommendation h3,
+.risk-assessment-tooltip__recommendation p {
+  margin: 0;
+}
+
+.risk-assessment-tooltip__recommendation h3 {
+  color: #0d9488;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.125rem;
+}
+
+.risk-assessment-tooltip__recommendation p {
+  color: #73808c;
+  font-family: Inter, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1rem;
+}
+
+.risk-assessment-tooltip__recommended-problem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 3.75rem;
+  margin-top: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  background: #fff;
+  border: 1px solid #d5dfdc;
+  border-radius: 0.625rem;
+}
+
+.risk-assessment-tooltip__recommended-problem > span:first-child {
+  display: grid;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.risk-assessment-tooltip__recommended-problem strong {
+  color: #171f26;
+  font-family: Inter, sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1rem;
+}
+
+.risk-assessment-tooltip__recommended-problem small {
+  color: #87929c;
+  font-family: Inter, sans-serif;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  line-height: 0.875rem;
+}
+
+.risk-assessment-tooltip__recommendation-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.risk-assessment-tooltip__recommendation-actions button {
+  min-height: 2rem;
+  padding: 0.4375rem 0.75rem;
+  color: #73808c;
+  background: #fff;
+  border: 1px solid #e3ded9;
+  border-radius: 0.5rem;
+  font-family: Inter, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
+  cursor: pointer;
+}
+
+.risk-assessment-tooltip__recommendation-actions button:last-child {
+  min-width: 3.5rem;
+  color: #fff;
+  background: #0d9488;
+  border-color: #0d9488;
+}
+
+.risk-assessment-tooltip__recommendation-actions button:hover,
+.risk-assessment-tooltip__recommendation-actions button:focus-visible {
+  color: #171f26;
+  background: #f7f7f6;
+}
+
+.risk-assessment-tooltip__recommendation-actions button:last-child:hover,
+.risk-assessment-tooltip__recommendation-actions button:last-child:focus-visible {
+  color: #fff;
+  background: #0f766e;
+  border-color: #0f766e;
+}
+
+.risk-assessment-tooltip__recommendation-actions button:focus-visible {
+  outline: 2px solid #0d9488;
+  outline-offset: 2px;
+}
+
+.risk-assessment-tooltip__recommendation-status {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-family: Inter, sans-serif;
+  font-size: 0.625rem;
+  font-weight: 400;
+  line-height: 0.875rem;
+  white-space: nowrap;
+}
+
+.risk-assessment-tooltip__recommendation-status--added {
+  color: #0d9488;
+  background: #e6f7f4;
+}
+
+.risk-assessment-tooltip__recommendation-status--dismissed {
+  color: #7c858d;
+  background: #eceeed;
+}
+
 .risk-assessment-tooltip__factors {
   min-width: 0;
   margin: 0;
@@ -275,6 +434,20 @@
   .risk-assessment-tooltip__footer {
     position: sticky;
     bottom: 0;
+  }
+
+  .risk-assessment-tooltip__recommended-problem {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .risk-assessment-tooltip__recommendation-actions,
+  .risk-assessment-tooltip__recommendation-actions button {
+    width: 100%;
+  }
+
+  .risk-assessment-tooltip__recommendation-status {
+    align-self: flex-end;
   }
 }
 
