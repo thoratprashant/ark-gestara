@@ -1065,6 +1065,30 @@ describe('PatientDashboard timeline', () => {
     vi.useRealTimers();
   });
 
+  it('renders each pre-eclampsia risk summary variant', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dashboard = fixture.componentInstance;
+    const variants = [
+      ['update', 'Update Risk', 'assets/risk-update.svg'],
+      ['low', 'Low Risk', 'assets/risk-low.svg'],
+      ['moderate', 'Moderate Risk', 'assets/risk-moderate.svg'],
+      ['high', 'High Risk', 'assets/warn-red.svg'],
+    ] as const;
+
+    for (const [status, label, icon] of variants) {
+      dashboard.preEclampsiaRiskStatus.set(status);
+      fixture.detectChanges();
+
+      const riskFact = fixture.nativeElement.querySelector(
+        '.summary-fact--risk',
+      ) as HTMLButtonElement;
+
+      expect(riskFact.classList.contains(`summary-fact--risk-${status}`)).toBe(true);
+      expect(riskFact.querySelector('strong')?.textContent?.trim()).toBe(label);
+      expect(riskFact.querySelector('img')?.getAttribute('src')).toBe(icon);
+    }
+  });
+
   it('opens the delivery window tooltip below the recommended delivery summary fact', () => {
     vi.useFakeTimers();
     const dashboard = new PatientDashboard();

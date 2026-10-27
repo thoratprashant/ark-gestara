@@ -152,6 +152,22 @@ type TimelineStatusTooltipIcon = 'calendar' | 'clock';
 type TimelineResultReviewState = 'added' | 'dismissed';
 type ProgressNoteState = 'empty' | 'draft' | 'submitted';
 type RecommendedProblemState = 'pending' | 'added' | 'dismissed';
+type PreEclampsiaRiskStatus = 'update' | 'low' | 'moderate' | 'high';
+
+interface PreEclampsiaRiskSummary {
+  icon: string;
+  label: string;
+}
+
+const PRE_ECLAMPSIA_RISK_SUMMARIES: Record<
+  PreEclampsiaRiskStatus,
+  PreEclampsiaRiskSummary
+> = {
+  update: { icon: 'assets/risk-update.svg', label: 'Update Risk' },
+  low: { icon: 'assets/risk-low.svg', label: 'Low Risk' },
+  moderate: { icon: 'assets/risk-moderate.svg', label: 'Moderate Risk' },
+  high: { icon: 'assets/warn-red.svg', label: 'High Risk' },
+};
 
 interface TimelineStatusTooltipScheduleRow {
   icon: TimelineStatusTooltipIcon;
@@ -311,8 +327,33 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
     ],
   },
   {
-    id: 'heart-rate',
-    title: 'Fetal Heart Rate Trend',
+    id: 'heart-rate-1',
+    title: 'Fetal 1 - Heart Rate Trend',
+    subtitle: 'Normal Range: 110-160 bpm',
+    width: 520,
+    // footer: {
+    //   color: '#0d9488',
+    //   message: 'Fetal heart rate is stable and within normal limits',
+    // },
+    charts: [
+      {
+        min: 100,
+        max: 170,
+        yTicks: [100, 120, 140, 170],
+        xLabels: ['12w', '16w', '20w', '24w', '26w', '28w'],
+        thresholds: [
+          { value: 110, label: '', color: '#0d9488' },
+          { value: 160, label: '', color: '#0d9488' },
+        ],
+        normalRange: { min: 110, max: 160 },
+        unit: 'bpm',
+        series: [{ values: [166, 156, 149, 143, 140, 136], color: '#3b82f6' }],
+      },
+    ],
+  },
+  {
+    id: 'heart-rate-2',
+    title: 'Fetal 2 - Heart Rate Trend',
     subtitle: 'Normal Range: 110-160 bpm',
     width: 520,
     // footer: {
@@ -984,6 +1025,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   readonly resultTooltipMaxHeight = signal(600);
   readonly resultChartHover = signal<number | null>(null);
   readonly riskAssessmentOpen = signal(false);
+  readonly preEclampsiaRiskStatus = signal<PreEclampsiaRiskStatus>('high');
+  readonly preEclampsiaRiskSummary = computed(
+    () => PRE_ECLAMPSIA_RISK_SUMMARIES[this.preEclampsiaRiskStatus()],
+  );
   readonly recommendedProblemState = signal<RecommendedProblemState>('pending');
   readonly riskAssessmentPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 600 });
   readonly riskAssessmentMaxHeight = signal(690);

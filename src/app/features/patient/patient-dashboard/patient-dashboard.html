@@ -135,6 +135,7 @@
               </button> -->
               <button
                 class="summary-fact summary-fact--risk"
+                [class]="'summary-fact summary-fact--risk summary-fact--risk-' + preEclampsiaRiskStatus()"
                 type="button"
                 aria-haspopup="dialog"
                 [attr.aria-expanded]="riskAssessmentOpen()"
@@ -146,19 +147,23 @@
               >
                 <img
                   class="summary-fact__icon"
-                  src="assets/warn-red.svg"
+                  [src]="preEclampsiaRiskSummary().icon"
                   alt=""
                   aria-hidden="true"
                 />
                 <span>
                   <small>Pre-eclampsia Risk</small>
-                  <strong>High Risk</strong>
+                  <strong>{{ preEclampsiaRiskSummary().label }}</strong>
                 </span>
               </button>
             </div>
           } @else {
             <button
-              class="summary-fact summary-fact--risk patient-summary__risk"
+              [class]="
+                'summary-fact summary-fact--risk summary-fact--risk-' +
+                preEclampsiaRiskStatus() +
+                ' patient-summary__risk'
+              "
               type="button"
               aria-haspopup="dialog"
               [attr.aria-expanded]="riskAssessmentOpen()"
@@ -168,10 +173,15 @@
               (focusout)="scheduleRiskAssessmentHide()"
               (click)="showRiskAssessment($event)"
             >
-              <img class="summary-fact__icon" src="assets/warn-red.svg" alt="" aria-hidden="true" />
+              <img
+                class="summary-fact__icon"
+                [src]="preEclampsiaRiskSummary().icon"
+                alt=""
+                aria-hidden="true"
+              />
               <span>
                 <small>Pre-eclampsia Risk</small>
-                <strong>High Risk</strong>
+                <strong>{{ preEclampsiaRiskSummary().label }}</strong>
               </span>
             </button>
           }
@@ -464,7 +474,11 @@
     }
 
     <section #vitalSigns class="vital-signs" aria-labelledby="vital-signs-title">
-      <h2 id="vital-signs-title">Current Vital Signs</h2>
+      <div class="vital-signs-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <h2 id="vital-signs-title">Vital Signs</h2>
+        <p class="">Recorded Mar 28, 2026</p>
+      </div>
+      
 
       <div class="vital-signs__scroller" tabindex="0">
         <div class="vital-signs__list">
@@ -500,9 +514,9 @@
           <article
             class="vital-card"
             tabindex="0"
-            (mouseenter)="showVitalTooltip('heart-rate', $event)"
+            (mouseenter)="showVitalTooltip('heart-rate-1', $event)"
             (mouseleave)="scheduleVitalTooltipHide()"
-            (focusin)="showVitalTooltip('heart-rate', $event)"
+            (focusin)="showVitalTooltip('heart-rate-1', $event)"
             (focusout)="scheduleVitalTooltipHide()"
           >
             <div class="vital-card__top">
@@ -511,7 +525,32 @@
               </span>
               <i aria-hidden="true"></i>
             </div>
-            <h3>Fetal Heart Rate</h3>
+            <h3>Fetal 1 - Heart Rate</h3>
+            <p>
+              @if (hasVitalValue(vitalCounts().heartRate)) {
+                <strong class="vital-card__value">{{ vitalCounts().heartRate }}</strong>
+                <span>bpm</span>
+              } @else {
+                <strong class="vital-card__value">-</strong>
+              }
+            </p>
+          </article>
+
+          <article
+            class="vital-card"
+            tabindex="0"
+            (mouseenter)="showVitalTooltip('heart-rate-2', $event)"
+            (mouseleave)="scheduleVitalTooltipHide()"
+            (focusin)="showVitalTooltip('heart-rate-2', $event)"
+            (focusout)="scheduleVitalTooltipHide()"
+          >
+            <div class="vital-card__top">
+              <span class="vital-card__icon" aria-hidden="true">
+                <img src="assets/heart-green.svg" alt="" />
+              </span>
+              <i aria-hidden="true"></i>
+            </div>
+            <h3>Fetal 2 - Heart Rate</h3>
             <p>
               @if (hasVitalValue(vitalCounts().heartRate)) {
                 <strong class="vital-card__value">{{ vitalCounts().heartRate }}</strong>

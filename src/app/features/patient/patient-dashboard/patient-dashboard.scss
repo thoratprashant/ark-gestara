@@ -224,8 +224,6 @@
 }
 
 .summary-fact--risk {
-  color: #f06a6a;
-  background: #fff0f1;
   border: 0;
   font: inherit;
   text-align: left;
@@ -234,6 +232,26 @@
   transition:
     background-color 180ms ease,
     box-shadow 180ms ease;
+}
+
+.summary-fact--risk-update {
+  color: #71859f;
+  background: #f4f7fb;
+}
+
+.summary-fact--risk-low {
+  color: #00bd86;
+  background: #effcf7;
+}
+
+.summary-fact--risk-moderate {
+  color: #ff9817;
+  background: #fff9e9;
+}
+
+.summary-fact--risk-high {
+  color: #f06a6a;
+  background: #fff0f1;
 }
 
 .summary-fact--delivery {
@@ -272,8 +290,29 @@
   outline: none;
 }
 
-.summary-fact--risk:hover,
-.summary-fact--risk:focus-visible {
+.summary-fact--risk-update:hover,
+.summary-fact--risk-update:focus-visible {
+  background: #eaf0f7;
+  box-shadow: 0 0 0 2px rgba(113, 133, 159, 0.16);
+  outline: none;
+}
+
+.summary-fact--risk-low:hover,
+.summary-fact--risk-low:focus-visible {
+  background: #e2f9f0;
+  box-shadow: 0 0 0 2px rgba(0, 189, 134, 0.14);
+  outline: none;
+}
+
+.summary-fact--risk-moderate:hover,
+.summary-fact--risk-moderate:focus-visible {
+  background: #fff3d4;
+  box-shadow: 0 0 0 2px rgba(255, 152, 23, 0.15);
+  outline: none;
+}
+
+.summary-fact--risk-high:hover,
+.summary-fact--risk-high:focus-visible {
   background: #ffe8ea;
   box-shadow: 0 0 0 2px rgba(240, 106, 106, 0.16);
   outline: none;
@@ -556,7 +595,7 @@
   padding: clamp(1rem, 2vw, 1.25rem);
 }
 
-.vital-signs > h2 {
+.vital-signs-header > h2 {
   margin: 0 0 clamp(0.75rem, 1.5vw, 1rem);
   color: #171f26;
   font-family: 'Plus Jakarta Sans', sans-serif;
@@ -564,6 +603,13 @@
   font-weight: 700;
   letter-spacing: 0.025em;
   text-transform: uppercase;
+}
+
+.vital-signs-header > p {
+  color: #73808C;
+  font-size: 10px;
+  font-weight: 400;
+  margin: 0 0 clamp(0.75rem, 1.5vw, 1rem);
 }
 
 .vital-signs__scroller {
@@ -663,7 +709,7 @@
 }
 
 .vital-card p strong {
-  color: #171f26;
+  color: #0d9488;
   font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: 15px;
   font-weight: 700;
@@ -686,7 +732,7 @@
 }
 
 .vital-card:nth-child(7) p strong {
-  color: #b45309;
+  color: #0d9488;
 }
 
 .vital-card small {
