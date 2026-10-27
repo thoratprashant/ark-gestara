@@ -260,9 +260,23 @@
   box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.1);
 }
 
-.add-problem-dialog__search img {
+.add-problem-dialog__search-icon,
+.add-problem-dialog__search-error-icon {
+  flex: 0 0 16px;
   width: 16px;
   height: 16px;
+  color: #9ca3af;
+}
+
+.add-problem-dialog__search--invalid,
+.add-problem-dialog__search--invalid:focus-within {
+  border-color: #ef4444;
+  box-shadow: none;
+}
+
+.add-problem-dialog__search--invalid .add-problem-dialog__search-icon,
+.add-problem-dialog__search--invalid .add-problem-dialog__search-error-icon {
+  color: #ef4444;
 }
 
 .add-problem-dialog__search input {
@@ -280,17 +294,37 @@
   opacity: 1;
 }
 
-.add-problem-dialog__hint,
-.add-problem-dialog__empty {
+.add-problem-dialog__search--invalid input {
+  color: #ef4444;
+}
+
+.add-problem-dialog__search--invalid input::placeholder {
+  color: #ef4444;
+}
+
+.add-problem-dialog__hint {
   color: #9ca3af;
   font:
     500 11px/normal 'Plus Jakarta Sans',
     sans-serif;
 }
 
-.add-problem-dialog__empty {
-  padding: 12px;
-  text-align: center;
+.add-problem-dialog__library-error {
+  gap: 10px;
+  min-height: 38px;
+  padding: 10px 14px;
+  color: #dc2626;
+  background: #fef2f2;
+  border-radius: 8px;
+  font:
+    500 12px/normal 'Plus Jakarta Sans',
+    sans-serif;
+}
+
+.add-problem-dialog__library-error svg {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
 }
 
 .add-problem-dialog__inputs-grid {

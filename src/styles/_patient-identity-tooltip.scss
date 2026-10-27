@@ -1,0 +1,18 @@
+.birth-date-tooltip {
+  --mat-tooltip-container-color: #fff;
+  --mat-tooltip-supporting-text-color: #374151;
+  --mat-tooltip-supporting-text-font: Inter, sans-serif;
+  --mat-tooltip-supporting-text-size: 16px;
+  --mat-tooltip-supporting-text-weight: 400;
+  --mat-tooltip-supporting-text-line-height: 24px;
+
+  .mat-mdc-tooltip-surface {
+    min-width: max-content;
+    padding: 12px 16px;
+    color: #374151;
+    background-color: #fff;
+    border: 1px solid #d6d0ca;
+    border-radius: 8px;
+    box-shadow: 0 2px 7px rgb(23 31 38 / 20%);
+  }
+}

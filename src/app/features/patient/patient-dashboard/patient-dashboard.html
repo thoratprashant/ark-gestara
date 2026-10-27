@@ -44,8 +44,18 @@
         <div class="patient-identity">
           <h1 id="patient-name">Sarah Johnson</h1>
           <p>
-            <span>Age 32</span>
-            <span aria-hidden="true">/</span>
+            <button
+              class="patient-identity__birth-date"
+              type="button"
+              aria-label="Birth date: Jun 8, 1989"
+              matTooltip="Birth date Jun 8, 1989"
+              matTooltipClass="birth-date-tooltip"
+              matTooltipPosition="below"
+            >
+              <span aria-hidden="true">i</span>
+            </button>
+            <span class="patient-identity__age">Age 32</span>
+            <span class="patient-identity__separator" aria-hidden="true">/</span>
             <button
               class="patient-identity__history"
               type="button"

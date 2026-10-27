@@ -337,6 +337,38 @@ describe('PatientDashboard timeline', () => {
     });
   });
 
+  it('shows a configuration warning when the problem library has no matching problem', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dialog = TestBed.inject(MatDialog);
+    fixture.detectChanges();
+
+    const addProblemButton = fixture.nativeElement.querySelector(
+      '.problem-timeline__add-problem',
+    ) as HTMLButtonElement;
+    addProblemButton.click();
+    fixture.detectChanges();
+
+    const dialogRef = dialog.openDialogs[0];
+    const dialogElement = dialogRef.componentRef?.location.nativeElement as HTMLElement;
+    const search = dialogElement.querySelector('#problem-library-search') as HTMLInputElement;
+
+    search.value = 'Recurrent pelvic pressure';
+    search.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    const searchContainer = dialogElement.querySelector('.add-problem-dialog__search');
+    const warning = dialogElement.querySelector('.add-problem-dialog__library-error');
+
+    expect(searchContainer?.classList.contains('add-problem-dialog__search--invalid')).toBe(true);
+    expect(search.getAttribute('aria-invalid')).toBe('true');
+    expect(warning?.getAttribute('role')).toBe('alert');
+    expect(warning?.textContent?.trim()).toBe('This Problem is not in the configuration list.');
+    expect(dialogElement.querySelector('.add-problem-dialog__list--library')).toBeNull();
+    expect(dialogElement.querySelector('.add-problem-dialog__hint')).toBeNull();
+
+    dialog.closeAll();
+  });
+
   it('opens the Assign Problem dialog with defaults for the selected Epic result', () => {
     const fixture = TestBed.createComponent(PatientDashboard);
     const dialog = TestBed.inject(MatDialog);

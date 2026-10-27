@@ -3,6 +3,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule, Routes } from '@angular/router';
 import { SuggestiveInput } from '../../../shared/components/suggestive-input/suggestive-input';
 
@@ -31,6 +32,7 @@ const routes: Routes = [
     CommonModule,
     DragDropModule,
     MatDialogModule,
+    MatTooltipModule,
     ReactiveFormsModule,
     RouterModule.forChild(routes),
     SuggestiveInput,

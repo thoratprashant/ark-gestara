@@ -96,62 +96,117 @@
         </h3>
         <label
           class="add-problem-dialog__search d-flex align-items-center w-100"
+          [class.add-problem-dialog__search--invalid]="filteredProblemLibrary.length === 0"
           for="problem-library-search"
         >
-          <img src="assets/problem-dialog/search.svg" alt="" aria-hidden="true" />
+          <svg
+            class="add-problem-dialog__search-icon"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="m14 14-2.893-2.893M12.667 7.333a5.333 5.333 0 1 1-10.667 0 5.333 5.333 0 0 1 10.667 0Z"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
           <input
             id="problem-library-search"
             class="w-100 p-0 border-0"
             type="search"
             placeholder="Search institution problem library..."
+            [attr.aria-invalid]="filteredProblemLibrary.length === 0"
+            [attr.aria-describedby]="
+              filteredProblemLibrary.length === 0 ? 'problem-library-error' : null
+            "
             (input)="filterProblemLibrary($event)"
           />
+          @if (filteredProblemLibrary.length === 0) {
+            <svg
+              class="add-problem-dialog__search-error-icon"
+              viewBox="0 0 16 16"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" />
+              <path
+                d="M8 4.75v3.5M8 10.75h.01"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+          }
         </label>
 
-        <div class="add-problem-dialog__list add-problem-dialog__list--library">
-          @for (problem of filteredProblemLibrary; track problem.code) {
-            <button
-              class="add-problem-dialog__problem-row d-flex align-items-center w-100 text-start"
-              type="button"
-              [class.add-problem-dialog__problem-row--selected]="
-                selectedProblem()?.code === problem.code
-              "
-              [attr.aria-pressed]="selectedProblem()?.code === problem.code"
-              [attr.aria-label]="'Select ' + problem.name"
-              (click)="selectProblem(problem)"
-            >
-              <img
-                class="add-problem-dialog__problem-star"
-                src="assets/problem-dialog/star-outline.svg"
-                alt=""
-                aria-hidden="true"
-              />
-              <span class="add-problem-dialog__problem-name flex-grow-1 fw-semibold">{{
-                problem.name
-              }}</span>
-              <span class="add-problem-dialog__badge fw-semibold">{{ problem.code }}</span>
-              @if (selectedProblem()?.code === problem.code) {
-                <span
-                  class="add-problem-dialog__selected-check d-flex align-items-center justify-content-center"
+        @if (filteredProblemLibrary.length > 0) {
+          <div class="add-problem-dialog__list add-problem-dialog__list--library">
+            @for (problem of filteredProblemLibrary; track problem.code) {
+              <button
+                class="add-problem-dialog__problem-row d-flex align-items-center w-100 text-start"
+                type="button"
+                [class.add-problem-dialog__problem-row--selected]="
+                  selectedProblem()?.code === problem.code
+                "
+                [attr.aria-pressed]="selectedProblem()?.code === problem.code"
+                [attr.aria-label]="'Select ' + problem.name"
+                (click)="selectProblem(problem)"
+              >
+                <img
+                  class="add-problem-dialog__problem-star"
+                  src="assets/problem-dialog/star-outline.svg"
+                  alt=""
                   aria-hidden="true"
-                >
-                  <svg viewBox="0 0 12 12" fill="none">
-                    <path
-                      d="m2.4 6.1 2.15 2.15L9.7 3.6"
-                      stroke="currentColor"
-                      stroke-width="1.7"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </span>
-              }
-            </button>
-          } @empty {
-            <p class="add-problem-dialog__empty m-0">No matching problems found.</p>
-          }
-        </div>
-        <p class="add-problem-dialog__hint m-0">Showing results from institution library</p>
+                />
+                <span class="add-problem-dialog__problem-name flex-grow-1 fw-semibold">{{
+                  problem.name
+                }}</span>
+                <span class="add-problem-dialog__badge fw-semibold">{{ problem.code }}</span>
+                @if (selectedProblem()?.code === problem.code) {
+                  <span
+                    class="add-problem-dialog__selected-check d-flex align-items-center justify-content-center"
+                    aria-hidden="true"
+                  >
+                    <svg viewBox="0 0 12 12" fill="none">
+                      <path
+                        d="m2.4 6.1 2.15 2.15L9.7 3.6"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </span>
+                }
+              </button>
+            }
+          </div>
+          <p class="add-problem-dialog__hint m-0">Showing results from institution library</p>
+        } @else {
+          <p
+            id="problem-library-error"
+            class="add-problem-dialog__library-error d-flex align-items-center m-0"
+            role="alert"
+          >
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path
+                d="M7.134 2.5a1 1 0 0 1 1.732 0l5.196 9A1 1 0 0 1 13.196 13H2.804a1 1 0 0 1-.866-1.5l5.196-9Z"
+                stroke="currentColor"
+                stroke-width="1.35"
+                stroke-linejoin="round"
+              />
+              <path
+                d="M8 5.75v3.2M8 11.15h.01"
+                stroke="currentColor"
+                stroke-width="1.35"
+                stroke-linecap="round"
+              />
+            </svg>
+            <span>This Problem is not in the configuration list.</span>
+          </p>
+        }
       </section>
 
       <div class="add-problem-dialog__divider w-100" aria-hidden="true"></div>
