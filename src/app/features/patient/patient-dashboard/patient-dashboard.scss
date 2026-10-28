@@ -149,7 +149,9 @@
   background: transparent;
   border: 1px solid currentcolor;
   border-radius: 50%;
-  font: 600 0.5625rem/1 Inter, sans-serif;
+  font:
+    600 0.5625rem/1 Inter,
+    sans-serif;
   cursor: pointer;
   place-items: center;
 }
@@ -401,9 +403,8 @@
 }
 
 .patient-summary__recommendation {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  display: grid;
+  gap: 0.25rem;
   width: calc(100% + var(--patient-summary-inline-padding) + var(--patient-summary-inline-padding));
   min-height: 2.625rem;
   margin-top: 0.75rem;
@@ -416,6 +417,14 @@
   font-family: Inter, sans-serif;
   font-size: 12px;
   line-height: normal;
+}
+
+.patient-summary__recommendation-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  min-height: 1.875rem;
 }
 
 .patient-summary:not(.patient-summary--collapsed) .patient-summary__recommendation {
@@ -441,6 +450,88 @@
   font-size: 9px;
   font-weight: 600;
   text-align: center;
+}
+
+.patient-summary__recommendation-badge--success {
+  color: #0d9488;
+  background: rgba(13, 148, 136, 0.12);
+  font-size: 0.75rem;
+}
+
+.patient-summary__recommendation-success {
+  color: #0d9488 !important;
+}
+
+.patient-summary__recommendation-actions {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.patient-summary__recommendation-actions button,
+.patient-summary__recommendation-link {
+  font: inherit;
+}
+
+.patient-summary__recommendation-actions button {
+  border: 0;
+  cursor: pointer;
+}
+
+.patient-summary__recommendation-add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 7.125rem;
+  min-height: 2rem;
+  padding: 0.5rem 0.875rem;
+  color: #fff;
+  background: #0d9488;
+  border-radius: 0.875rem;
+}
+
+.patient-summary__recommendation-add img {
+  width: 1rem;
+  height: 1rem;
+}
+
+.patient-summary__recommendation-add:hover,
+.patient-summary__recommendation-add:focus-visible {
+  background: #0f766e;
+}
+
+.patient-summary__recommendation-dismiss {
+  padding: 0.25rem 0;
+  color: #73808c;
+  background: transparent;
+}
+
+.patient-summary__recommendation-dismiss:hover,
+.patient-summary__recommendation-dismiss:focus-visible,
+.patient-summary__recommendation-link:hover,
+.patient-summary__recommendation-link:focus-visible {
+  color: #171f26;
+}
+
+.patient-summary__recommendation-actions button:focus-visible,
+.patient-summary__recommendation-link:focus-visible {
+  outline: 2px solid #0d9488;
+  outline-offset: 2px;
+}
+
+.patient-summary__recommendation-link {
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: #73808c;
+  text-decoration: underline;
+  text-underline-offset: 0.125rem;
+}
+
+#problem-timeline {
+  scroll-margin-top: 6rem;
 }
 
 .patient-summary__details-motion {
@@ -557,7 +648,8 @@
   outline: none;
 }
 
-.patient-metric--pregnancy-history {
+.patient-metric--pregnancy-history,
+.patient-metric--delivery {
   background: #fff;
   font: inherit;
   text-align: left;
@@ -570,7 +662,9 @@
 }
 
 .patient-metric--pregnancy-history:hover,
-.patient-metric--pregnancy-history:focus-visible {
+.patient-metric--pregnancy-history:focus-visible,
+.patient-metric--delivery:hover,
+.patient-metric--delivery:focus-visible {
   background: #f1fbfa;
   border-color: #78c9c5;
   box-shadow:
@@ -637,7 +731,7 @@
 }
 
 .vital-signs-header > p {
-  color: #73808C;
+  color: #73808c;
   font-size: 10px;
   font-weight: 400;
   margin: 0 0 clamp(0.75rem, 1.5vw, 1rem);
@@ -1421,14 +1515,14 @@
   background-color: #0d9488;
 }
 
-.order-decision .order-decision__approve:hover, 
+.order-decision .order-decision__approve:hover,
 .order-decision .order-decision__approve:focus-visible {
   background: #087f76;
   outline: 2px solid rgb(13 148 136 / 25%);
   outline-offset: 2px;
 }
 
-.order-decision .order-decision__decline:hover, 
+.order-decision .order-decision__decline:hover,
 .order-decision .order-decision__decline:focus-visible {
   outline: 2px solid rgba(194, 203, 202, 0.25);
   outline-offset: 2px;

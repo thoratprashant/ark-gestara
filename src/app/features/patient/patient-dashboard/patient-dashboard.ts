@@ -56,6 +56,7 @@ interface VitalChart {
   showVerticalGrid?: boolean;
   thresholds?: VitalChartThreshold[];
   tooltipContexts?: string[];
+  tooltipDates?: Array<string | null>;
   tooltipYear?: number;
   unit?: string;
   xLabels: string[];
@@ -139,14 +140,7 @@ interface VitalCountValues {
 }
 
 type TimelineStatus =
-  | 'completed'
-  | 'not-reviewed'
-  | 'ordered'
-  | 'due-soon'
-  | 'late'
-  | 'abnormal'
-  | 'incomplete'
-  | 'future';
+  'completed' | 'not-reviewed' | 'ordered' | 'due-soon' | 'late' | 'incomplete' | 'future';
 type ChipInteractionMode = 'move' | 'resize-start' | 'resize-end';
 type TimelineStatusTooltipIcon = 'calendar' | 'clock';
 type TimelineResultReviewState = 'added' | 'dismissed';
@@ -159,10 +153,7 @@ interface PreEclampsiaRiskSummary {
   label: string;
 }
 
-const PRE_ECLAMPSIA_RISK_SUMMARIES: Record<
-  PreEclampsiaRiskStatus,
-  PreEclampsiaRiskSummary
-> = {
+const PRE_ECLAMPSIA_RISK_SUMMARIES: Record<PreEclampsiaRiskStatus, PreEclampsiaRiskSummary> = {
   update: { icon: 'assets/risk-update.svg', label: 'Update Risk' },
   low: { icon: 'assets/risk-low.svg', label: 'Low Risk' },
   moderate: { icon: 'assets/risk-moderate.svg', label: 'Moderate Risk' },
@@ -514,6 +505,14 @@ const RESULT_TOOLTIPS: ResultTooltip[] = [
         { value: 90, label: '', color: '#f58cb4' },
       ],
       tooltipContexts: ['Week 27', 'Week 27', 'Week 28', 'Week 28', 'Week 28', 'Week 28'],
+      tooltipDates: [
+        'Mar 22, 2026',
+        'Mar 23, 2026',
+        'Mar 24, 2026',
+        'Mar 25, 2026',
+        'Mar 26, 2026',
+        'Mar 27, 2026',
+      ],
       tooltipYear: 2026,
       unit: 'mmHg',
       series: [
@@ -542,6 +541,14 @@ const RESULT_TOOLTIPS: ResultTooltip[] = [
         { value: 95, label: '', color: '#d99b00' },
       ],
       tooltipContexts: ['Week 27', 'Week 27', 'Week 28', 'Week 28', 'Week 28', 'Week 28'],
+      tooltipDates: [
+        'Mar 22, 2026',
+        'Mar 23, 2026',
+        'Mar 24, 2026',
+        'Mar 25, 2026',
+        'Mar 26, 2026',
+        'Mar 27, 2026',
+      ],
       tooltipYear: 2026,
       unit: 'mg/dL',
       series: [
@@ -675,7 +682,6 @@ const ADDITIONAL_TIMELINE_GROUPS: TimelineGroup[] = [
     'ordered',
     'due-soon',
     'late',
-    'abnormal',
     'incomplete',
     'future',
   ];
@@ -726,20 +732,20 @@ const TIMELINE_STATUS_TOOLTIPS: Record<TimelineStatus, TimelineStatusTooltip> = 
     tests: [{ label: '24-hour Urine Protein', showActions: true }],
     title: '24-hour urine protein (Baseline)',
   },
-  abnormal: {
-    badgeLabel: 'Abnormal Finding',
-    notes:
-      'Patient referred for 3-hour glucose tolerance test. Advised on dietary modifications pending confirmatory testing.',
-    schedule: [
-      { icon: 'calendar', label: 'Scheduled:', value: 'Week 24-28' },
-      { icon: 'clock', label: 'Completed:', value: 'Week 26' },
-      { icon: 'calendar', label: 'Date:', value: '2026-01-15' },
-    ],
-    status: 'abnormal',
-    subtitle: 'Insulin Dependent Gestational Diabetes Mellitus',
-    tests: [{ label: '1-hour Glucose', result: '185 mg/dL (abnormal, >140)' }],
-    title: '1-hour glucose screening (Baseline)',
-  },
+  // abnormal: {
+  //   badgeLabel: 'Abnormal Finding',
+  //   notes:
+  //     'Patient referred for 3-hour glucose tolerance test. Advised on dietary modifications pending confirmatory testing.',
+  //   schedule: [
+  //     { icon: 'calendar', label: 'Scheduled:', value: 'Week 24-28' },
+  //     { icon: 'clock', label: 'Completed:', value: 'Week 26' },
+  //     { icon: 'calendar', label: 'Date:', value: '2026-01-15' },
+  //   ],
+  //   status: 'abnormal',
+  //   subtitle: 'Insulin Dependent Gestational Diabetes Mellitus',
+  //   tests: [{ label: '1-hour Glucose', result: '185 mg/dL (abnormal, >140)' }],
+  //   title: '1-hour glucose screening (Baseline)',
+  // },
   late: {
     badgeLabel: 'Late',
     notes:
@@ -928,7 +934,7 @@ const INITIAL_TIMELINE: PregnancyTimeline = {
             {
               id: 'glucose-1',
               label: 'Glucose screening',
-              status: 'abnormal',
+              status: 'due-soon',
               startWeek: 24,
               endWeek: 28,
             },
@@ -1030,6 +1036,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     () => PRE_ECLAMPSIA_RISK_SUMMARIES[this.preEclampsiaRiskStatus()],
   );
   readonly recommendedProblemState = signal<RecommendedProblemState>('pending');
+  readonly summaryRecommendedProblemState = signal<RecommendedProblemState>('pending');
   readonly riskAssessmentPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 600 });
   readonly riskAssessmentMaxHeight = signal(690);
   readonly deliveryWindowTooltipOpen = signal(false);
@@ -1133,7 +1140,6 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   });
   readonly tooltipGlassActive = computed(
     () =>
-      this.activeVitalTooltip() !== null ||
       this.activeResultTooltip() !== null ||
       this.riskAssessmentOpen() ||
       this.deliveryWindowTooltipOpen() ||
@@ -1234,7 +1240,6 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     { label: 'Ordered', status: 'ordered' },
     { label: 'Due Soon', status: 'due-soon' },
     { label: 'Late', status: 'late' },
-    { label: 'Abnormal', status: 'abnormal' },
     { label: 'Incomplete', status: 'incomplete' },
     { label: 'Future', status: 'future' },
   ];
@@ -1355,7 +1360,6 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       top: cardBounds.bottom - sectionBounds.top + 6,
       width,
     });
-    this.setTooltipGlassFocus(cardBounds);
     this.activeVitalTooltip.set(tooltip);
   }
 
@@ -1486,6 +1490,26 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   dismissRecommendedProblem(): void {
     this.keepRiskAssessmentOpen();
     this.recommendedProblemState.set('dismissed');
+  }
+
+  addSummaryRecommendedProblem(): void {
+    const problem = this.suggestedProblems().find(
+      (suggestion) => suggestion.name === 'Advanced Maternal Age',
+    );
+
+    if (problem) {
+      this.acceptSuggestedProblem(problem);
+    } else if (
+      !this.pregnancyTimeline().groups.some((group) => group.label === 'Advanced Maternal Age')
+    ) {
+      this.addTimelineProblem('Advanced Maternal Age');
+    }
+
+    this.summaryRecommendedProblemState.set('added');
+  }
+
+  dismissSummaryRecommendedProblem(): void {
+    this.summaryRecommendedProblemState.set('dismissed');
   }
 
   showDeliveryWindowTooltip(event: Event): void {
@@ -1725,7 +1749,6 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     const preferredWidth = chip.status === 'future' ? 380 : 320;
     const width = Math.min(preferredWidth, Math.max(260, window.innerWidth - 24));
     const preferredHeight: Record<TimelineStatus, number> = {
-      abnormal: 490,
       completed: 380,
       future: 657,
       late: 650,
@@ -2252,6 +2275,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     return week ? `Week ${week[1]}` : label;
   }
 
+  vitalChartTooltipDate(chart: VitalChart, pointIndex: number): string {
+    return chart.tooltipDates?.[pointIndex]?.trim() || 'Feb 10, 2026';
+  }
+
   vitalChartPath(chart: VitalChart, series: VitalChartSeries): string {
     return series.values
       .map((value, index) => {
@@ -2332,6 +2359,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     ];
     const month = monthNames[Number(date[1]) - 1];
     return month ? `${month} ${Number(date[2])}, ${year}` : label;
+  }
+
+  resultChartTooltipDate(chart: VitalChart, pointIndex: number): string {
+    return chart.tooltipDates?.[pointIndex]?.trim() || 'Feb 10, 2026';
   }
 
   resultChartTooltipValue(chart: VitalChart, pointIndex: number): string {

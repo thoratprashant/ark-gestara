@@ -845,6 +845,58 @@ describe('PatientDashboard timeline', () => {
     expect(dashboard.deliveryChipTooltipOpen()).toBe(false);
   });
 
+  it('shows the delivery chip tooltip from the recommended delivery summary fact', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dashboard = fixture.componentInstance;
+    dashboard.summaryExpanded.set(false);
+    fixture.detectChanges();
+
+    const trigger = fixture.nativeElement.querySelector(
+      '.summary-fact--delivery',
+    ) as HTMLButtonElement;
+    vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue({
+      bottom: 120,
+      height: 40,
+      left: 720,
+      right: 900,
+      top: 80,
+      width: 180,
+    } as DOMRect);
+
+    trigger.dispatchEvent(new Event('mouseenter'));
+    fixture.detectChanges();
+
+    expect(dashboard.deliveryChipTooltipOpen()).toBe(true);
+    expect(dashboard.deliveryWindowTooltipOpen()).toBe(false);
+    expect(trigger.getAttribute('aria-describedby')).toBe('delivery-chip-tooltip');
+    expect(fixture.nativeElement.querySelector('#delivery-chip-tooltip')).toBeTruthy();
+  });
+
+  it('shows the delivery chip tooltip from the expanded delivery metric', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dashboard = fixture.componentInstance;
+    fixture.detectChanges();
+
+    const trigger = fixture.nativeElement.querySelector(
+      '.patient-metric--delivery',
+    ) as HTMLButtonElement;
+    vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue({
+      bottom: 220,
+      height: 80,
+      left: 500,
+      right: 760,
+      top: 140,
+      width: 260,
+    } as DOMRect);
+
+    trigger.dispatchEvent(new Event('mouseenter'));
+    fixture.detectChanges();
+
+    expect(dashboard.deliveryChipTooltipOpen()).toBe(true);
+    expect(trigger.getAttribute('aria-describedby')).toBe('delivery-chip-tooltip');
+    expect(fixture.nativeElement.querySelector('#delivery-chip-tooltip')).toBeTruthy();
+  });
+
   it('switches only late and future chips when they move across the current-week line', () => {
     const dashboard = new PatientDashboard();
     const track = document.createElement('div');
@@ -926,21 +978,16 @@ describe('PatientDashboard timeline', () => {
       }
     ).vitalSigns = new ElementRef(section);
 
-    dashboard.showVitalTooltip('heart-rate', {
+    dashboard.showVitalTooltip('heart-rate-1', {
       currentTarget: card,
     } as unknown as Event);
 
     const tooltip = dashboard.activeVitalTooltip();
     const chart = tooltip?.charts?.[0];
-    expect(tooltip?.title).toBe('Fetal Heart Rate Trend');
+    expect(tooltip?.title).toBe('Fetal 1 - Heart Rate Trend');
     expect(chart?.unit).toBe('bpm');
     expect(dashboard.vitalTooltipPosition()).toEqual({ left: 120, top: 166, width: 520 });
-    expect(dashboard.tooltipGlassFocusRect()).toEqual({
-      left: 114,
-      right: 306,
-      top: 174,
-      bottom: 266,
-    });
+    expect(dashboard.tooltipGlassActive()).toBe(false);
     expect(chart && dashboard.vitalChartPath(chart, chart.series[0])).toMatch(/^M42,/);
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -953,6 +1000,13 @@ describe('PatientDashboard timeline', () => {
       );
       expect(dashboard.vitalChartHover()).toEqual({ chartIndex: 0, pointIndex: 5 });
       expect(dashboard.vitalChartTooltipHeading(chart.xLabels[5])).toBe('Week 28');
+      expect(dashboard.vitalChartTooltipDate(chart, 5)).toBe('Feb 10, 2026');
+      expect(
+        dashboard.vitalChartTooltipDate(
+          { ...chart, tooltipDates: [null, null, null, null, null, 'Feb 17, 2026'] },
+          5,
+        ),
+      ).toBe('Feb 17, 2026');
       expect(dashboard.vitalChartTooltipLeft(5, chart.xLabels.length)).toBeCloseTo(86);
       expect(dashboard.vitalChartTooltipTop(chart, 5)).toBeGreaterThan(0);
       dashboard.clearVitalChartHover(0);
@@ -1012,6 +1066,7 @@ describe('PatientDashboard timeline', () => {
     const bloodPressureChart = dashboard.activeResultTooltip()?.chart;
     expect(bloodPressureChart?.unit).toBe('mmHg');
     expect(bloodPressureChart?.tooltipContexts?.[2]).toBe('Week 28');
+    expect(bloodPressureChart?.tooltipDates?.[2]).toBe('Mar 24, 2026');
     expect(dashboard.resultTooltipPosition()).toEqual({ left: 80, top: 200, width: 520 });
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -1031,6 +1086,10 @@ describe('PatientDashboard timeline', () => {
           bloodPressureChart.tooltipYear,
         ),
       ).toBe('Mar 24, 2026');
+      expect(dashboard.resultChartTooltipDate(bloodPressureChart, 2)).toBe('Mar 24, 2026');
+      expect(
+        dashboard.resultChartTooltipDate({ ...bloodPressureChart, tooltipDates: undefined }, 2),
+      ).toBe('Feb 10, 2026');
       expect(dashboard.resultChartTooltipValue(bloodPressureChart, 2)).toBe('128/82');
       dashboard.clearResultChartHover();
       expect(dashboard.resultChartHover()).toBeNull();
@@ -1095,6 +1154,46 @@ describe('PatientDashboard timeline', () => {
     expect(dashboard.riskAssessmentOpen()).toBe(false);
     expect(dashboard.tooltipGlassActive()).toBe(false);
     vi.useRealTimers();
+  });
+
+  it('replaces the summary recommendation with its added-to-problem-list status', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dashboard = fixture.componentInstance;
+    fixture.detectChanges();
+
+    const recommendation = fixture.nativeElement.querySelector(
+      '.patient-summary__recommendation',
+    ) as HTMLElement;
+    const addButton = recommendation.querySelector(
+      '.patient-summary__recommendation-add',
+    ) as HTMLButtonElement;
+
+    expect(recommendation.textContent).toContain('Add Advanced Maternal Age to Problem List.');
+    expect(recommendation.textContent).toContain(
+      'Recommend low-dose aspirin (81 mg/day) starting before 16 weeks gestation.',
+    );
+
+    addButton.click();
+    fixture.detectChanges();
+
+    expect(dashboard.summaryRecommendedProblemState()).toBe('added');
+    expect(
+      dashboard.pregnancyTimeline().groups.some((group) => group.label === 'Advanced Maternal Age'),
+    ).toBe(true);
+    expect(
+      dashboard.suggestedProblems().some((problem) => problem.name === 'Advanced Maternal Age'),
+    ).toBe(false);
+    expect(recommendation.querySelector('[role="status"]')?.textContent?.trim()).toBe(
+      'Advanced Maternal Age added to Problem List',
+    );
+    expect(
+      recommendation.querySelector('.patient-summary__recommendation-link')?.getAttribute('href'),
+    ).toBe('#problem-timeline');
+    expect(fixture.nativeElement.querySelector('#problem-timeline')).toBeTruthy();
+    expect(recommendation.querySelector('.patient-summary__recommendation-add')).toBeNull();
+    expect(recommendation.textContent).toContain(
+      'Recommend low-dose aspirin (81 mg/day) starting before 16 weeks gestation.',
+    );
   });
 
   it('renders each pre-eclampsia risk summary variant', () => {

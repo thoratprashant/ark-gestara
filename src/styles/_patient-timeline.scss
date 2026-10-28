@@ -92,31 +92,38 @@
 }
 
 .problem-timeline [data-status='completed'] {
-  background: #0d9488;
+  background: #C4FFFD;
+  color: #034E58;
 }
 
 .problem-timeline [data-status='not-reviewed'] {
-  background: #0d948899;
+  background: #DDF0EE;
+  color: #034E58;
 }
 
 .problem-timeline [data-status='future'] {
-  background: #d6d3d1;
+  background: #E9E9E9;
+  color: #8E8E8E;
 }
 
 .problem-timeline [data-status='ordered'] {
-  background: #2961ff;
+  background: #E0E8FF;
+  color: #2961FF;
 }
 
 .problem-timeline [data-status='due-soon'] {
-  background: #ff5900;
+  background: #FFDAC6;
+  color: #FF5900;
 }
 
 .problem-timeline [data-status='incomplete'] {
-  background: #f59e0b;
+  background: #FFF1DA;
+  color: #F59E0B;
 }
 
 .problem-timeline [data-status='late'] {
-  background: #ae3939;
+  background: #FDE2E2;
+  color: #AE3939;
 }
 
 .problem-timeline [data-status='abnormal'] {

@@ -74,7 +74,8 @@
 
         <div class="patient-summary__controls">
           @if (!summaryExpanded()) {
-            <div class="summary-facts" aria-label="Patient summary">
+            <div class="summary-facts" aria-label="Patient summary">        
+              <!-- Added on 28-10-26 -->
               <article class="summary-fact">
                 <img
                   class="summary-fact__icon"
@@ -83,23 +84,12 @@
                   aria-hidden="true"
                 />
                 <span>
-                  <small>Prenatal visits completed</small>
-                  <strong>6</strong>
+                  <small>Current Gestational Age</small>
+                  <strong>28w 4d</strong>
                 </span>
               </article>
-              <article class="summary-fact">
-                <img
-                  class="summary-fact__icon"
-                  src="assets/calender-green.svg"
-                  alt=""
-                  aria-hidden="true"
-                />
-                <span>
-                  <small>Prenatal visits scheduled</small>
-                  <strong>2</strong>
-                </span>
-              </article>
-              <!-- <button
+
+              <button
                 class="summary-fact summary-fact--edd"
                 type="button"
                 aria-describedby="edd-tooltip"
@@ -124,13 +114,16 @@
               <button
                 class="summary-fact summary-fact--delivery"
                 type="button"
-                aria-describedby="delivery-window-tooltip"
-                [attr.aria-expanded]="deliveryWindowTooltipOpen()"
-                (mouseenter)="showDeliveryWindowTooltip($event)"
-                (mouseleave)="scheduleDeliveryWindowTooltipHide()"
-                (focusin)="showDeliveryWindowTooltip($event)"
-                (focusout)="scheduleDeliveryWindowTooltipHide()"
-                (click)="showDeliveryWindowTooltip($event)"
+                aria-haspopup="dialog"
+                [attr.aria-describedby]="
+                  deliveryChipTooltipOpen() ? 'delivery-chip-tooltip' : null
+                "
+                [attr.aria-expanded]="deliveryChipTooltipOpen()"
+                (mouseenter)="showDeliveryChipTooltip($event)"
+                (mouseleave)="scheduleDeliveryChipTooltipHide()"
+                (focusin)="showDeliveryChipTooltip($event)"
+                (focusout)="scheduleDeliveryChipTooltipHide()"
+                (click)="showDeliveryChipTooltip($event)"
               >
                 <img
                   class="summary-fact__icon"
@@ -139,10 +132,10 @@
                   aria-hidden="true"
                 />
                 <span>
-                  <small>Recommended Delivery Window</small>
+                  <small>Suggested Delivery Window</small>
                   <strong>Week 36–39</strong>
                 </span>
-              </button> -->
+              </button>
               <button
                 class="summary-fact summary-fact--risk"
                 [class]="'summary-fact summary-fact--risk summary-fact--risk-' + preEclampsiaRiskStatus()"
@@ -281,14 +274,27 @@
                 <strong>G3 P1011</strong>
                 <small>*Hover for the details</small>
               </button>
-              <article class="patient-metric">
+              <button
+                class="patient-metric patient-metric--delivery"
+                type="button"
+                aria-haspopup="dialog"
+                [attr.aria-describedby]="
+                  deliveryChipTooltipOpen() ? 'delivery-chip-tooltip' : null
+                "
+                [attr.aria-expanded]="deliveryChipTooltipOpen()"
+                (mouseenter)="showDeliveryChipTooltip($event)"
+                (mouseleave)="scheduleDeliveryChipTooltipHide()"
+                (focusin)="showDeliveryChipTooltip($event)"
+                (focusout)="scheduleDeliveryChipTooltipHide()"
+                (click)="showDeliveryChipTooltip($event)"
+              >
                 <h2>
                   <img src="assets/calender-orange.svg" alt="" aria-hidden="true" />
-                  Recommended Delivery Window
+                  Suggested Delivery Window
                 </h2>
                 <strong>Week 36–39</strong>
                 <small>*GDM and gestational hypertension - recommend delivery at term</small>
-              </article>
+              </button>
               <article class="patient-metric">
                 <h2>
                   <img src="assets/calender-orange.svg" alt="" aria-hidden="true" />
@@ -308,10 +314,55 @@
         </div>
       </div>
 
-      <aside class="patient-summary__recommendation" aria-label="Clinical recommendation">
-        <span class="patient-summary__recommendation-badge" aria-hidden="true">Rx</span>
-        <strong>Recommendation:</strong>
-        <span>Recommend low-dose aspirin (81 mg/day) starting before 16 weeks gestation.</span>
+      <aside class="patient-summary__recommendation" aria-label="Clinical recommendations">
+        @if (summaryRecommendedProblemState() !== 'dismissed') {
+          <div class="patient-summary__recommendation-row">
+            @if (summaryRecommendedProblemState() === 'added') {
+              <span
+                class="patient-summary__recommendation-badge patient-summary__recommendation-badge--success"
+                aria-hidden="true"
+              >
+                &#10003;
+              </span>
+              <strong class="patient-summary__recommendation-success" role="status">
+                Advanced Maternal Age added to Problem List
+              </strong>
+              <a
+                class="patient-summary__recommendation-link"
+                href="#problem-timeline"
+              >
+                View Problem List
+              </a>
+            } @else {
+              <span class="patient-summary__recommendation-badge" aria-hidden="true">Rx</span>
+              <strong>Recommendation:</strong>
+              <span>Add Advanced Maternal Age to Problem List.</span>
+              <span class="patient-summary__recommendation-actions">
+                <button
+                  class="patient-summary__recommendation-add"
+                  type="button"
+                  (click)="addSummaryRecommendedProblem()"
+                >
+                  <img src="assets/problem-dialog/add.svg" alt="" aria-hidden="true" />
+                  Add Problem
+                </button>
+                <button
+                  class="patient-summary__recommendation-dismiss"
+                  type="button"
+                  (click)="dismissSummaryRecommendedProblem()"
+                >
+                  Dismiss
+                </button>
+              </span>
+            }
+          </div>
+        }
+
+        <div class="patient-summary__recommendation-row">
+          <span class="patient-summary__recommendation-badge" aria-hidden="true">Rx</span>
+          <strong>Recommendation:</strong>
+          <span>Recommend low-dose aspirin (81 mg/day) starting before 16 weeks gestation.</span>
+        </div>
       </aside>
     </section>
 
@@ -861,9 +912,10 @@
                       "
                       [style.top.%]="vitalChartTooltipTop(chart, chartHover.pointIndex)"
                     >
-                      <strong>
+                      <strong>{{ vitalChartTooltipDate(chart, chartHover.pointIndex) }}</strong>
+                      <span class="vital-tooltip__data-context">
                         {{ vitalChartTooltipHeading(chart.xLabels[chartHover.pointIndex]) }}
-                      </strong>
+                      </span>
                       @for (series of chart.series; track $index) {
                         <span class="vital-tooltip__data-value" [style.color]="series.color">
                           @if (chart.series.length > 1 && series.label) {
@@ -1004,7 +1056,11 @@
       }
     </section>
 
-    <section class="problem-timeline" aria-labelledby="problem-timeline-title">
+    <section
+      id="problem-timeline"
+      class="problem-timeline"
+      aria-labelledby="problem-timeline-title"
+    >
       <header class="problem-timeline__header">
         <h2 id="problem-timeline-title">Problem List &amp; Timeline</h2>
 
@@ -2736,9 +2792,7 @@
                 [style.left.%]="resultChartTooltipLeft(pointIndex, chart.xLabels.length)"
                 [style.top.%]="resultChartTooltipTop(chart, pointIndex)"
               >
-                <strong>
-                  {{ resultChartTooltipHeading(chart.xLabels[pointIndex], chart.tooltipYear) }}
-                </strong>
+                <strong>{{ resultChartTooltipDate(chart, pointIndex) }}</strong>
                 @if (chart.tooltipContexts?.[pointIndex]; as context) {
                   <span class="result-tooltip__data-context">{{ context }}</span>
                 }
