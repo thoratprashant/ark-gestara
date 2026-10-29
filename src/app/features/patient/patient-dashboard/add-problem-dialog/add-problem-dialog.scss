@@ -179,6 +179,21 @@
   border-color: #0d9488;
 }
 
+.add-problem-dialog__problem-favorite {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.add-problem-dialog__problem-favorite:focus-visible {
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2);
+  outline: none;
+}
+
 .add-problem-dialog__problem-name {
   min-width: 0;
   overflow: hidden;

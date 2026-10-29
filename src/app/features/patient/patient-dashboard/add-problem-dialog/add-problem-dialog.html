@@ -46,22 +46,32 @@
             class="add-problem-dialog__list add-problem-dialog__list--favorites"
           >
             @for (problem of favorites; track problem.code) {
-              <button
+              <div
                 class="add-problem-dialog__problem-row d-flex align-items-center w-100 text-start"
-                type="button"
+                role="button"
+                tabindex="0"
                 [class.add-problem-dialog__problem-row--selected]="
                   selectedProblem()?.code === problem.code
                 "
                 [attr.aria-pressed]="selectedProblem()?.code === problem.code"
                 [attr.aria-label]="'Select ' + problem.name"
                 (click)="selectProblem(problem)"
+                (keydown)="handleProblemRowKeydown($event, problem)"
               >
-                <img
-                  class="add-problem-dialog__problem-star"
-                  src="assets/problem-dialog/star-filled.svg"
-                  alt=""
-                  aria-hidden="true"
-                />
+                <button
+                  class="add-problem-dialog__problem-favorite p-0 border-0"
+                  type="button"
+                  [attr.aria-label]="'Remove ' + problem.name + ' from My Favorites'"
+                  [attr.aria-pressed]="true"
+                  (click)="toggleProblemFavorite($event, problem)"
+                >
+                  <img
+                    class="add-problem-dialog__problem-star"
+                    src="assets/problem-dialog/star-filled.svg"
+                    alt=""
+                    aria-hidden="true"
+                  />
+                </button>
                 <span class="add-problem-dialog__problem-name flex-grow-1 fw-semibold">{{
                   problem.name
                 }}</span>
@@ -82,7 +92,7 @@
                     </svg>
                   </span>
                 }
-              </button>
+              </div>
             }
           </div>
         }
@@ -144,22 +154,40 @@
         @if (filteredProblemLibrary.length > 0) {
           <div class="add-problem-dialog__list add-problem-dialog__list--library">
             @for (problem of filteredProblemLibrary; track problem.code) {
-              <button
+              <div
                 class="add-problem-dialog__problem-row d-flex align-items-center w-100 text-start"
-                type="button"
+                role="button"
+                tabindex="0"
                 [class.add-problem-dialog__problem-row--selected]="
                   selectedProblem()?.code === problem.code
                 "
                 [attr.aria-pressed]="selectedProblem()?.code === problem.code"
                 [attr.aria-label]="'Select ' + problem.name"
                 (click)="selectProblem(problem)"
+                (keydown)="handleProblemRowKeydown($event, problem)"
               >
-                <img
-                  class="add-problem-dialog__problem-star"
-                  src="assets/problem-dialog/star-outline.svg"
-                  alt=""
-                  aria-hidden="true"
-                />
+                <button
+                  class="add-problem-dialog__problem-favorite p-0 border-0"
+                  type="button"
+                  [attr.aria-label]="
+                    (isFavorite(problem) ? 'Remove ' : 'Add ') +
+                    problem.name +
+                    (isFavorite(problem) ? ' from My Favorites' : ' to My Favorites')
+                  "
+                  [attr.aria-pressed]="isFavorite(problem)"
+                  (click)="toggleProblemFavorite($event, problem)"
+                >
+                  <img
+                    class="add-problem-dialog__problem-star"
+                    [src]="
+                      isFavorite(problem)
+                        ? 'assets/problem-dialog/star-filled.svg'
+                        : 'assets/problem-dialog/star-outline.svg'
+                    "
+                    alt=""
+                    aria-hidden="true"
+                  />
+                </button>
                 <span class="add-problem-dialog__problem-name flex-grow-1 fw-semibold">{{
                   problem.name
                 }}</span>
@@ -180,7 +208,7 @@
                     </svg>
                   </span>
                 }
-              </button>
+              </div>
             }
           </div>
           <p class="add-problem-dialog__hint m-0">Showing results from institution library</p>

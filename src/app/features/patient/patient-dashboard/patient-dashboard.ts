@@ -88,6 +88,15 @@ interface VitalTooltipPosition {
   width: number;
 }
 
+interface AnchoredTooltipPosition {
+  bottom: number | null;
+  left: number;
+  notchLeft: number;
+  placement: 'above' | 'below';
+  top: number | null;
+  width: number;
+}
+
 interface TooltipGlassFocusRect {
   bottom: number;
   left: number;
@@ -1021,15 +1030,31 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     const tooltip = this.activeVitalTooltip();
     return tooltip ? [tooltip] : [];
   });
-  readonly vitalTooltipPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 500 });
+  readonly vitalTooltipPosition = signal<AnchoredTooltipPosition>({
+    bottom: null,
+    left: 0,
+    notchLeft: 250,
+    placement: 'below',
+    top: 0,
+    width: 500,
+  });
+  readonly vitalTooltipMaxHeight = signal(420);
   readonly activeResultTooltip = signal<ResultTooltip | null>(null);
   readonly activeResultTooltipItems = computed(() => {
     const tooltip = this.activeResultTooltip();
     return tooltip ? [tooltip] : [];
   });
-  readonly resultTooltipPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 420 });
+  readonly resultTooltipPosition = signal<AnchoredTooltipPosition>({
+    bottom: null,
+    left: 0,
+    notchLeft: 210,
+    placement: 'below',
+    top: 0,
+    width: 420,
+  });
   readonly resultTooltipMaxHeight = signal(600);
   readonly resultChartHover = signal<number | null>(null);
+  readonly reviewedResultIds = signal<ReadonlySet<string>>(new Set());
   readonly riskAssessmentOpen = signal(false);
   readonly preEclampsiaRiskStatus = signal<PreEclampsiaRiskStatus>('high');
   readonly preEclampsiaRiskSummary = computed(
@@ -1037,7 +1062,14 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   );
   readonly recommendedProblemState = signal<RecommendedProblemState>('pending');
   readonly summaryRecommendedProblemState = signal<RecommendedProblemState>('pending');
-  readonly riskAssessmentPosition = signal<VitalTooltipPosition>({ left: 0, top: 0, width: 600 });
+  readonly riskAssessmentPosition = signal<AnchoredTooltipPosition>({
+    bottom: null,
+    left: 0,
+    notchLeft: 300,
+    placement: 'below',
+    top: 0,
+    width: 600,
+  });
   readonly riskAssessmentMaxHeight = signal(690);
   readonly deliveryWindowTooltipOpen = signal(false);
   readonly deliveryWindowTooltipPosition = signal<VitalTooltipPosition>({
@@ -1046,11 +1078,15 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     width: 300,
   });
   readonly eddTooltipOpen = signal(false);
-  readonly eddTooltipPosition = signal<VitalTooltipPosition>({
+  readonly eddTooltipPosition = signal<AnchoredTooltipPosition>({
+    bottom: null,
     left: 0,
+    notchLeft: 210,
+    placement: 'below',
     top: 0,
     width: 420,
   });
+  readonly eddTooltipMaxHeight = signal(560);
   readonly eddCalculationRows: readonly EddTooltipRow[] = [
     { label: 'Last Menstrual Period (LMP)', value: 'August 28, 2025' },
     { label: 'EDD by LMP', value: 'June 4, 2026' },
@@ -1063,11 +1099,15 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     { label: 'Based on', value: 'first trimester ultrasound' },
   ];
   readonly pregnancyHistoryTooltipOpen = signal(false);
-  readonly pregnancyHistoryTooltipPosition = signal<VitalTooltipPosition>({
+  readonly pregnancyHistoryTooltipPosition = signal<AnchoredTooltipPosition>({
+    bottom: null,
     left: 0,
+    notchLeft: 230,
+    placement: 'below',
     top: 0,
     width: 460,
   });
+  readonly pregnancyHistoryTooltipMaxHeight = signal(620);
   readonly pregnancyHistoryEntries: readonly PregnancyHistoryEntry[] = [
     {
       title: 'Pregnancy 1',
@@ -1348,18 +1388,28 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       return;
     }
 
-    const sectionBounds = section.getBoundingClientRect();
     const cardBounds = card.getBoundingClientRect();
-    const availableWidth = Math.max(sectionBounds.width - 24, 280);
-    const width = Math.min(tooltip.width, availableWidth);
-    const maximumLeft = Math.max(12, sectionBounds.width - width - 12);
-    const left = this.clamp(cardBounds.left - sectionBounds.left, 12, maximumLeft);
+    const viewportGap = 12;
+    const triggerGap = 10;
+    const width = Math.min(tooltip.width, Math.max(window.innerWidth - viewportGap * 2, 280));
+    const maximumLeft = Math.max(viewportGap, window.innerWidth - width - viewportGap);
+    const left = this.clamp(cardBounds.left, viewportGap, maximumLeft);
+    const preferredHeight = this.vitalTooltipPreferredHeight(tooltip);
+    const spaceBelow = Math.max(0, window.innerHeight - cardBounds.bottom - viewportGap);
+    const spaceAbove = Math.max(0, cardBounds.top - viewportGap);
+    const placement = spaceBelow >= preferredHeight || spaceBelow >= spaceAbove ? 'below' : 'above';
+    const availableHeight = placement === 'below' ? spaceBelow : spaceAbove;
+    const maxHeight = Math.max(0, Math.min(preferredHeight, availableHeight - triggerGap));
 
     this.vitalTooltipPosition.set({
+      bottom: placement === 'above' ? window.innerHeight - cardBounds.top + triggerGap : null,
       left,
-      top: cardBounds.bottom - sectionBounds.top + 6,
+      notchLeft: this.clamp(cardBounds.left + cardBounds.width / 2 - left, 20, width - 20),
+      placement,
+      top: placement === 'below' ? cardBounds.bottom + triggerGap : null,
       width,
     });
+    this.vitalTooltipMaxHeight.set(maxHeight);
     this.activeVitalTooltip.set(tooltip);
   }
 
@@ -1405,14 +1455,21 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     const cardBounds = card.getBoundingClientRect();
     const width = Math.min(tooltip.width, Math.max(window.innerWidth - 24, 280));
     const maximumLeft = Math.max(12, window.innerWidth - width - 12);
-    const top = Math.max(12, cardBounds.top);
+    const left = this.clamp(cardBounds.right - width, 12, maximumLeft);
+    const verticalPosition = this.viewportTooltipVerticalPosition(
+      cardBounds,
+      this.resultTooltipPreferredHeight(tooltip),
+    );
 
     this.resultTooltipPosition.set({
-      left: this.clamp(cardBounds.right - width, 12, maximumLeft),
-      top,
+      bottom: verticalPosition.bottom,
+      left,
+      notchLeft: this.clamp((cardBounds.left + cardBounds.right) / 2 - left, 20, width - 20),
+      placement: verticalPosition.placement,
+      top: verticalPosition.top,
       width,
     });
-    this.resultTooltipMaxHeight.set(Math.max(180, window.innerHeight - top - 12));
+    this.resultTooltipMaxHeight.set(verticalPosition.maxHeight);
     this.setTooltipGlassFocus(cardBounds);
     this.activeResultTooltip.set(tooltip);
   }
@@ -1436,6 +1493,20 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.cancelResultTooltipHide();
   }
 
+  markResultReviewed(resultId: string, event: Event): void {
+    event.stopPropagation();
+
+    if (this.reviewedResultIds().has(resultId)) {
+      return;
+    }
+
+    this.reviewedResultIds.update((reviewedIds) => {
+      const nextReviewedIds = new Set(reviewedIds);
+      nextReviewedIds.add(resultId);
+      return nextReviewedIds;
+    });
+  }
+
   showRiskAssessment(event: Event): void {
     this.cancelRiskAssessmentHide();
     this.hideVitalTooltip();
@@ -1453,14 +1524,18 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     const triggerBounds = trigger.getBoundingClientRect();
     const width = Math.min(600, Math.max(window.innerWidth - 24, 280));
     const maximumLeft = Math.max(12, window.innerWidth - width - 12);
-    const top = triggerBounds.bottom + 8;
+    const verticalPosition = this.viewportTooltipVerticalPosition(triggerBounds, 690);
+    const left = this.clamp(triggerBounds.right - width, 12, maximumLeft);
 
     this.riskAssessmentPosition.set({
-      left: this.clamp(triggerBounds.right - width, 12, maximumLeft),
-      top,
+      bottom: verticalPosition.bottom,
+      left,
+      notchLeft: this.clamp((triggerBounds.left + triggerBounds.right) / 2 - left, 20, width - 20),
+      placement: verticalPosition.placement,
+      top: verticalPosition.top,
       width,
     });
-    this.riskAssessmentMaxHeight.set(Math.max(180, window.innerHeight - top - 12));
+    this.riskAssessmentMaxHeight.set(verticalPosition.maxHeight);
     this.setTooltipGlassFocus(triggerBounds);
     this.riskAssessmentOpen.set(true);
   }
@@ -1574,13 +1649,18 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     const width = Math.min(420, Math.max(window.innerWidth - 24, 280));
     const maximumLeft = Math.max(12, window.innerWidth - width - 12);
     const preferredLeft = triggerBounds.right - width;
-    const top = triggerBounds.bottom + 8;
+    const verticalPosition = this.viewportTooltipVerticalPosition(triggerBounds, 560);
+    const left = this.clamp(preferredLeft, 12, maximumLeft);
 
     this.eddTooltipPosition.set({
-      left: this.clamp(preferredLeft, 12, maximumLeft),
-      top,
+      bottom: verticalPosition.bottom,
+      left,
+      notchLeft: this.clamp((triggerBounds.left + triggerBounds.right) / 2 - left, 20, width - 20),
+      placement: verticalPosition.placement,
+      top: verticalPosition.top,
       width,
     });
+    this.eddTooltipMaxHeight.set(verticalPosition.maxHeight);
     this.setTooltipGlassFocus(triggerBounds);
     this.eddTooltipOpen.set(true);
   }
@@ -1620,13 +1700,18 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     const width = Math.min(460, Math.max(window.innerWidth - 24, 300));
     const maximumLeft = Math.max(12, window.innerWidth - width - 12);
     const preferredLeft = triggerBounds.right - width;
-    const top = triggerBounds.bottom + 8;
+    const verticalPosition = this.viewportTooltipVerticalPosition(triggerBounds, 620);
+    const left = this.clamp(preferredLeft, 12, maximumLeft);
 
     this.pregnancyHistoryTooltipPosition.set({
-      left: this.clamp(preferredLeft, 12, maximumLeft),
-      top,
+      bottom: verticalPosition.bottom,
+      left,
+      notchLeft: this.clamp((triggerBounds.left + triggerBounds.right) / 2 - left, 20, width - 20),
+      placement: verticalPosition.placement,
+      top: verticalPosition.top,
       width,
     });
+    this.pregnancyHistoryTooltipMaxHeight.set(verticalPosition.maxHeight);
     this.setTooltipGlassFocus(triggerBounds);
     this.pregnancyHistoryTooltipOpen.set(true);
   }
@@ -2859,6 +2944,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   @HostListener('window:scroll')
   onWindowScroll(): void {
+    if (this.activeVitalTooltip()) {
+      this.hideVitalTooltip();
+    }
+
     if (this.activeResultTooltip()) {
       this.hideResultTooltip();
     }
@@ -3048,6 +3137,47 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       right: this.clamp(right + padding, 0, window.innerWidth),
       bottom: this.clamp(bottom + padding, 0, window.innerHeight),
     });
+  }
+
+  private viewportTooltipVerticalPosition(
+    triggerBounds: DOMRect,
+    preferredHeight: number,
+  ): {
+    bottom: number | null;
+    maxHeight: number;
+    placement: 'above' | 'below';
+    top: number | null;
+  } {
+    const viewportGap = 12;
+    const triggerGap = 8;
+    const spaceBelow = Math.max(0, window.innerHeight - triggerBounds.bottom - viewportGap);
+    const spaceAbove = Math.max(0, triggerBounds.top - viewportGap);
+    const openBelow = spaceBelow >= preferredHeight || spaceBelow >= spaceAbove;
+    const availableHeight = openBelow ? spaceBelow : spaceAbove;
+    const maxHeight = Math.max(0, Math.min(preferredHeight, availableHeight - triggerGap));
+
+    return {
+      bottom: openBelow ? null : window.innerHeight - triggerBounds.top + triggerGap,
+      maxHeight,
+      placement: openBelow ? 'below' : 'above',
+      top: openBelow ? triggerBounds.bottom + triggerGap : null,
+    };
+  }
+
+  private vitalTooltipPreferredHeight(tooltip: VitalTooltip): number {
+    if (tooltip.history) {
+      return 360;
+    }
+
+    if ((tooltip.charts?.length ?? 0) > 1) {
+      return 420;
+    }
+
+    return 320;
+  }
+
+  private resultTooltipPreferredHeight(tooltip: ResultTooltip): number {
+    return tooltip.rows ? 620 : 430;
   }
 
   private updateTimelineChip(

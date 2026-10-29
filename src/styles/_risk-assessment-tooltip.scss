@@ -1,18 +1,74 @@
 .risk-assessment-tooltip {
+  --risk-assessment-tooltip-border: #e3ded9;
+
   position: fixed;
   z-index: 1250;
-  display: flex;
-  flex-direction: column;
   max-width: calc(100vw - 1.5rem);
-  overflow: auto;
+  overflow: visible;
   color: #171f26;
   background: #fff;
-  border: 1px solid #e3ded9;
+  border: 1px solid var(--risk-assessment-tooltip-border);
   border-radius: 1.5rem;
   box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.1);
   font-family: 'Plus Jakarta Sans', sans-serif;
   transform-origin: top right;
   animation: risk-assessment-open 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.risk-assessment-tooltip[data-placement='above'] {
+  transform-origin: bottom right;
+  animation-name: risk-assessment-open-above;
+}
+
+.risk-assessment-tooltip::before {
+  position: absolute;
+  left: var(--risk-assessment-tooltip-notch-left);
+  z-index: 2;
+  width: 0.875rem;
+  height: 0.875rem;
+  background: #fff;
+  content: '';
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.risk-assessment-tooltip[data-placement='below']::before {
+  top: -0.5rem;
+  border-top: 1px solid var(--risk-assessment-tooltip-border);
+  border-left: 1px solid var(--risk-assessment-tooltip-border);
+}
+
+.risk-assessment-tooltip[data-placement='above']::before {
+  bottom: -0.5rem;
+  border-right: 1px solid var(--risk-assessment-tooltip-border);
+  border-bottom: 1px solid var(--risk-assessment-tooltip-border);
+}
+
+.risk-assessment-tooltip__surface {
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: inherit;
+  overscroll-behavior: contain;
+  scrollbar-color: #8b8b8b transparent;
+  scrollbar-width: thin;
+}
+
+.risk-assessment-tooltip__surface::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+.risk-assessment-tooltip__surface::-webkit-scrollbar-track {
+  margin-block: 0.75rem;
+  background: transparent;
+}
+
+.risk-assessment-tooltip__surface::-webkit-scrollbar-thumb {
+  background: #8b8b8b;
+  border: 2px solid #fff;
+  border-radius: 999px;
 }
 
 .risk-assessment-tooltip__header {
@@ -404,6 +460,18 @@
   from {
     opacity: 0;
     transform: translateY(-0.5rem) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes risk-assessment-open-above {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.97);
   }
 
   to {

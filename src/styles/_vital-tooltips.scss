@@ -52,19 +52,77 @@
 }
 
 .vital-tooltip {
-  position: absolute;
-  z-index: 1100;
-  max-width: calc(100% - 1.5rem);
-  padding: 1.5rem;
+  --vital-tooltip-border: #e3ded9;
+
+  position: fixed;
+  z-index: 1300;
+  box-sizing: border-box;
+  max-width: calc(100vw - 1.5rem);
+  overflow: visible;
   color: #475569;
   background: #fff;
-  border: 1px solid #e3ded9;
+  border: 1px solid var(--vital-tooltip-border);
   border-radius: 1.5rem;
   box-shadow: 0 0.5rem 0.75rem rgba(0, 0, 0, 0.08);
   font-family: 'Plus Jakarta Sans', sans-serif;
   pointer-events: auto;
-  transform-origin: top left;
+  transform-origin: top center;
   animation: vital-tooltip-open 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.vital-tooltip[data-placement='above'] {
+  transform-origin: bottom center;
+  animation-name: vital-tooltip-open-above;
+}
+
+.vital-tooltip::before {
+  position: absolute;
+  left: var(--vital-tooltip-notch-left);
+  z-index: 1;
+  width: 0.875rem;
+  height: 0.875rem;
+  background: #fff;
+  content: '';
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.vital-tooltip[data-placement='below']::before {
+  top: -0.5rem;
+  border-top: 1px solid var(--vital-tooltip-border);
+  border-left: 1px solid var(--vital-tooltip-border);
+}
+
+.vital-tooltip[data-placement='above']::before {
+  bottom: -0.5rem;
+  border-right: 1px solid var(--vital-tooltip-border);
+  border-bottom: 1px solid var(--vital-tooltip-border);
+}
+
+.vital-tooltip__content {
+  box-sizing: border-box;
+  max-height: inherit;
+  padding: 1.5rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: inherit;
+  overscroll-behavior: contain;
+  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-width: thin;
+}
+
+.vital-tooltip__content::-webkit-scrollbar {
+  width: 0.375rem;
+}
+
+.vital-tooltip__content::-webkit-scrollbar-track {
+  margin-block: 1rem;
+  background: transparent;
+}
+
+.vital-tooltip__content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
 }
 
 .vital-tooltip h3 {
@@ -93,7 +151,7 @@
 }
 
 .vital-tooltip--blood-pressure {
-  padding-block: 1.5rem;
+  min-height: 0;
 }
 
 .vital-tooltip--blood-pressure .vital-tooltip__chart-block h4 {
@@ -318,6 +376,18 @@
   }
 }
 
+@keyframes vital-tooltip-open-above {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes vital-chart-data-tooltip-in {
   from {
     opacity: 0;
@@ -409,8 +479,11 @@
 
 @media (max-width: 35.999rem) {
   .vital-tooltip {
-    padding: 1rem;
     border-radius: 1rem;
+  }
+
+  .vital-tooltip__content {
+    padding: 1rem;
   }
 }
 

@@ -49,10 +49,11 @@ export class AddProblemDialog {
     { value: 'F33.0', label: 'Major depressive disorder, recurrent, mild' },
   ];
 
-  filteredProblemLibrary = this.problemLibrary;
+  filteredProblemLibrary = [...this.problemLibrary];
   favoritesExpanded = true;
   saveToFavorites = false;
   readonly selectedProblem = signal<ProblemOption | null>(null);
+  private problemLibraryQuery = '';
 
   readonly form = new FormGroup({
     name: new FormControl('', {
@@ -65,9 +66,13 @@ export class AddProblemDialog {
   constructor(private readonly dialogRef: MatDialogRef<AddProblemDialog>) {}
 
   filterProblemLibrary(event: Event): void {
-    const query = (event.target as HTMLInputElement).value.trim().toLocaleLowerCase();
+    this.problemLibraryQuery = (event.target as HTMLInputElement).value.trim().toLocaleLowerCase();
+    this.refreshFilteredProblemLibrary();
+  }
+
+  private refreshFilteredProblemLibrary(): void {
     this.filteredProblemLibrary = this.problemLibrary.filter((problem) =>
-      `${problem.name} ${problem.code}`.toLocaleLowerCase().includes(query),
+      `${problem.name} ${problem.code}`.toLocaleLowerCase().includes(this.problemLibraryQuery),
     );
   }
 
@@ -80,8 +85,50 @@ export class AddProblemDialog {
   }
 
   selectProblem(problem: ProblemOption): void {
+    if (this.selectedProblem()?.code === problem.code) {
+      this.clearProblemSelection();
+      return;
+    }
+
     this.selectedProblem.set(problem);
     this.form.reset({ name: '', icd10Code: '' });
+  }
+
+  isFavorite(problem: ProblemOption): boolean {
+    return this.favorites.some((favorite) => favorite.code === problem.code);
+  }
+
+  toggleProblemFavorite(event: Event, problem: ProblemOption): void {
+    event.stopPropagation();
+
+    const favoriteIndex = this.favorites.findIndex((favorite) => favorite.code === problem.code);
+
+    if (favoriteIndex >= 0) {
+      this.favorites.splice(favoriteIndex, 1);
+      if (!this.problemLibrary.some((libraryProblem) => libraryProblem.code === problem.code)) {
+        this.problemLibrary.push(problem);
+      }
+      this.refreshFilteredProblemLibrary();
+      return;
+    }
+
+    this.favorites.push(problem);
+    const libraryIndex = this.problemLibrary.findIndex(
+      (libraryProblem) => libraryProblem.code === problem.code,
+    );
+    if (libraryIndex >= 0) {
+      this.problemLibrary.splice(libraryIndex, 1);
+    }
+    this.refreshFilteredProblemLibrary();
+  }
+
+  handleProblemRowKeydown(event: KeyboardEvent, problem: ProblemOption): void {
+    if (event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' ')) {
+      return;
+    }
+
+    event.preventDefault();
+    this.selectProblem(problem);
   }
 
   clearProblemSelection(): void {

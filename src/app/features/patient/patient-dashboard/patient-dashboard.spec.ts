@@ -295,7 +295,7 @@ describe('PatientDashboard timeline', () => {
     dialog.closeAll();
   });
 
-  it('selects favorite and library problems and submits the active selection', () => {
+  it('toggles favorite and library selections and submits the active selection', () => {
     const fixture = TestBed.createComponent(PatientDashboard);
     const dialog = TestBed.inject(MatDialog);
     fixture.detectChanges();
@@ -329,12 +329,131 @@ describe('PatientDashboard timeline', () => {
     expect(library.getAttribute('aria-pressed')).toBe('true');
     expect(dialogElement.querySelectorAll('.add-problem-dialog__selected-check')).toHaveLength(1);
 
+    library.click();
+    fixture.detectChanges();
+    expect(library.getAttribute('aria-pressed')).toBe('false');
+    expect(dialogElement.querySelector('.add-problem-dialog__selected-check')).toBeNull();
+
+    library.click();
+    fixture.detectChanges();
+
     dialogComponent.submit();
     expect(closeSpy).toHaveBeenCalledWith({
       icd10Code: 'J20.9',
       name: 'Acute Bronchitis',
       saveToFavorites: false,
     });
+  });
+
+  it('moves problems between My Favorites and Problem Library using each row star', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dialog = TestBed.inject(MatDialog);
+    fixture.detectChanges();
+
+    const addProblemButton = fixture.nativeElement.querySelector(
+      '.problem-timeline__add-problem',
+    ) as HTMLButtonElement;
+    addProblemButton.click();
+    fixture.detectChanges();
+
+    const dialogRef = dialog.openDialogs[0];
+    const dialogElement = dialogRef.componentRef?.location.nativeElement as HTMLElement;
+    const dialogComponent = dialogRef.componentInstance as AddProblemDialog;
+    const favoriteRow = dialogElement.querySelector(
+      '.add-problem-dialog__list--favorites .add-problem-dialog__problem-row',
+    ) as HTMLElement;
+    const initialFavoriteName = favoriteRow.querySelector(
+      '.add-problem-dialog__problem-name',
+    )?.textContent;
+    const initialFavoriteStar = favoriteRow.querySelector(
+      '.add-problem-dialog__problem-favorite',
+    ) as HTMLButtonElement;
+
+    initialFavoriteStar.click();
+    fixture.detectChanges();
+
+    expect(
+      Array.from(
+        dialogElement.querySelectorAll(
+          '.add-problem-dialog__list--favorites .add-problem-dialog__problem-row',
+        ),
+      ).some((row) => row.textContent?.includes(initialFavoriteName ?? '')),
+    ).toBe(false);
+    const movedToLibrary = Array.from(
+      dialogElement.querySelectorAll(
+        '.add-problem-dialog__list--library .add-problem-dialog__problem-row',
+      ),
+    ).find((row) => row.textContent?.includes(initialFavoriteName ?? '')) as HTMLElement;
+    expect(movedToLibrary).toBeTruthy();
+    expect(
+      movedToLibrary
+        .querySelector('.add-problem-dialog__problem-favorite')
+        ?.getAttribute('aria-pressed'),
+    ).toBe('false');
+
+    const libraryRow = dialogElement.querySelector(
+      '.add-problem-dialog__list--library .add-problem-dialog__problem-row',
+    ) as HTMLElement;
+    const libraryProblemName = libraryRow.querySelector(
+      '.add-problem-dialog__problem-name',
+    )?.textContent;
+    const libraryStar = libraryRow.querySelector(
+      '.add-problem-dialog__problem-favorite',
+    ) as HTMLButtonElement;
+
+    libraryStar.click();
+    fixture.detectChanges();
+
+    expect(dialogComponent.selectedProblem()).toBeNull();
+    expect(
+      Array.from(
+        dialogElement.querySelectorAll(
+          '.add-problem-dialog__list--library .add-problem-dialog__problem-row',
+        ),
+      ).some((row) => row.textContent?.includes(libraryProblemName ?? '')),
+    ).toBe(false);
+
+    const addedFavorite = Array.from(
+      dialogElement.querySelectorAll(
+        '.add-problem-dialog__list--favorites .add-problem-dialog__problem-row',
+      ),
+    ).find((row) => row.textContent?.includes(libraryProblemName ?? '')) as HTMLElement;
+    expect(addedFavorite).toBeTruthy();
+    const favoriteStar = addedFavorite.querySelector(
+      '.add-problem-dialog__problem-favorite',
+    ) as HTMLButtonElement;
+    expect(favoriteStar.getAttribute('aria-pressed')).toBe('true');
+    expect(favoriteStar.querySelector('img')?.getAttribute('src')).toBe(
+      'assets/problem-dialog/star-filled.svg',
+    );
+
+    favoriteStar.click();
+    fixture.detectChanges();
+
+    expect(dialogComponent.selectedProblem()).toBeNull();
+    const returnedLibraryRow = Array.from(
+      dialogElement.querySelectorAll(
+        '.add-problem-dialog__list--library .add-problem-dialog__problem-row',
+      ),
+    ).find((row) => row.textContent?.includes(libraryProblemName ?? '')) as HTMLElement;
+    expect(returnedLibraryRow).toBeTruthy();
+    expect(
+      returnedLibraryRow
+        .querySelector('.add-problem-dialog__problem-favorite')
+        ?.getAttribute('aria-pressed'),
+    ).toBe('false');
+    expect(returnedLibraryRow.querySelector('img')?.getAttribute('src')).toBe(
+      'assets/problem-dialog/star-outline.svg',
+    );
+    expect(
+      Array.from(
+        dialogElement.querySelectorAll(
+          '.add-problem-dialog__list--favorites .add-problem-dialog__problem-row',
+        ),
+      ).some((row) => row.textContent?.includes(libraryProblemName ?? '')),
+    ).toBe(false);
+
+    dialog.closeAll();
   });
 
   it('shows a configuration warning when the problem library has no matching problem', () => {
@@ -986,7 +1105,15 @@ describe('PatientDashboard timeline', () => {
     const chart = tooltip?.charts?.[0];
     expect(tooltip?.title).toBe('Fetal 1 - Heart Rate Trend');
     expect(chart?.unit).toBe('bpm');
-    expect(dashboard.vitalTooltipPosition()).toEqual({ left: 120, top: 166, width: 520 });
+    expect(dashboard.vitalTooltipPosition()).toEqual({
+      bottom: null,
+      left: 120,
+      notchLeft: 90,
+      placement: 'below',
+      top: 270,
+      width: 520,
+    });
+    expect(dashboard.vitalTooltipMaxHeight()).toBe(320);
     expect(dashboard.tooltipGlassActive()).toBe(false);
     expect(chart && dashboard.vitalChartPath(chart, chart.series[0])).toMatch(/^M42,/);
 
@@ -1034,6 +1161,39 @@ describe('PatientDashboard timeline', () => {
     vi.useRealTimers();
   });
 
+  it('opens a vital tooltip above its card and keeps its pointer inside the viewport', () => {
+    const dashboard = new PatientDashboard();
+    const section = document.createElement('section');
+    const card = document.createElement('article');
+    vi.spyOn(card, 'getBoundingClientRect').mockReturnValue({
+      left: 800,
+      right: 980,
+      top: 600,
+      bottom: 700,
+      width: 180,
+      height: 100,
+    } as DOMRect);
+    (
+      dashboard as unknown as {
+        vitalSigns: ElementRef<HTMLElement>;
+      }
+    ).vitalSigns = new ElementRef(section);
+
+    dashboard.showVitalTooltip('heart-rate-1', {
+      currentTarget: card,
+    } as unknown as Event);
+
+    expect(dashboard.vitalTooltipPosition()).toEqual({
+      bottom: 178,
+      left: 492,
+      notchLeft: 398,
+      placement: 'above',
+      top: null,
+      width: 520,
+    });
+    expect(dashboard.vitalTooltipMaxHeight()).toBe(320);
+  });
+
   it('opens each Figma result tooltip at the top-right edge of its result card', () => {
     vi.useFakeTimers();
     const dashboard = new PatientDashboard();
@@ -1049,7 +1209,15 @@ describe('PatientDashboard timeline', () => {
 
     expect(dashboard.activeResultTooltip()?.title).toBe('Complete Blood Count (CBC)');
     expect(dashboard.activeResultTooltip()?.rows).toHaveLength(14);
-    expect(dashboard.resultTooltipPosition()).toEqual({ left: 180, top: 200, width: 420 });
+    expect(dashboard.resultTooltipPosition()).toEqual({
+      bottom: null,
+      left: 180,
+      notchLeft: 180,
+      placement: 'below',
+      top: 368,
+      width: 420,
+    });
+    expect(dashboard.resultTooltipMaxHeight()).toBe(388);
     expect(dashboard.tooltipGlassActive()).toBe(true);
     expect(dashboard.tooltipGlassFocusRect()).toEqual({
       left: 114,
@@ -1067,7 +1235,14 @@ describe('PatientDashboard timeline', () => {
     expect(bloodPressureChart?.unit).toBe('mmHg');
     expect(bloodPressureChart?.tooltipContexts?.[2]).toBe('Week 28');
     expect(bloodPressureChart?.tooltipDates?.[2]).toBe('Mar 24, 2026');
-    expect(dashboard.resultTooltipPosition()).toEqual({ left: 80, top: 200, width: 520 });
+    expect(dashboard.resultTooltipPosition()).toEqual({
+      bottom: null,
+      left: 80,
+      notchLeft: 280,
+      placement: 'below',
+      top: 368,
+      width: 520,
+    });
 
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
     vi.spyOn(svg, 'getBoundingClientRect').mockReturnValue({ left: 0, width: 472 } as DOMRect);
@@ -1100,12 +1275,80 @@ describe('PatientDashboard timeline', () => {
       'Elevated fasting readings: 50%',
       'Elevated post-prandial readings: 0%',
     ]);
-    expect(dashboard.resultTooltipPosition()).toEqual({ left: 80, top: 200, width: 520 });
+    expect(dashboard.resultTooltipPosition()).toEqual({
+      bottom: null,
+      left: 80,
+      notchLeft: 280,
+      placement: 'below',
+      top: 368,
+      width: 520,
+    });
 
     dashboard.scheduleResultTooltipHide();
     vi.advanceTimersByTime(180);
     expect(dashboard.activeResultTooltip()).toBeNull();
     vi.useRealTimers();
+  });
+
+  it('marks each result reviewed once and keeps the reviewed state', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dashboard = fixture.componentInstance;
+    fixture.detectChanges();
+
+    const buttons = Array.from(
+      fixture.nativeElement.querySelectorAll('.result-card .reviewed-button'),
+    ) as HTMLButtonElement[];
+    const cbcButton = buttons[0];
+
+    expect(cbcButton.textContent?.trim()).toBe('Mark Reviewed');
+
+    cbcButton.click();
+    fixture.detectChanges();
+
+    const firstResultCard = fixture.nativeElement.querySelector('.result-card') as HTMLElement;
+    const reviewedLabel = firstResultCard.querySelector('.result-reviewed-label') as HTMLElement;
+
+    expect(firstResultCard.querySelector('.reviewed-button')).toBeNull();
+    expect(reviewedLabel.textContent?.trim()).toBe('Reviewed');
+    expect(reviewedLabel.getAttribute('role')).toBe('status');
+    expect(reviewedLabel.querySelector('img')?.getAttribute('src')).toBe(
+      'assets/timeline-status-tooltip/reviewed-check.svg',
+    );
+    expect(dashboard.reviewedResultIds()).toEqual(new Set(['cbc']));
+
+    dashboard.markResultReviewed('cbc', new Event('click'));
+    fixture.detectChanges();
+
+    expect(firstResultCard.querySelector('.result-reviewed-label')?.textContent?.trim()).toBe(
+      'Reviewed',
+    );
+    expect(dashboard.reviewedResultIds()).toEqual(new Set(['cbc']));
+    expect(buttons[1].textContent?.trim()).toBe('Mark Reviewed');
+  });
+
+  it('opens a result tooltip above a card near the viewport bottom', () => {
+    const dashboard = new PatientDashboard();
+    const card = document.createElement('article');
+    vi.spyOn(card, 'getBoundingClientRect').mockReturnValue({
+      left: 500,
+      right: 980,
+      top: 600,
+      bottom: 700,
+      width: 480,
+      height: 100,
+    } as DOMRect);
+
+    dashboard.showResultTooltip('home-bp', { currentTarget: card } as unknown as Event);
+
+    expect(dashboard.resultTooltipPosition()).toEqual({
+      bottom: 176,
+      left: 460,
+      notchLeft: 280,
+      placement: 'above',
+      top: null,
+      width: 520,
+    });
+    expect(dashboard.resultTooltipMaxHeight()).toBe(430);
   });
 
   it('opens the pre-eclampsia assessment below the high-risk summary fact', () => {
@@ -1124,7 +1367,14 @@ describe('PatientDashboard timeline', () => {
     dashboard.showRiskAssessment({ currentTarget: riskFact } as unknown as Event);
 
     expect(dashboard.riskAssessmentOpen()).toBe(true);
-    expect(dashboard.riskAssessmentPosition()).toEqual({ left: 300, top: 128, width: 600 });
+    expect(dashboard.riskAssessmentPosition()).toEqual({
+      bottom: null,
+      left: 300,
+      notchLeft: 530,
+      placement: 'below',
+      top: 128,
+      width: 600,
+    });
     expect(dashboard.tooltipGlassFocusRect()).toEqual({
       left: 754,
       right: 906,

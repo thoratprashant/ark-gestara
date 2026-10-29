@@ -413,11 +413,17 @@
         (pointerdown)="keepRiskAssessmentOpen()"
         (change)="keepRiskAssessmentOpen()"
         (keydown.escape)="hideRiskAssessment()"
+        [attr.data-placement]="riskAssessmentPosition().placement"
+        [style.bottom.px]="riskAssessmentPosition().bottom"
         [style.left.px]="riskAssessmentPosition().left"
         [style.top.px]="riskAssessmentPosition().top"
         [style.width.px]="riskAssessmentPosition().width"
         [style.max-height.px]="riskAssessmentMaxHeight()"
+        [style.--risk-assessment-tooltip-notch-left]="
+          riskAssessmentPosition().notchLeft + 'px'
+        "
       >
+        <div class="risk-assessment-tooltip__surface">
         <header class="risk-assessment-tooltip__header">
           <div>
             <h2>Pre-eclampsia Risk Assessment</h2>
@@ -531,6 +537,7 @@
           <button type="button" (click)="hideRiskAssessment()">Cancel</button>
           <button type="button" (click)="hideRiskAssessment()">Save Assessment</button>
         </footer>
+        </div>
       </aside>
     }
 
@@ -540,7 +547,6 @@
         <p class="">Recorded Mar 28, 2026</p>
       </div>
       
-
       <div class="vital-signs__scroller" tabindex="0">
         <div class="vital-signs__list">
           <article
@@ -751,200 +757,206 @@
           [attr.data-tooltip-id]="tooltip.id"
           (mouseenter)="keepVitalTooltipOpen()"
           (mouseleave)="scheduleVitalTooltipHide()"
+          [attr.data-placement]="vitalTooltipPosition().placement"
+          [style.bottom.px]="vitalTooltipPosition().bottom"
           [style.left.px]="vitalTooltipPosition().left"
           [style.top.px]="vitalTooltipPosition().top"
           [style.width.px]="vitalTooltipPosition().width"
+          [style.max-height.px]="vitalTooltipMaxHeight()"
+          [style.--vital-tooltip-notch-left]="vitalTooltipPosition().notchLeft + 'px'"
         >
-          <h3>{{ tooltip.title }}</h3>
+          <div class="vital-tooltip__content">
+            <h3>{{ tooltip.title }}</h3>
 
-          @if (tooltip.subtitle) {
-            <p class="vital-tooltip__subtitle">{{ tooltip.subtitle }}</p>
-          }
+            @if (tooltip.subtitle) {
+              <p class="vital-tooltip__subtitle">{{ tooltip.subtitle }}</p>
+            }
 
-          @if (tooltip.history) {
-            <ol class="vital-tooltip__history">
-              @for (item of tooltip.history; track item.week; let historyIndex = $index) {
-                <li [style.animation-delay.ms]="historyIndex * 65">
-                  <strong>{{ item.week }}</strong>
-                  <span>{{ item.detail }}</span>
-                </li>
-              }
-            </ol>
-          }
+            @if (tooltip.history) {
+              <ol class="vital-tooltip__history">
+                @for (item of tooltip.history; track item.week; let historyIndex = $index) {
+                  <li [style.animation-delay.ms]="historyIndex * 65">
+                    <strong>{{ item.week }}</strong>
+                    <span>{{ item.detail }}</span>
+                  </li>
+                }
+              </ol>
+            }
 
-          @for (chart of tooltip.charts ?? []; track $index; let chartIndex = $index) {
-            <div class="vital-tooltip__chart-block">
-              @if (chart.label) {
-                <h4>{{ chart.label }}</h4>
-              }
+            @for (chart of tooltip.charts ?? []; track $index; let chartIndex = $index) {
+              <div class="vital-tooltip__chart-block">
+                @if (chart.label) {
+                  <h4>{{ chart.label }}</h4>
+                }
 
-              <div class="vital-tooltip__chart-wrap">
-                <svg
-                  class="vital-tooltip__chart"
-                  [attr.viewBox]="vitalChartViewBox(chart)"
-                  role="img"
-                  [attr.aria-label]="chart.label || tooltip.title"
-                  (mousemove)="updateVitalChartHover($event, chart, chartIndex)"
-                  (mouseleave)="clearVitalChartHover(chartIndex)"
-                >
-                  @if (chart.normalRange) {
-                    <rect
-                      class="vital-tooltip__normal-range"
-                      x="42"
-                      [attr.y]="vitalChartY(chart.normalRange.max, chart)"
-                      width="360"
-                      [attr.height]="vitalChartRangeHeight(chart)"
-                      [attr.fill]="chart.normalRange.color || 'rgba(13, 148, 136, 0.08)'"
-                    ></rect>
-                  }
+                <div class="vital-tooltip__chart-wrap">
+                  <svg
+                    class="vital-tooltip__chart"
+                    [attr.viewBox]="vitalChartViewBox(chart)"
+                    role="img"
+                    [attr.aria-label]="chart.label || tooltip.title"
+                    (mousemove)="updateVitalChartHover($event, chart, chartIndex)"
+                    (mouseleave)="clearVitalChartHover(chartIndex)"
+                  >
+                    @if (chart.normalRange) {
+                      <rect
+                        class="vital-tooltip__normal-range"
+                        x="42"
+                        [attr.y]="vitalChartY(chart.normalRange.max, chart)"
+                        width="360"
+                        [attr.height]="vitalChartRangeHeight(chart)"
+                        [attr.fill]="chart.normalRange.color || 'rgba(13, 148, 136, 0.08)'"
+                      ></rect>
+                    }
 
-                  @for (tick of chart.yTicks; track tick) {
-                    <line
-                      class="vital-tooltip__grid-line"
-                      x1="42"
-                      x2="402"
-                      [attr.y1]="vitalChartY(tick, chart)"
-                      [attr.y2]="vitalChartY(tick, chart)"
-                    ></line>
-                    <text
-                      class="vital-tooltip__axis-label"
-                      x="36"
-                      text-anchor="end"
-                      [attr.y]="vitalChartY(tick, chart) + 4"
-                    >
-                      {{ tick }}
-                    </text>
-                  }
-
-                  @for (label of chart.xLabels; track label; let labelIndex = $index) {
-                    @if (chart.showVerticalGrid) {
+                    @for (tick of chart.yTicks; track tick) {
                       <line
                         class="vital-tooltip__grid-line"
-                        y1="10"
-                        [attr.y2]="vitalChartBottom(chart)"
-                        [attr.x1]="vitalChartX(labelIndex, chart.xLabels.length)"
-                        [attr.x2]="vitalChartX(labelIndex, chart.xLabels.length)"
+                        x1="42"
+                        x2="402"
+                        [attr.y1]="vitalChartY(tick, chart)"
+                        [attr.y2]="vitalChartY(tick, chart)"
                       ></line>
-                    }
-                    <text
-                      class="vital-tooltip__axis-label"
-                      [attr.y]="vitalChartAxisY(chart)"
-                      text-anchor="middle"
-                      [attr.x]="vitalChartX(labelIndex, chart.xLabels.length)"
-                    >
-                      {{ label }}
-                    </text>
-                  }
-
-                  @for (threshold of chart.thresholds ?? []; track threshold.value) {
-                    <line
-                      class="vital-tooltip__threshold"
-                      x1="42"
-                      x2="402"
-                      [attr.y1]="vitalChartY(threshold.value, chart)"
-                      [attr.y2]="vitalChartY(threshold.value, chart)"
-                      [attr.stroke]="threshold.color"
-                    ></line>
-                    @if (threshold.label) {
                       <text
-                        class="vital-tooltip__threshold-label"
-                        x="398"
+                        class="vital-tooltip__axis-label"
+                        x="36"
                         text-anchor="end"
-                        [attr.y]="vitalChartY(threshold.value, chart) + 3"
-                        [attr.fill]="threshold.color"
+                        [attr.y]="vitalChartY(tick, chart) + 4"
                       >
-                        {{ threshold.label }}
+                        {{ tick }}
                       </text>
                     }
-                  }
 
-                  @for (series of chart.series; track $index) {
-                    <path
-                      class="vital-tooltip__series"
-                      pathLength="100"
-                      fill="none"
-                      [attr.d]="vitalChartPath(chart, series)"
-                      [attr.stroke]="series.color"
-                    ></path>
-
-                    @for (value of series.values; track $index; let pointIndex = $index) {
-                      <circle
-                        class="vital-tooltip__point"
-                        r="4.5"
-                        [attr.cx]="vitalChartX(pointIndex, series.values.length)"
-                        [attr.cy]="vitalChartY(value, chart)"
-                        [attr.fill]="series.pointColor || series.color"
-                        [style.animation-delay.ms]="250 + pointIndex * 85"
-                      ></circle>
+                    @for (label of chart.xLabels; track label; let labelIndex = $index) {
+                      @if (chart.showVerticalGrid) {
+                        <line
+                          class="vital-tooltip__grid-line"
+                          y1="10"
+                          [attr.y2]="vitalChartBottom(chart)"
+                          [attr.x1]="vitalChartX(labelIndex, chart.xLabels.length)"
+                          [attr.x2]="vitalChartX(labelIndex, chart.xLabels.length)"
+                        ></line>
+                      }
+                      <text
+                        class="vital-tooltip__axis-label"
+                        [attr.y]="vitalChartAxisY(chart)"
+                        text-anchor="middle"
+                        [attr.x]="vitalChartX(labelIndex, chart.xLabels.length)"
+                      >
+                        {{ label }}
+                      </text>
                     }
-                  }
+
+                    @for (threshold of chart.thresholds ?? []; track threshold.value) {
+                      <line
+                        class="vital-tooltip__threshold"
+                        x1="42"
+                        x2="402"
+                        [attr.y1]="vitalChartY(threshold.value, chart)"
+                        [attr.y2]="vitalChartY(threshold.value, chart)"
+                        [attr.stroke]="threshold.color"
+                      ></line>
+                      @if (threshold.label) {
+                        <text
+                          class="vital-tooltip__threshold-label"
+                          x="398"
+                          text-anchor="end"
+                          [attr.y]="vitalChartY(threshold.value, chart) + 3"
+                          [attr.fill]="threshold.color"
+                        >
+                          {{ threshold.label }}
+                        </text>
+                      }
+                    }
+
+                    @for (series of chart.series; track $index) {
+                      <path
+                        class="vital-tooltip__series"
+                        pathLength="100"
+                        fill="none"
+                        [attr.d]="vitalChartPath(chart, series)"
+                        [attr.stroke]="series.color"
+                      ></path>
+
+                      @for (value of series.values; track $index; let pointIndex = $index) {
+                        <circle
+                          class="vital-tooltip__point"
+                          r="4.5"
+                          [attr.cx]="vitalChartX(pointIndex, series.values.length)"
+                          [attr.cy]="vitalChartY(value, chart)"
+                          [attr.fill]="series.pointColor || series.color"
+                          [style.animation-delay.ms]="250 + pointIndex * 85"
+                        ></circle>
+                      }
+                    }
+
+                    @if (vitalChartHover(); as chartHover) {
+                      @if (chartHover.chartIndex === chartIndex) {
+                        <g class="vital-tooltip__crosshair">
+                          <line
+                            [attr.x1]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
+                            [attr.x2]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
+                            y1="10"
+                            [attr.y2]="vitalChartBottom(chart)"
+                          ></line>
+                          @for (series of chart.series; track $index) {
+                            <circle
+                              class="vital-tooltip__hover-point"
+                              r="5.5"
+                              [attr.cx]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
+                              [attr.cy]="vitalChartY(series.values[chartHover.pointIndex], chart)"
+                              [attr.fill]="series.pointColor || series.color"
+                            ></circle>
+                          }
+                        </g>
+                      }
+                    }
+                  </svg>
 
                   @if (vitalChartHover(); as chartHover) {
                     @if (chartHover.chartIndex === chartIndex) {
-                      <g class="vital-tooltip__crosshair">
-                        <line
-                          [attr.x1]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
-                          [attr.x2]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
-                          y1="10"
-                          [attr.y2]="vitalChartBottom(chart)"
-                        ></line>
+                      <div
+                        class="vital-tooltip__data-tooltip"
+                        role="tooltip"
+                        [style.left.%]="
+                          vitalChartTooltipLeft(chartHover.pointIndex, chart.xLabels.length)
+                        "
+                        [style.top.%]="vitalChartTooltipTop(chart, chartHover.pointIndex)"
+                      >
+                        <strong>{{ vitalChartTooltipDate(chart, chartHover.pointIndex) }}</strong>
+                        <span class="vital-tooltip__data-context">
+                          {{ vitalChartTooltipHeading(chart.xLabels[chartHover.pointIndex]) }}
+                        </span>
                         @for (series of chart.series; track $index) {
-                          <circle
-                            class="vital-tooltip__hover-point"
-                            r="5.5"
-                            [attr.cx]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
-                            [attr.cy]="vitalChartY(series.values[chartHover.pointIndex], chart)"
-                            [attr.fill]="series.pointColor || series.color"
-                          ></circle>
+                          <span class="vital-tooltip__data-value" [style.color]="series.color">
+                            @if (chart.series.length > 1 && series.label) {
+                              <small>{{ series.label }}</small>
+                            }
+                            {{ series.values[chartHover.pointIndex] }}
+                            @if (chart.unit) {
+                              <span class="vital-tooltip__data-unit"> {{ chart.unit }}</span>
+                            }
+                          </span>
                         }
-                      </g>
+                      </div>
                     }
                   }
-                </svg>
-
-                @if (vitalChartHover(); as chartHover) {
-                  @if (chartHover.chartIndex === chartIndex) {
-                    <div
-                      class="vital-tooltip__data-tooltip"
-                      role="tooltip"
-                      [style.left.%]="
-                        vitalChartTooltipLeft(chartHover.pointIndex, chart.xLabels.length)
-                      "
-                      [style.top.%]="vitalChartTooltipTop(chart, chartHover.pointIndex)"
-                    >
-                      <strong>{{ vitalChartTooltipDate(chart, chartHover.pointIndex) }}</strong>
-                      <span class="vital-tooltip__data-context">
-                        {{ vitalChartTooltipHeading(chart.xLabels[chartHover.pointIndex]) }}
-                      </span>
-                      @for (series of chart.series; track $index) {
-                        <span class="vital-tooltip__data-value" [style.color]="series.color">
-                          @if (chart.series.length > 1 && series.label) {
-                            <small>{{ series.label }}</small>
-                          }
-                          {{ series.values[chartHover.pointIndex] }}
-                          @if (chart.unit) {
-                            <span class="vital-tooltip__data-unit"> {{ chart.unit }}</span>
-                          }
-                        </span>
-                      }
-                    </div>
-                  }
-                }
+                </div>
               </div>
-            </div>
-          }
+            }
 
-          @if (tooltip.footer) {
-            <footer class="vital-tooltip__footer" [style.color]="tooltip.footer.color">
-              <strong>{{ tooltip.footer.message }}</strong>
-              @if (tooltip.footer.status) {
-                <span class="vital-tooltip__status">
-                  <i [style.background-color]="tooltip.footer.color" aria-hidden="true"></i>
-                  {{ tooltip.footer.status }}
-                </span>
-              }
-            </footer>
-          }
+            @if (tooltip.footer) {
+              <footer class="vital-tooltip__footer" [style.color]="tooltip.footer.color">
+                <strong>{{ tooltip.footer.message }}</strong>
+                @if (tooltip.footer.status) {
+                  <span class="vital-tooltip__status">
+                    <i [style.background-color]="tooltip.footer.color" aria-hidden="true"></i>
+                    {{ tooltip.footer.status }}
+                  </span>
+                }
+              </footer>
+            }
+          </div>
         </aside>
       }
 
@@ -955,10 +967,15 @@
           role="tooltip"
           (mouseenter)="keepEddTooltipOpen()"
           (mouseleave)="scheduleEddTooltipHide()"
+          [attr.data-placement]="eddTooltipPosition().placement"
+          [style.bottom.px]="eddTooltipPosition().bottom"
           [style.left.px]="eddTooltipPosition().left"
           [style.top.px]="eddTooltipPosition().top"
           [style.width.px]="eddTooltipPosition().width"
+          [style.max-height.px]="eddTooltipMaxHeight()"
+          [style.--edd-tooltip-notch-left]="eddTooltipPosition().notchLeft + 'px'"
         >
+          <div class="edd-tooltip__surface">
           <div class="edd-tooltip__summary">
             <div>
               <span>Current Gestational Age</span>
@@ -995,6 +1012,7 @@
               </dl>
             </section>
           </div>
+          </div>
         </aside>
       }
 
@@ -1005,10 +1023,17 @@
           role="tooltip"
           (mouseenter)="keepPregnancyHistoryTooltipOpen()"
           (mouseleave)="schedulePregnancyHistoryTooltipHide()"
+          [attr.data-placement]="pregnancyHistoryTooltipPosition().placement"
+          [style.bottom.px]="pregnancyHistoryTooltipPosition().bottom"
           [style.left.px]="pregnancyHistoryTooltipPosition().left"
           [style.top.px]="pregnancyHistoryTooltipPosition().top"
           [style.width.px]="pregnancyHistoryTooltipPosition().width"
+          [style.max-height.px]="pregnancyHistoryTooltipMaxHeight()"
+          [style.--pregnancy-history-tooltip-notch-left]="
+            pregnancyHistoryTooltipPosition().notchLeft + 'px'
+          "
         >
+          <div class="pregnancy-history-tooltip__surface">
           <div class="pregnancy-history-tooltip__inner">
             <header class="pregnancy-history-tooltip__header">
               <h3>Obstetrical History</h3>
@@ -1051,6 +1076,7 @@
                 }
               </div>
             </section>
+          </div>
           </div>
         </aside>
       }
@@ -2297,9 +2323,22 @@
                     <li>Hct: 34%</li>
                     <li>Platelets: 245 K/uL</li>
                   </ul>
-                  <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">
-                    Mark Reviewed
-                  </button>
+                  @if (reviewedResultIds().has('cbc')) {
+                    <span class="result-reviewed-label" role="status">
+                      <span class="result-reviewed-label__icon" aria-hidden="true">
+                        <img src="assets/timeline-status-tooltip/reviewed-check.svg" alt="" />
+                      </span>
+                      Reviewed
+                    </span>
+                  } @else {
+                    <button
+                      class="reviewed-button"
+                      type="button"
+                      (click)="markResultReviewed('cbc', $event)"
+                    >
+                      Mark Reviewed
+                    </button>
+                  }
                 </article>
 
                 <article
@@ -2323,9 +2362,22 @@
                     <li>Range: 128–148/82–92 mmHg (33% elevated)</li>
                     <li>Compliance: 14/14 days</li>
                   </ul>
-                  <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">
-                    Mark Reviewed
-                  </button>
+                  @if (reviewedResultIds().has('home-bp')) {
+                    <span class="result-reviewed-label" role="status">
+                      <span class="result-reviewed-label__icon" aria-hidden="true">
+                        <img src="assets/timeline-status-tooltip/reviewed-check.svg" alt="" />
+                      </span>
+                      Reviewed
+                    </span>
+                  } @else {
+                    <button
+                      class="reviewed-button"
+                      type="button"
+                      (click)="markResultReviewed('home-bp', $event)"
+                    >
+                      Mark Reviewed
+                    </button>
+                  }
                 </article>
 
                 <article
@@ -2350,9 +2402,22 @@
                     <li>Post-prandial: 118–135 mg/dL (0% elevated)</li>
                     <li>Compliance: 56/56 checks</li>
                   </ul>
-                  <button class="reviewed-button" type="button" (click)="$event.stopPropagation()">
-                    Mark Reviewed
-                  </button>
+                  @if (reviewedResultIds().has('blood-glucose')) {
+                    <span class="result-reviewed-label" role="status">
+                      <span class="result-reviewed-label__icon" aria-hidden="true">
+                        <img src="assets/timeline-status-tooltip/reviewed-check.svg" alt="" />
+                      </span>
+                      Reviewed
+                    </span>
+                  } @else {
+                    <button
+                      class="reviewed-button"
+                      type="button"
+                      (click)="markResultReviewed('blood-glucose', $event)"
+                    >
+                      Mark Reviewed
+                    </button>
+                  }
                 </article>
               </div>
 
@@ -2643,11 +2708,15 @@
         (mouseleave)="scheduleResultTooltipHide()"
         (focusin)="keepResultTooltipOpen()"
         (focusout)="scheduleResultTooltipHide()"
+        [attr.data-placement]="resultTooltipPosition().placement"
+        [style.bottom.px]="resultTooltipPosition().bottom"
         [style.left.px]="resultTooltipPosition().left"
         [style.top.px]="resultTooltipPosition().top"
         [style.width.px]="resultTooltipPosition().width"
         [style.max-height.px]="resultTooltipMaxHeight()"
+        [style.--result-tooltip-notch-left]="resultTooltipPosition().notchLeft + 'px'"
       >
+        <div class="result-tooltip__surface">
         <header
           class="result-tooltip__header"
           [class.result-tooltip__header--plain]="!tooltip.closeable"
@@ -2823,6 +2892,7 @@
             }
           </footer>
         }
+        </div>
       </aside>
     }
 

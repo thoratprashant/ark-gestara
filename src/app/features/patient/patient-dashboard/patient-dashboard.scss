@@ -1541,6 +1541,36 @@
   outline-offset: 2px;
 }
 
+.result-reviewed-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  width: fit-content;
+  min-height: 1.75rem;
+  padding: 0.3rem 0.75rem 0.3rem 0.5rem;
+  color: #fff;
+  background: #0d9488;
+  border-radius: 0.25rem;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 10%);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1rem;
+}
+
+.result-reviewed-label__icon {
+  display: grid;
+  width: 1rem;
+  height: 1rem;
+  background: #fff;
+  border-radius: 50%;
+  place-items: center;
+}
+
+.result-reviewed-label__icon img {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
 .order-card {
   display: grid;
   gap: 0.375rem;

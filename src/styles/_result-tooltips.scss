@@ -1,19 +1,77 @@
 .result-tooltip {
+  --result-tooltip-border: #e3ded9;
+
   position: fixed;
   z-index: 1200;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  box-sizing: border-box;
   max-width: calc(100vw - 1.5rem);
-  padding: 1.5rem;
-  overflow: auto;
+  overflow: visible;
   color: #171f26;
   background: #fff;
+  border: 1px solid var(--result-tooltip-border);
   border-radius: 1.5rem;
   box-shadow: 0 0.5rem 0.75rem rgba(0, 0, 0, 0.08);
   font-family: 'Plus Jakarta Sans', sans-serif;
-  transform-origin: top left;
+  transform-origin: top center;
   animation: result-tooltip-open 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.result-tooltip[data-placement='above'] {
+  transform-origin: bottom center;
+  animation-name: result-tooltip-open-above;
+}
+
+.result-tooltip::before {
+  position: absolute;
+  left: var(--result-tooltip-notch-left);
+  z-index: 2;
+  width: 0.875rem;
+  height: 0.875rem;
+  background: #fff;
+  content: '';
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.result-tooltip[data-placement='below']::before {
+  top: -0.5rem;
+  border-top: 1px solid var(--result-tooltip-border);
+  border-left: 1px solid var(--result-tooltip-border);
+}
+
+.result-tooltip[data-placement='above']::before {
+  bottom: -0.5rem;
+  border-right: 1px solid var(--result-tooltip-border);
+  border-bottom: 1px solid var(--result-tooltip-border);
+}
+
+.result-tooltip__surface {
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: inherit;
+  padding: 1.5rem;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: inherit;
+  overscroll-behavior: contain;
+  scrollbar-color: #94a3b8 transparent;
+  scrollbar-width: thin;
+}
+
+.result-tooltip__surface::-webkit-scrollbar {
+  width: 0.375rem;
+}
+
+.result-tooltip__surface::-webkit-scrollbar-track {
+  margin-block: 1rem;
+  background: transparent;
+}
+
+.result-tooltip__surface::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 999px;
 }
 
 .result-tooltip__header {
@@ -303,6 +361,18 @@
   }
 }
 
+@keyframes result-tooltip-open-above {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @keyframes result-chart-draw {
   to {
     stroke-dashoffset: 0;
@@ -346,8 +416,12 @@
 @media (max-width: 35.999rem) {
   .result-tooltip {
     gap: 0.625rem;
-    padding: 1rem;
     border-radius: 1rem;
+  }
+
+  .result-tooltip__surface {
+    gap: 0.625rem;
+    padding: 1rem;
   }
 
   .result-tooltip__table-head,
