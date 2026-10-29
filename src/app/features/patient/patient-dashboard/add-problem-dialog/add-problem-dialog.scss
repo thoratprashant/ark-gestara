@@ -342,11 +342,6 @@
   height: 16px;
 }
 
-.add-problem-dialog__inputs-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
 .add-problem-dialog__field {
   gap: 6px;
 }
@@ -383,6 +378,13 @@
 .add-problem-dialog__field > input:focus {
   border: 1.5px solid #0d9488;
   outline: none;
+}
+
+.add-problem-dialog__manual-note {
+  color: #4b5563;
+  font:
+    italic 500 10px/normal 'Plus Jakarta Sans',
+    sans-serif;
 }
 
 .add-problem-dialog__favorite-toggle {
@@ -452,9 +454,5 @@
   .add-problem-dialog__header,
   .add-problem-dialog__footer {
     padding-inline: 16px;
-  }
-
-  .add-problem-dialog__inputs-grid {
-    grid-template-columns: 1fr;
   }
 }

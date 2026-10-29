@@ -243,29 +243,19 @@
         <h3 id="manual-title" class="add-problem-dialog__section-title m-0 fw-bold">
           Or Add Manually
         </h3>
-        <div class="add-problem-dialog__inputs-grid d-grid w-100">
-          <div class="add-problem-dialog__field d-flex flex-column align-items-start w-100">
-            <label class="w-100 text-start fw-semibold" for="problem-name">Problem Name</label>
-            <input
-              class="w-100 text-start fw-normal"
-              id="problem-name"
-              type="text"
-              formControlName="name"
-              placeholder="Type problem name..."
-              (input)="clearProblemSelection()"
-            />
-          </div>
-          <div class="add-problem-dialog__field d-flex flex-column align-items-start w-100">
-            <label class="w-100 text-start fw-semibold" for="icd10-code"
-              >ICD-10 Code (Optional)</label
-            >
-            <app-suggestive-input
-              inputId="icd10-code"
-              formControlName="icd10Code"
-              placeholder="Type ICD-10 code..."
-              [options]="icd10Suggestions"
-            />
-          </div>
+        <div class="add-problem-dialog__field d-flex flex-column align-items-start w-100">
+          <label class="w-100 text-start fw-semibold" for="problem-name">Problem Name</label>
+          <input
+            class="w-100 text-start fw-normal"
+            id="problem-name"
+            type="text"
+            formControlName="name"
+            placeholder="Type problem name..."
+            (input)="clearProblemSelection()"
+          />
+          <p class="add-problem-dialog__manual-note w-100 m-0 text-start">
+            **Associated Categories, Tasks and Orders will need to be configured manually.
+          </p>
         </div>
 
         <button
@@ -285,6 +275,18 @@
           />
           <span>Save to My Favorites</span>
         </button>
+
+        <div class="add-problem-dialog__field d-flex flex-column align-items-start w-100">
+          <label class="w-100 text-start fw-semibold" for="icd10-code"
+            >ICD-10 Code (Optional)</label
+          >
+          <app-suggestive-input
+            inputId="icd10-code"
+            formControlName="icd10Code"
+            placeholder="Type ICD-10 code..."
+            [options]="icd10Suggestions"
+          />
+        </div>
       </section>
     </mat-dialog-content>
 
