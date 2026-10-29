@@ -1,0 +1,1 @@
+import{Bn as le,ht as Oo}from"./chunk-Bw9khoYM.js";var a=class e{completed=Oo(!1);profileCompleted=this.completed.asReadonly();completeProfile(){this.completed.set(!0)}static ɵfac=function(r){return new(r||e)};static ɵprov=le({token:e,factory:e.ɵfac,providedIn:`root`})};export{a as t};
