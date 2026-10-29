@@ -779,6 +779,59 @@ describe('PatientDashboard timeline', () => {
     vi.useRealTimers();
   });
 
+  it('shows the received-result summary and marks every result reviewed', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    const dashboard = fixture.componentInstance;
+    fixture.detectChanges();
+    const chip = fixture.nativeElement.querySelector(
+      '.problem-timeline__chip[data-status="future"]',
+    ) as HTMLElement;
+
+    chip.dispatchEvent(new MouseEvent('mouseenter'));
+    const activeTooltip = dashboard.activeTimelineStatusTooltip();
+    dashboard.activeTimelineStatusTooltip.set({
+      ...activeTooltip!,
+      tooltip: { ...activeTooltip!.tooltip, resultsSubmitted: true },
+    });
+    fixture.detectChanges();
+
+    const summary = fixture.nativeElement.querySelector(
+      '.timeline-status-tooltip__review-summary',
+    ) as HTMLElement;
+    const rows = Array.from(
+      summary.querySelectorAll('.timeline-status-tooltip__review-summary-row'),
+    ) as HTMLElement[];
+
+    expect(
+      rows.map((row) => ({
+        name: row.querySelector('strong')?.textContent?.trim(),
+        result: row
+          .querySelector('.timeline-status-tooltip__review-summary-content span')
+          ?.textContent?.trim(),
+      })),
+    ).toEqual([
+      {
+        name: 'Hemoglobin Electrophoresis',
+        result: 'Result: 12 g/dl (11.5 - 15.5)',
+      },
+      { name: 'Spinal Muscular Atrophy', result: 'Result: Negative' },
+      { name: 'Fragile X', result: 'Result: Normal' },
+    ]);
+    expect(summary.querySelectorAll('.timeline-status-tooltip__reviewed-tick')).toHaveLength(0);
+
+    const reviewButton = fixture.nativeElement.querySelector(
+      '.timeline-status-tooltip__mark-reviewed',
+    ) as HTMLButtonElement;
+    reviewButton.click();
+    fixture.detectChanges();
+
+    expect(summary.querySelectorAll('.timeline-status-tooltip__reviewed-tick')).toHaveLength(3);
+    expect(
+      fixture.nativeElement.querySelector('.timeline-status-tooltip__mark-reviewed'),
+    ).toBeNull();
+    expect(dashboard.activeTimelineStatusTooltip()?.tooltip.resultsReviewed).toBe(true);
+  });
+
   it('limits the complete tooltip height only when vertical space is constrained', () => {
     const dashboard = new PatientDashboard();
     const trigger = document.createElement('div');
