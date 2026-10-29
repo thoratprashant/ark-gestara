@@ -208,6 +208,19 @@ interface ActiveTimelineStatusTooltip {
   tooltip: TimelineStatusTooltip;
 }
 
+interface DueSoonChecklistItem {
+  completed: boolean;
+  declined: boolean;
+  id: string;
+  label: string;
+}
+
+interface ActiveDueSoonTooltip {
+  chipId: string;
+  items: DueSoonChecklistItem[];
+  notes: string;
+}
+
 interface TimelineStatusTooltipPosition extends VitalTooltipPosition {
   notchLeft: number;
   placement: 'above' | 'below';
@@ -834,6 +847,16 @@ const TIMELINE_STATUS_TOOLTIPS: Record<TimelineStatus, TimelineStatusTooltip> = 
   },
 };
 
+const DUE_SOON_CHECKLIST: ReadonlyArray<DueSoonChecklistItem> = [
+  { completed: true, declined: false, id: 'tdap', label: 'Tdap Vaccine' },
+  { completed: false, declined: false, id: 'flu', label: 'Flu Vaccine (Seasonal)' },
+  { completed: false, declined: false, id: 'hepatitis-b', label: 'Hepatitis B – Dose 2' },
+  { completed: false, declined: true, id: 'rhogam', label: 'RhoGAM (if Rh-negative)' },
+];
+
+const DUE_SOON_DEFAULT_NOTES =
+  'Administered 0.5 mL IM in left deltoid. Patient tolerated well. Lot #TD9910.';
+
 const INITIAL_TIMELINE: PregnancyTimeline = {
   currentWeek: 28,
   deliveryChip: {
@@ -1149,6 +1172,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   });
   readonly timelineGroupTooltipMaxHeight = signal(320);
   readonly activeTimelineStatusTooltip = signal<ActiveTimelineStatusTooltip | null>(null);
+  readonly activeDueSoonTooltip = signal<ActiveDueSoonTooltip | null>(null);
   readonly timelineStatusTooltipPosition = signal<TimelineStatusTooltipPosition>({
     left: 0,
     notchLeft: 160,
@@ -1297,6 +1321,10 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   private timelineStatusTooltipHideTimer: number | null = null;
   private deliveryChipTooltipHideTimer: number | null = null;
   private timelineStatusTooltipInteractionActive = false;
+  private readonly dueSoonTaskProgress = new Map<
+    string,
+    { items: DueSoonChecklistItem[]; notes: string }
+  >();
   private deliveryChipTooltipSnapshot: DeliveryChipTooltipSnapshot | null = null;
   private timelineItemSequence = 0;
   private timelineTaskSequence = 0;
@@ -1807,6 +1835,77 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     );
   }
 
+  dueSoonCompletedCount(): number {
+    return this.activeDueSoonTooltip()?.items.filter((item) => item.completed).length ?? 0;
+  }
+
+  toggleDueSoonChecklistItem(itemId: string): void {
+    this.activeDueSoonTooltip.update((active) =>
+      active
+        ? {
+            ...active,
+            items: active.items.map((item) =>
+              item.id === itemId && !item.declined ? { ...item, completed: !item.completed } : item,
+            ),
+          }
+        : active,
+    );
+  }
+
+  declineDueSoonChecklistItem(itemId: string): void {
+    this.activeDueSoonTooltip.update((active) =>
+      active
+        ? {
+            ...active,
+            items: active.items.map((item) =>
+              item.id === itemId ? { ...item, completed: false, declined: true } : item,
+            ),
+          }
+        : active,
+    );
+  }
+
+  updateDueSoonNotes(event: Event): void {
+    const notes = (event.target as HTMLTextAreaElement).value;
+    this.activeDueSoonTooltip.update((active) => (active ? { ...active, notes } : active));
+  }
+
+  saveDueSoonTaskProgress(): void {
+    const active = this.activeDueSoonTooltip();
+
+    if (active) {
+      this.dueSoonTaskProgress.set(active.chipId, {
+        items: active.items.map((item) => ({ ...item })),
+        notes: active.notes,
+      });
+    }
+
+    this.hideTimelineStatusTooltip();
+  }
+
+  completeDueSoonTask(): void {
+    const chipId = this.activeDueSoonTooltip()?.chipId;
+
+    if (!chipId) {
+      return;
+    }
+
+    this.rememberTimeline();
+    this.pregnancyTimeline.update((timeline) => ({
+      ...timeline,
+      groups: timeline.groups.map((group) => ({
+        ...group,
+        rows: group.rows.map((row) => ({
+          ...row,
+          chips: row.chips.map((chip) =>
+            chip.id === chipId ? { ...chip, status: 'completed' } : chip,
+          ),
+        })),
+      })),
+    }));
+    this.hideTimelineStatusTooltip();
+  }
+
   showTimelineStatusTooltip(chip: TimelineChip, event: Event): void {
     this.cancelTimelineStatusTooltipHide();
     this.hideDeliveryChipTooltip();
@@ -1822,6 +1921,13 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     if (!trigger) {
       return;
     }
+
+    if (chip.status === 'due-soon') {
+      this.showDueSoonTooltip(chip, trigger);
+      return;
+    }
+
+    this.activeDueSoonTooltip.set(null);
 
     const sourceTooltip = TIMELINE_STATUS_TOOLTIPS[chip.status];
     const tooltip: TimelineStatusTooltip = {
@@ -1872,6 +1978,47 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     });
     this.timelineStatusTooltipMaxHeight.set(maxHeight);
     this.activeTimelineStatusTooltip.set({ chipId: chip.id, tooltip });
+  }
+
+  private showDueSoonTooltip(chip: TimelineChip, trigger: HTMLElement): void {
+    const triggerBounds = trigger.getBoundingClientRect();
+    const preferredWidth = 468;
+    const preferredHeight = 470;
+    const width = Math.min(preferredWidth, Math.max(280, window.innerWidth - 24));
+    const spaceBelow = window.innerHeight - triggerBounds.bottom - 12;
+    const spaceAbove = triggerBounds.top - 12;
+    const placement =
+      spaceBelow >= Math.min(preferredHeight, 300) || spaceBelow >= spaceAbove ? 'below' : 'above';
+    const availableHeight = placement === 'below' ? spaceBelow : spaceAbove;
+    const maxHeight = Math.max(
+      0,
+      Math.min(preferredHeight, availableHeight - 10, window.innerHeight - 24),
+    );
+    const left = this.clamp(
+      triggerBounds.left + triggerBounds.width / 2 - width / 2,
+      12,
+      Math.max(12, window.innerWidth - width - 12),
+    );
+    const top =
+      placement === 'below'
+        ? triggerBounds.bottom + 10
+        : Math.max(12, triggerBounds.top - maxHeight - 10);
+    const savedProgress = this.dueSoonTaskProgress.get(chip.id);
+
+    this.timelineStatusTooltipPosition.set({
+      left,
+      notchLeft: this.clamp(triggerBounds.left + triggerBounds.width / 2 - left, 18, width - 18),
+      placement,
+      top,
+      width,
+    });
+    this.timelineStatusTooltipMaxHeight.set(maxHeight);
+    this.activeTimelineStatusTooltip.set(null);
+    this.activeDueSoonTooltip.set({
+      chipId: chip.id,
+      items: (savedProgress?.items ?? DUE_SOON_CHECKLIST).map((item) => ({ ...item })),
+      notes: savedProgress?.notes ?? DUE_SOON_DEFAULT_NOTES,
+    });
   }
 
   showDeliveryChipTooltip(event: Event): void {
@@ -2189,6 +2336,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   hideTimelineStatusTooltip(): void {
     this.cancelTimelineStatusTooltipHide();
     this.activeTimelineStatusTooltip.set(null);
+    this.activeDueSoonTooltip.set(null);
   }
 
   scheduleTimelineStatusTooltipHide(): void {
@@ -2205,6 +2353,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       }
 
       this.activeTimelineStatusTooltip.set(null);
+      this.activeDueSoonTooltip.set(null);
       this.timelineStatusTooltipHideTimer = null;
     }, 180);
   }
@@ -2221,7 +2370,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   endTimelineStatusTooltipInteraction(): void {
     window.setTimeout(() => {
       this.timelineStatusTooltipInteractionActive = false;
-      const tooltip = document.getElementById('timeline-status-tooltip');
+      const tooltip = document.querySelector('[data-timeline-hover-tooltip]');
 
       if (!tooltip?.matches(':hover') && !this.timelineStatusTooltipHasFocus()) {
         this.scheduleTimelineStatusTooltipHide();
@@ -3110,7 +3259,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   private timelineStatusTooltipHasFocus(): boolean {
     return document.activeElement instanceof HTMLElement
-      ? document.activeElement.closest('.timeline-status-tooltip') !== null
+      ? document.activeElement.closest('[data-timeline-hover-tooltip]') !== null
       : false;
   }
 

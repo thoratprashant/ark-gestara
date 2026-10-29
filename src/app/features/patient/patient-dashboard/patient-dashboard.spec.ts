@@ -737,6 +737,32 @@ describe('PatientDashboard timeline', () => {
     });
   });
 
+  it('shows due-soon details in a separate tooltip', () => {
+    const fixture = TestBed.createComponent(PatientDashboard);
+    fixture.detectChanges();
+    const chip = fixture.nativeElement.querySelector(
+      '.problem-timeline__chip[data-status="due-soon"]',
+    ) as HTMLElement;
+
+    expect(chip).toBeTruthy();
+    chip.dispatchEvent(new MouseEvent('mouseenter'));
+    fixture.detectChanges();
+
+    const dueSoonTooltip = fixture.nativeElement.querySelector('#due-soon-tooltip') as HTMLElement;
+    expect(dueSoonTooltip).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('#timeline-status-tooltip')).toBeNull();
+    expect(dueSoonTooltip.textContent).toContain('Vaccines (Week 26–28)');
+    expect(dueSoonTooltip.textContent).toContain('1 of 4 completed');
+
+    const fluCheckbox = dueSoonTooltip.querySelectorAll(
+      'input[type="checkbox"]',
+    )[1] as HTMLInputElement;
+    fluCheckbox.click();
+    fixture.detectChanges();
+
+    expect(dueSoonTooltip.textContent).toContain('2 of 4 completed');
+  });
+
   it('expands tooltip notes according to their wrapped content', () => {
     const dashboard = new PatientDashboard();
 

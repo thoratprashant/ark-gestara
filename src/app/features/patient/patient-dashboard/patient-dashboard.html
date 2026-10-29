@@ -74,7 +74,7 @@
 
         <div class="patient-summary__controls">
           @if (!summaryExpanded()) {
-            <div class="summary-facts" aria-label="Patient summary">        
+            <div class="summary-facts" aria-label="Patient summary">
               <!-- Added on 28-10-26 -->
               <article class="summary-fact">
                 <img
@@ -115,9 +115,7 @@
                 class="summary-fact summary-fact--delivery"
                 type="button"
                 aria-haspopup="dialog"
-                [attr.aria-describedby]="
-                  deliveryChipTooltipOpen() ? 'delivery-chip-tooltip' : null
-                "
+                [attr.aria-describedby]="deliveryChipTooltipOpen() ? 'delivery-chip-tooltip' : null"
                 [attr.aria-expanded]="deliveryChipTooltipOpen()"
                 (mouseenter)="showDeliveryChipTooltip($event)"
                 (mouseleave)="scheduleDeliveryChipTooltipHide()"
@@ -138,7 +136,9 @@
               </button>
               <button
                 class="summary-fact summary-fact--risk"
-                [class]="'summary-fact summary-fact--risk summary-fact--risk-' + preEclampsiaRiskStatus()"
+                [class]="
+                  'summary-fact summary-fact--risk summary-fact--risk-' + preEclampsiaRiskStatus()
+                "
                 type="button"
                 aria-haspopup="dialog"
                 [attr.aria-expanded]="riskAssessmentOpen()"
@@ -278,9 +278,7 @@
                 class="patient-metric patient-metric--delivery"
                 type="button"
                 aria-haspopup="dialog"
-                [attr.aria-describedby]="
-                  deliveryChipTooltipOpen() ? 'delivery-chip-tooltip' : null
-                "
+                [attr.aria-describedby]="deliveryChipTooltipOpen() ? 'delivery-chip-tooltip' : null"
                 [attr.aria-expanded]="deliveryChipTooltipOpen()"
                 (mouseenter)="showDeliveryChipTooltip($event)"
                 (mouseleave)="scheduleDeliveryChipTooltipHide()"
@@ -327,10 +325,7 @@
               <strong class="patient-summary__recommendation-success" role="status">
                 Advanced Maternal Age added to Problem List
               </strong>
-              <a
-                class="patient-summary__recommendation-link"
-                href="#problem-timeline"
-              >
+              <a class="patient-summary__recommendation-link" href="#problem-timeline">
                 View Problem List
               </a>
             } @else {
@@ -419,134 +414,138 @@
         [style.top.px]="riskAssessmentPosition().top"
         [style.width.px]="riskAssessmentPosition().width"
         [style.max-height.px]="riskAssessmentMaxHeight()"
-        [style.--risk-assessment-tooltip-notch-left]="
-          riskAssessmentPosition().notchLeft + 'px'
-        "
+        [style.--risk-assessment-tooltip-notch-left]="riskAssessmentPosition().notchLeft + 'px'"
       >
         <div class="risk-assessment-tooltip__surface">
-        <header class="risk-assessment-tooltip__header">
-          <div>
-            <h2>Pre-eclampsia Risk Assessment</h2>
-            <p>
-              Sarah Johnson, 32yo <span aria-hidden="true">•</span> 28 Weeks 4 Days
-              <span aria-hidden="true">•</span> G3P1011
-            </p>
-          </div>
-          <button type="button" aria-label="Close risk assessment" (click)="hideRiskAssessment()">
-            <img src="assets/risk-assessment/asset-1.svg" alt="" aria-hidden="true" />
-          </button>
-        </header>
+          <header class="risk-assessment-tooltip__header">
+            <div>
+              <h2>Pre-eclampsia Risk Assessment</h2>
+              <p>
+                Sarah Johnson, 32yo <span aria-hidden="true">•</span> 28 Weeks 4 Days
+                <span aria-hidden="true">•</span> G3P1011
+              </p>
+            </div>
+            <button type="button" aria-label="Close risk assessment" (click)="hideRiskAssessment()">
+              <img src="assets/risk-assessment/asset-1.svg" alt="" aria-hidden="true" />
+            </button>
+          </header>
 
-        <section class="risk-assessment-tooltip__banner" aria-label="Risk summary">
-          <span class="risk-assessment-tooltip__warning-icon">
-            <img src="assets/risk-assessment/asset-2.svg" alt="" aria-hidden="true" />
-          </span>
-          <div>
-            <strong>High Risk Detected (1 High Factor)</strong>
-            <p>Daily low-dose aspirin (81-150 mg) is recommended starting from 12-16 weeks.</p>
-          </div>
-        </section>
-
-        <div class="risk-assessment-tooltip__body">
-          <section
-            class="risk-assessment-tooltip__recommendation"
-            aria-labelledby="recommended-problem-title"
-          >
-            <header class="risk-assessment-tooltip__recommendation-header">
-              <span class="risk-assessment-tooltip__recommendation-icon" aria-hidden="true">+</span>
-              <span>
-                <h3 id="recommended-problem-title">Recommended problem</h3>
-                <p>Eligible because at least 1 high risk factor is selected.</p>
-              </span>
-            </header>
-
-            <div class="risk-assessment-tooltip__recommended-problem">
-              <span>
-                <strong>High risk for preeclampsia</strong>
-                <small>No ICD-10 code. Does not sync with Epic.</small>
-              </span>
-
-              @switch (recommendedProblemState()) {
-                @case ('pending') {
-                  <span class="risk-assessment-tooltip__recommendation-actions">
-                    <button type="button" (click)="dismissRecommendedProblem()">Dismiss</button>
-                    <button type="button" (click)="addRecommendedProblem()">Add</button>
-                  </span>
-                }
-                @case ('added') {
-                  <span
-                    class="risk-assessment-tooltip__recommendation-status risk-assessment-tooltip__recommendation-status--added"
-                    role="status"
-                  >
-                    <span aria-hidden="true">&#10003;</span> Added to Problem List
-                  </span>
-                }
-                @case ('dismissed') {
-                  <span
-                    class="risk-assessment-tooltip__recommendation-status risk-assessment-tooltip__recommendation-status--dismissed"
-                    role="status"
-                  >
-                    <span aria-hidden="true">&times;</span> Dismissed Problem
-                  </span>
-                }
-              }
+          <section class="risk-assessment-tooltip__banner" aria-label="Risk summary">
+            <span class="risk-assessment-tooltip__warning-icon">
+              <img src="assets/risk-assessment/asset-2.svg" alt="" aria-hidden="true" />
+            </span>
+            <div>
+              <strong>High Risk Detected (1 High Factor)</strong>
+              <p>Daily low-dose aspirin (81-150 mg) is recommended starting from 12-16 weeks.</p>
             </div>
           </section>
 
-          <fieldset class="risk-assessment-tooltip__factors risk-assessment-tooltip__factors--high">
-            <legend>High Risk Factors (1)</legend>
-            <div>
-              @for (factor of highRiskFactors; track factor.label) {
-                <label>
-                  <input type="checkbox" [checked]="factor.selected" />
-                  <span class="risk-assessment-tooltip__checkbox" aria-hidden="true">
-                    <img src="assets/risk-assessment/asset-3.svg" alt="" />
-                  </span>
-                  <span>{{ factor.label }}</span>
-                </label>
-              }
-            </div>
-          </fieldset>
+          <div class="risk-assessment-tooltip__body">
+            <section
+              class="risk-assessment-tooltip__recommendation"
+              aria-labelledby="recommended-problem-title"
+            >
+              <header class="risk-assessment-tooltip__recommendation-header">
+                <span class="risk-assessment-tooltip__recommendation-icon" aria-hidden="true"
+                  >+</span
+                >
+                <span>
+                  <h3 id="recommended-problem-title">Recommended problem</h3>
+                  <p>Eligible because at least 1 high risk factor is selected.</p>
+                </span>
+              </header>
 
-          <img
-            class="risk-assessment-tooltip__divider"
-            src="assets/risk-assessment/asset-4.svg"
-            alt=""
-            aria-hidden="true"
-          />
+              <div class="risk-assessment-tooltip__recommended-problem">
+                <span>
+                  <strong>High risk for preeclampsia</strong>
+                  <small>No ICD-10 code. Does not sync with Epic.</small>
+                </span>
 
-          <fieldset
-            class="risk-assessment-tooltip__factors risk-assessment-tooltip__factors--moderate"
-          >
-            <legend>Moderate Risk Factors (0)</legend>
-            <div>
-              @for (factor of moderateRiskFactors; track factor) {
-                <label>
-                  <input type="checkbox" />
-                  <span class="risk-assessment-tooltip__checkbox" aria-hidden="true">
-                    <img src="assets/risk-assessment/asset-3.svg" alt="" />
-                  </span>
-                  <span>{{ factor }}</span>
-                </label>
-              }
-            </div>
-          </fieldset>
-        </div>
+                @switch (recommendedProblemState()) {
+                  @case ('pending') {
+                    <span class="risk-assessment-tooltip__recommendation-actions">
+                      <button type="button" (click)="dismissRecommendedProblem()">Dismiss</button>
+                      <button type="button" (click)="addRecommendedProblem()">Add</button>
+                    </span>
+                  }
+                  @case ('added') {
+                    <span
+                      class="risk-assessment-tooltip__recommendation-status risk-assessment-tooltip__recommendation-status--added"
+                      role="status"
+                    >
+                      <span aria-hidden="true">&#10003;</span> Added to Problem List
+                    </span>
+                  }
+                  @case ('dismissed') {
+                    <span
+                      class="risk-assessment-tooltip__recommendation-status risk-assessment-tooltip__recommendation-status--dismissed"
+                      role="status"
+                    >
+                      <span aria-hidden="true">&times;</span> Dismissed Problem
+                    </span>
+                  }
+                }
+              </div>
+            </section>
 
-        <footer class="risk-assessment-tooltip__footer">
-          <button type="button" (click)="hideRiskAssessment()">Cancel</button>
-          <button type="button" (click)="hideRiskAssessment()">Save Assessment</button>
-        </footer>
+            <fieldset
+              class="risk-assessment-tooltip__factors risk-assessment-tooltip__factors--high"
+            >
+              <legend>High Risk Factors (1)</legend>
+              <div>
+                @for (factor of highRiskFactors; track factor.label) {
+                  <label>
+                    <input type="checkbox" [checked]="factor.selected" />
+                    <span class="risk-assessment-tooltip__checkbox" aria-hidden="true">
+                      <img src="assets/risk-assessment/asset-3.svg" alt="" />
+                    </span>
+                    <span>{{ factor.label }}</span>
+                  </label>
+                }
+              </div>
+            </fieldset>
+
+            <img
+              class="risk-assessment-tooltip__divider"
+              src="assets/risk-assessment/asset-4.svg"
+              alt=""
+              aria-hidden="true"
+            />
+
+            <fieldset
+              class="risk-assessment-tooltip__factors risk-assessment-tooltip__factors--moderate"
+            >
+              <legend>Moderate Risk Factors (0)</legend>
+              <div>
+                @for (factor of moderateRiskFactors; track factor) {
+                  <label>
+                    <input type="checkbox" />
+                    <span class="risk-assessment-tooltip__checkbox" aria-hidden="true">
+                      <img src="assets/risk-assessment/asset-3.svg" alt="" />
+                    </span>
+                    <span>{{ factor }}</span>
+                  </label>
+                }
+              </div>
+            </fieldset>
+          </div>
+
+          <footer class="risk-assessment-tooltip__footer">
+            <button type="button" (click)="hideRiskAssessment()">Cancel</button>
+            <button type="button" (click)="hideRiskAssessment()">Save Assessment</button>
+          </footer>
         </div>
       </aside>
     }
 
     <section #vitalSigns class="vital-signs" aria-labelledby="vital-signs-title">
-      <div class="vital-signs-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+      <div
+        class="vital-signs-header d-flex align-items-center justify-content-between flex-wrap gap-2"
+      >
         <h2 id="vital-signs-title">Vital Signs</h2>
         <p class="">Recorded Mar 28, 2026</p>
       </div>
-      
+
       <div class="vital-signs__scroller" tabindex="0">
         <div class="vital-signs__list">
           <article
@@ -976,42 +975,42 @@
           [style.--edd-tooltip-notch-left]="eddTooltipPosition().notchLeft + 'px'"
         >
           <div class="edd-tooltip__surface">
-          <div class="edd-tooltip__summary">
-            <div>
-              <span>Current Gestational Age</span>
-              <strong>28w 4d</strong>
+            <div class="edd-tooltip__summary">
+              <div>
+                <span>Current Gestational Age</span>
+                <strong>28w 4d</strong>
+              </div>
+              <div>
+                <span>Estimated Due Date</span>
+                <strong>June 15, 2026</strong>
+              </div>
             </div>
-            <div>
-              <span>Estimated Due Date</span>
-              <strong>June 15, 2026</strong>
+
+            <div class="edd-tooltip__body">
+              <section aria-labelledby="edd-calculation-title">
+                <h3 id="edd-calculation-title">EDD Calculation</h3>
+                <dl class="edd-tooltip__list">
+                  @for (row of eddCalculationRows; track row.label) {
+                    <div>
+                      <dt>{{ row.label }}</dt>
+                      <dd>{{ row.value }}</dd>
+                    </div>
+                  }
+                </dl>
+              </section>
+
+              <section aria-labelledby="edd-final-title">
+                <h3 id="edd-final-title">Final EDD</h3>
+                <dl class="edd-tooltip__list edd-tooltip__list--final">
+                  @for (row of eddFinalRows; track row.label) {
+                    <div>
+                      <dt>{{ row.label }}</dt>
+                      <dd>{{ row.value }}</dd>
+                    </div>
+                  }
+                </dl>
+              </section>
             </div>
-          </div>
-
-          <div class="edd-tooltip__body">
-            <section aria-labelledby="edd-calculation-title">
-              <h3 id="edd-calculation-title">EDD Calculation</h3>
-              <dl class="edd-tooltip__list">
-                @for (row of eddCalculationRows; track row.label) {
-                  <div>
-                    <dt>{{ row.label }}</dt>
-                    <dd>{{ row.value }}</dd>
-                  </div>
-                }
-              </dl>
-            </section>
-
-            <section aria-labelledby="edd-final-title">
-              <h3 id="edd-final-title">Final EDD</h3>
-              <dl class="edd-tooltip__list edd-tooltip__list--final">
-                @for (row of eddFinalRows; track row.label) {
-                  <div>
-                    <dt>{{ row.label }}</dt>
-                    <dd>{{ row.value }}</dd>
-                  </div>
-                }
-              </dl>
-            </section>
-          </div>
           </div>
         </aside>
       }
@@ -1034,49 +1033,49 @@
           "
         >
           <div class="pregnancy-history-tooltip__surface">
-          <div class="pregnancy-history-tooltip__inner">
-            <header class="pregnancy-history-tooltip__header">
-              <h3>Obstetrical History</h3>
-              <span>G3P1011</span>
-            </header>
+            <div class="pregnancy-history-tooltip__inner">
+              <header class="pregnancy-history-tooltip__header">
+                <h3>Obstetrical History</h3>
+                <span>G3P1011</span>
+              </header>
 
-            <img
-              class="pregnancy-history-tooltip__divider"
-              src="assets/pregnancy-history-tooltip/header-divider.svg"
-              alt=""
-              aria-hidden="true"
-              width="354"
-              height="28"
-            />
+              <img
+                class="pregnancy-history-tooltip__divider"
+                src="assets/pregnancy-history-tooltip/header-divider.svg"
+                alt=""
+                aria-hidden="true"
+                width="354"
+                height="28"
+              />
 
-            <section
-              class="pregnancy-history-tooltip__content"
-              aria-labelledby="pregnancy-history-title"
-            >
-              <h4 id="pregnancy-history-title">Obstetrical History</h4>
-              <div class="pregnancy-history-tooltip__entries">
-                @for (entry of pregnancyHistoryEntries; track entry.title) {
-                  <article class="pregnancy-history-tooltip__entry">
-                    <i aria-hidden="true"></i>
-                    <div>
-                      <header>
-                        <strong>{{ entry.title }}</strong>
-                        <span>{{ entry.date }}</span>
-                      </header>
-                      <dl>
-                        @for (detail of entry.details; track detail.label) {
-                          <div>
-                            <dt>{{ detail.label }}</dt>
-                            <dd>{{ detail.value }}</dd>
-                          </div>
-                        }
-                      </dl>
-                    </div>
-                  </article>
-                }
-              </div>
-            </section>
-          </div>
+              <section
+                class="pregnancy-history-tooltip__content"
+                aria-labelledby="pregnancy-history-title"
+              >
+                <h4 id="pregnancy-history-title">Obstetrical History</h4>
+                <div class="pregnancy-history-tooltip__entries">
+                  @for (entry of pregnancyHistoryEntries; track entry.title) {
+                    <article class="pregnancy-history-tooltip__entry">
+                      <i aria-hidden="true"></i>
+                      <div>
+                        <header>
+                          <strong>{{ entry.title }}</strong>
+                          <span>{{ entry.date }}</span>
+                        </header>
+                        <dl>
+                          @for (detail of entry.details; track detail.label) {
+                            <div>
+                              <dt>{{ detail.label }}</dt>
+                              <dd>{{ detail.value }}</dd>
+                            </div>
+                          }
+                        </dl>
+                      </div>
+                    </article>
+                  }
+                </div>
+              </section>
+            </div>
           </div>
         </aside>
       }
@@ -1366,7 +1365,9 @@
                               [attr.aria-describedby]="
                                 activeTimelineStatusTooltip()?.chipId === chip.id
                                   ? 'timeline-status-tooltip'
-                                  : null
+                                  : activeDueSoonTooltip()?.chipId === chip.id
+                                    ? 'due-soon-tooltip'
+                                    : null
                               "
                               [attr.aria-label]="
                                 timelineChipTooltip(chip) +
@@ -1672,10 +1673,113 @@
       </aside>
     }
 
+    @if (activeDueSoonTooltip(); as dueSoonTooltip) {
+      <aside
+        id="due-soon-tooltip"
+        class="due-soon-tooltip"
+        data-timeline-hover-tooltip
+        role="dialog"
+        aria-label="Vaccines task details"
+        [attr.data-placement]="timelineStatusTooltipPosition().placement"
+        [style.left.px]="timelineStatusTooltipPosition().left"
+        [style.top.px]="timelineStatusTooltipPosition().top"
+        [style.width.px]="timelineStatusTooltipPosition().width"
+        [style.max-height.px]="timelineStatusTooltipMaxHeight()"
+        [style.--due-soon-tooltip-notch-left]="timelineStatusTooltipPosition().notchLeft + 'px'"
+        (mouseenter)="keepTimelineStatusTooltipOpen()"
+        (mouseleave)="scheduleTimelineStatusTooltipHide()"
+        (pointerdown)="beginTimelineStatusTooltipInteraction()"
+        (pointerup)="endTimelineStatusTooltipInteraction()"
+        (pointercancel)="endTimelineStatusTooltipInteraction()"
+        (focusin)="keepTimelineStatusTooltipOpen()"
+        (focusout)="onTimelineStatusTooltipFocusOut($event)"
+      >
+        <div class="due-soon-tooltip__content">
+          <header class="due-soon-tooltip__header">
+            <div>
+              <h2>Vaccines (Week 26–28)</h2>
+              <p>Routine Prenatal Care</p>
+            </div>
+            <span class="due-soon-tooltip__badge">In Progress</span>
+          </header>
+
+          <div class="due-soon-tooltip__schedule">
+            <span>
+              <i class="due-soon-tooltip__icon" data-icon="calendar" aria-hidden="true"></i>
+              Scheduled: Week 26–28
+            </span>
+            <span>
+              <i class="due-soon-tooltip__icon" data-icon="clock" aria-hidden="true"></i>
+              Date: 2025-10-20
+            </span>
+          </div>
+
+          <div class="due-soon-tooltip__divider"></div>
+
+          <section class="due-soon-tooltip__checklist" aria-label="Checklist items">
+            <header>
+              <h3>Checklist Items</h3>
+              <strong
+                >{{ dueSoonCompletedCount() }} of
+                {{ dueSoonTooltip.items.length }} completed</strong
+              >
+            </header>
+
+            <div class="due-soon-tooltip__items">
+              @for (item of dueSoonTooltip.items; track item.id) {
+                <div
+                  class="due-soon-tooltip__item"
+                  [class.due-soon-tooltip__item--declined]="item.declined"
+                >
+                  <label>
+                    <input
+                      type="checkbox"
+                      [checked]="item.completed"
+                      [disabled]="item.declined"
+                      (change)="toggleDueSoonChecklistItem(item.id)"
+                    />
+                    <span class="due-soon-tooltip__checkbox" aria-hidden="true"></span>
+                    <span>{{ item.label }}</span>
+                  </label>
+
+                  @if (item.declined) {
+                    <span class="due-soon-tooltip__declined">Declined</span>
+                  } @else if (!item.completed) {
+                    <button type="button" (click)="declineDueSoonChecklistItem(item.id)">
+                      Decline
+                    </button>
+                  }
+                </div>
+
+                @if (item.completed) {
+                  <label class="due-soon-tooltip__notes">
+                    <span>Notes (Required)</span>
+                    <textarea
+                      rows="2"
+                      [value]="dueSoonTooltip.notes"
+                      (input)="updateDueSoonNotes($event)"
+                    ></textarea>
+                  </label>
+                }
+              }
+            </div>
+          </section>
+
+          <div class="due-soon-tooltip__divider due-soon-tooltip__divider--footer"></div>
+
+          <footer class="due-soon-tooltip__footer">
+            <button type="button" (click)="saveDueSoonTaskProgress()">Save Progress</button>
+            <button type="button" (click)="completeDueSoonTask()">Complete Task</button>
+          </footer>
+        </div>
+      </aside>
+    }
+
     @if (activeTimelineStatusTooltip(); as activeStatusTooltip) {
       <aside
         id="timeline-status-tooltip"
         class="timeline-status-tooltip"
+        data-timeline-hover-tooltip
         [class.timeline-status-tooltip--submitted-results]="
           activeStatusTooltip.tooltip.resultsSubmitted
         "
@@ -2751,181 +2855,185 @@
         [style.--result-tooltip-notch-left]="resultTooltipPosition().notchLeft + 'px'"
       >
         <div class="result-tooltip__surface">
-        <header
-          class="result-tooltip__header"
-          [class.result-tooltip__header--plain]="!tooltip.closeable"
-        >
-          <div>
-            <h3>{{ tooltip.title }}</h3>
-            @if (tooltip.subtitle) {
-              <p>{{ tooltip.subtitle }}</p>
-            }
-          </div>
-          @if (tooltip.closeable) {
-            <button
-              type="button"
-              aria-label="Close Complete Blood Count details"
-              (click)="hideResultTooltip()"
-            >
-              <img src="assets/result-tooltips/close.svg" alt="" aria-hidden="true" />
-            </button>
-          }
-        </header>
-
-        @if (tooltip.rows) {
-          <div class="result-tooltip__table" role="table" aria-label="Complete Blood Count results">
-            <div class="result-tooltip__table-head" role="row">
-              <span role="columnheader">Test Name</span>
-              <span role="columnheader">Value</span>
-              <span role="columnheader">Ref. Range</span>
+          <header
+            class="result-tooltip__header"
+            [class.result-tooltip__header--plain]="!tooltip.closeable"
+          >
+            <div>
+              <h3>{{ tooltip.title }}</h3>
+              @if (tooltip.subtitle) {
+                <p>{{ tooltip.subtitle }}</p>
+              }
             </div>
-            <div class="result-tooltip__table-body" role="rowgroup">
-              @for (row of tooltip.rows; track row.name) {
+            @if (tooltip.closeable) {
+              <button
+                type="button"
+                aria-label="Close Complete Blood Count details"
+                (click)="hideResultTooltip()"
+              >
+                <img src="assets/result-tooltips/close.svg" alt="" aria-hidden="true" />
+              </button>
+            }
+          </header>
+
+          @if (tooltip.rows) {
+            <div
+              class="result-tooltip__table"
+              role="table"
+              aria-label="Complete Blood Count results"
+            >
+              <div class="result-tooltip__table-head" role="row">
+                <span role="columnheader">Test Name</span>
+                <span role="columnheader">Value</span>
+                <span role="columnheader">Ref. Range</span>
+              </div>
+              <div class="result-tooltip__table-body" role="rowgroup">
+                @for (row of tooltip.rows; track row.name) {
+                  <div
+                    class="result-tooltip__table-row"
+                    [class.result-tooltip__table-row--alert]="row.alert"
+                    role="row"
+                  >
+                    <span role="cell">{{ row.name }}</span>
+                    <span role="cell" [class.result-tooltip__table-value--alert]="row.alert">
+                      {{ row.value }}
+                      @if (row.alert) {
+                        <small aria-label="Low">L</small>
+                      }
+                    </span>
+                    <span role="cell">{{ row.range }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          @if (tooltip.chart; as chart) {
+            <div class="result-tooltip__chart-wrap">
+              <svg
+                class="result-tooltip__chart"
+                viewBox="0 0 472 120"
+                role="img"
+                [attr.aria-label]="tooltip.title"
+                (mousemove)="updateResultChartHover($event, chart)"
+                (mouseleave)="clearResultChartHover()"
+              >
+                @for (tick of chart.yTicks; track tick) {
+                  <line
+                    class="result-tooltip__grid-line"
+                    x1="30"
+                    x2="472"
+                    [attr.y1]="vitalChartY(tick, chart)"
+                    [attr.y2]="vitalChartY(tick, chart)"
+                  ></line>
+                  <text
+                    class="result-tooltip__axis-label"
+                    x="24"
+                    text-anchor="end"
+                    [attr.y]="vitalChartY(tick, chart) + 3"
+                  >
+                    {{ tick }}
+                  </text>
+                }
+
+                @for (threshold of chart.thresholds ?? []; track threshold.value) {
+                  <line
+                    class="result-tooltip__threshold"
+                    x1="30"
+                    x2="472"
+                    [attr.y1]="vitalChartY(threshold.value, chart)"
+                    [attr.y2]="vitalChartY(threshold.value, chart)"
+                    [attr.stroke]="threshold.color"
+                  ></line>
+                }
+
+                @for (label of chart.xLabels; track label; let labelIndex = $index) {
+                  <text
+                    class="result-tooltip__axis-label"
+                    [attr.y]="vitalChartAxisY(chart)"
+                    text-anchor="middle"
+                    [attr.x]="resultChartX(labelIndex, chart.xLabels.length)"
+                  >
+                    {{ label }}
+                  </text>
+                }
+
+                @for (series of chart.series; track $index) {
+                  <path
+                    class="result-tooltip__series"
+                    pathLength="100"
+                    fill="none"
+                    [attr.d]="resultChartPath(chart, series)"
+                    [attr.stroke]="series.color"
+                  ></path>
+                  @for (value of series.values; track $index; let pointIndex = $index) {
+                    <circle
+                      class="result-tooltip__point"
+                      r="3"
+                      [attr.cx]="resultChartX(pointIndex, series.values.length)"
+                      [attr.cy]="vitalChartY(value, chart)"
+                      [attr.fill]="
+                        series.pointColors?.[pointIndex] || series.pointColor || series.color
+                      "
+                      [style.animation-delay.ms]="180 + pointIndex * 70"
+                    ></circle>
+                  }
+                }
+                @if (resultChartHover() !== null) {
+                  @let pointIndex = resultChartHover() ?? 0;
+                  @for (series of chart.series; track $index) {
+                    <circle
+                      class="result-tooltip__hover-point"
+                      r="4.5"
+                      [attr.cx]="resultChartX(pointIndex, series.values.length)"
+                      [attr.cy]="vitalChartY(series.values[pointIndex], chart)"
+                      [attr.fill]="
+                        series.pointColors?.[pointIndex] || series.pointColor || series.color
+                      "
+                    ></circle>
+                  }
+                }
+              </svg>
+
+              @if (resultChartHover() !== null) {
+                @let pointIndex = resultChartHover() ?? 0;
                 <div
-                  class="result-tooltip__table-row"
-                  [class.result-tooltip__table-row--alert]="row.alert"
-                  role="row"
+                  class="result-tooltip__data-tooltip"
+                  role="tooltip"
+                  [style.left.%]="resultChartTooltipLeft(pointIndex, chart.xLabels.length)"
+                  [style.top.%]="resultChartTooltipTop(chart, pointIndex)"
                 >
-                  <span role="cell">{{ row.name }}</span>
-                  <span role="cell" [class.result-tooltip__table-value--alert]="row.alert">
-                    {{ row.value }}
-                    @if (row.alert) {
-                      <small aria-label="Low">L</small>
+                  <strong>{{ resultChartTooltipDate(chart, pointIndex) }}</strong>
+                  @if (chart.tooltipContexts?.[pointIndex]; as context) {
+                    <span class="result-tooltip__data-context">{{ context }}</span>
+                  }
+                  <span class="result-tooltip__data-value" [style.color]="chart.series[0].color">
+                    {{ resultChartTooltipValue(chart, pointIndex) }}
+                    @if (chart.unit) {
+                      <span class="result-tooltip__data-unit"> {{ chart.unit }}</span>
                     }
                   </span>
-                  <span role="cell">{{ row.range }}</span>
                 </div>
               }
             </div>
-          </div>
-        }
 
-        @if (tooltip.chart; as chart) {
-          <div class="result-tooltip__chart-wrap">
-            <svg
-              class="result-tooltip__chart"
-              viewBox="0 0 472 120"
-              role="img"
-              [attr.aria-label]="tooltip.title"
-              (mousemove)="updateResultChartHover($event, chart)"
-              (mouseleave)="clearResultChartHover()"
+            <div
+              class="result-tooltip__legend"
+              [class.result-tooltip__legend--centered]="chart.series.length === 1"
             >
-              @for (tick of chart.yTicks; track tick) {
-                <line
-                  class="result-tooltip__grid-line"
-                  x1="30"
-                  x2="472"
-                  [attr.y1]="vitalChartY(tick, chart)"
-                  [attr.y2]="vitalChartY(tick, chart)"
-                ></line>
-                <text
-                  class="result-tooltip__axis-label"
-                  x="24"
-                  text-anchor="end"
-                  [attr.y]="vitalChartY(tick, chart) + 3"
-                >
-                  {{ tick }}
-                </text>
+              @for (series of chart.series; track series.label) {
+                <span><i [style.background-color]="series.color"></i>{{ series.label }}</span>
               }
+            </div>
+          }
 
-              @for (threshold of chart.thresholds ?? []; track threshold.value) {
-                <line
-                  class="result-tooltip__threshold"
-                  x1="30"
-                  x2="472"
-                  [attr.y1]="vitalChartY(threshold.value, chart)"
-                  [attr.y2]="vitalChartY(threshold.value, chart)"
-                  [attr.stroke]="threshold.color"
-                ></line>
+          @if (tooltip.footer.length) {
+            <footer class="result-tooltip__footer">
+              @for (item of tooltip.footer; track item.message) {
+                <strong [style.color]="item.color">{{ item.message }}</strong>
               }
-
-              @for (label of chart.xLabels; track label; let labelIndex = $index) {
-                <text
-                  class="result-tooltip__axis-label"
-                  [attr.y]="vitalChartAxisY(chart)"
-                  text-anchor="middle"
-                  [attr.x]="resultChartX(labelIndex, chart.xLabels.length)"
-                >
-                  {{ label }}
-                </text>
-              }
-
-              @for (series of chart.series; track $index) {
-                <path
-                  class="result-tooltip__series"
-                  pathLength="100"
-                  fill="none"
-                  [attr.d]="resultChartPath(chart, series)"
-                  [attr.stroke]="series.color"
-                ></path>
-                @for (value of series.values; track $index; let pointIndex = $index) {
-                  <circle
-                    class="result-tooltip__point"
-                    r="3"
-                    [attr.cx]="resultChartX(pointIndex, series.values.length)"
-                    [attr.cy]="vitalChartY(value, chart)"
-                    [attr.fill]="
-                      series.pointColors?.[pointIndex] || series.pointColor || series.color
-                    "
-                    [style.animation-delay.ms]="180 + pointIndex * 70"
-                  ></circle>
-                }
-              }
-              @if (resultChartHover() !== null) {
-                @let pointIndex = resultChartHover() ?? 0;
-                @for (series of chart.series; track $index) {
-                  <circle
-                    class="result-tooltip__hover-point"
-                    r="4.5"
-                    [attr.cx]="resultChartX(pointIndex, series.values.length)"
-                    [attr.cy]="vitalChartY(series.values[pointIndex], chart)"
-                    [attr.fill]="
-                      series.pointColors?.[pointIndex] || series.pointColor || series.color
-                    "
-                  ></circle>
-                }
-              }
-            </svg>
-
-            @if (resultChartHover() !== null) {
-              @let pointIndex = resultChartHover() ?? 0;
-              <div
-                class="result-tooltip__data-tooltip"
-                role="tooltip"
-                [style.left.%]="resultChartTooltipLeft(pointIndex, chart.xLabels.length)"
-                [style.top.%]="resultChartTooltipTop(chart, pointIndex)"
-              >
-                <strong>{{ resultChartTooltipDate(chart, pointIndex) }}</strong>
-                @if (chart.tooltipContexts?.[pointIndex]; as context) {
-                  <span class="result-tooltip__data-context">{{ context }}</span>
-                }
-                <span class="result-tooltip__data-value" [style.color]="chart.series[0].color">
-                  {{ resultChartTooltipValue(chart, pointIndex) }}
-                  @if (chart.unit) {
-                    <span class="result-tooltip__data-unit"> {{ chart.unit }}</span>
-                  }
-                </span>
-              </div>
-            }
-          </div>
-
-          <div
-            class="result-tooltip__legend"
-            [class.result-tooltip__legend--centered]="chart.series.length === 1"
-          >
-            @for (series of chart.series; track series.label) {
-              <span><i [style.background-color]="series.color"></i>{{ series.label }}</span>
-            }
-          </div>
-        }
-
-        @if (tooltip.footer.length) {
-          <footer class="result-tooltip__footer">
-            @for (item of tooltip.footer; track item.message) {
-              <strong [style.color]="item.color">{{ item.message }}</strong>
-            }
-          </footer>
-        }
+            </footer>
+          }
         </div>
       </aside>
     }
