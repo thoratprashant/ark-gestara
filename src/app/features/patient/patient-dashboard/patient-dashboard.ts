@@ -2170,7 +2170,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       return;
     }
 
-    this.updateFutureTimelineTooltip((tooltip) => ({
+    this.updateTimelineTooltip((tooltip) => ({
       ...tooltip,
       tests: [...(tooltip.tests ?? []), { label, showActions: true }],
     }));
@@ -2181,7 +2181,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     test: TimelineStatusTooltipTest,
     actionState: TimelineStatusTooltipTest['actionState'],
   ): void {
-    this.updateFutureTimelineTooltip((tooltip) => ({
+    this.updateTimelineTooltip((tooltip) => ({
       ...tooltip,
       removedTests: tooltip.removedTests?.map((item) =>
         item === test ? { ...item, actionState } : item,
@@ -2191,7 +2191,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   }
 
   declineTimelineTooltipTest(test: TimelineStatusTooltipTest, fromRemoved = false): void {
-    this.updateFutureTimelineTooltip((tooltip) => {
+    this.updateTimelineTooltip((tooltip) => {
       if (fromRemoved) {
         return {
           ...tooltip,
@@ -2215,7 +2215,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       return;
     }
 
-    this.updateFutureTimelineTooltip((tooltip) => ({
+    this.updateTimelineTooltip((tooltip) => ({
       ...tooltip,
       removedTests: tooltip.removedTests?.filter((item) => item.label !== test.label),
       tests: [...(tooltip.tests ?? []), { ...test, actionState: 'active' }],
@@ -2223,7 +2223,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   }
 
   orderTimelineTooltipTest(test: TimelineStatusTooltipTest, fromRemoved = false): void {
-    this.updateFutureTimelineTooltip((tooltip) => {
+    this.updateTimelineTooltip((tooltip) => {
       const orderedTest = { ...test, actionState: 'ordered' as const };
 
       if (fromRemoved) {
@@ -2244,7 +2244,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   setTimelineTooltipOrderResult(test: TimelineStatusTooltipTest, event: Event): void {
     const input = event.target as HTMLInputElement;
 
-    this.updateFutureTimelineTooltip((tooltip) => ({
+    this.updateTimelineTooltip((tooltip) => ({
       ...tooltip,
       tests: tooltip.tests?.map((item) =>
         item === test ? { ...item, orderResult: input.value } : item,
@@ -2273,7 +2273,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       return;
     }
 
-    this.updateFutureTimelineTooltip((tooltip) => ({
+    this.updateTimelineTooltip((tooltip) => ({
       ...tooltip,
       badgeLabel: 'Completed/Not Reviewed',
       resultsSubmitted: true,
@@ -2291,7 +2291,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   }
 
   setTimelineTooltipResultReviewState(resultId: string, state: TimelineResultReviewState): void {
-    this.updateFutureTimelineTooltip((tooltip) => ({
+    this.updateTimelineTooltip((tooltip) => ({
       ...tooltip,
       resultReviewStates: {
         ...tooltip.resultReviewStates,
@@ -2305,11 +2305,11 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   }
 
   markTimelineTooltipResultsReviewed(): void {
-    this.updateFutureTimelineTooltip((tooltip) => ({ ...tooltip, resultsReviewed: true }));
+    this.updateTimelineTooltip((tooltip) => ({ ...tooltip, resultsReviewed: true }));
   }
 
   removeTimelineTooltipTest(test: TimelineStatusTooltipTest, fromRemoved = false): void {
-    this.updateFutureTimelineTooltip((tooltip) => {
+    this.updateTimelineTooltip((tooltip) => {
       if (fromRemoved) {
         return {
           ...tooltip,
@@ -2325,11 +2325,11 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     });
   }
 
-  private updateFutureTimelineTooltip(
+  private updateTimelineTooltip(
     update: (tooltip: TimelineStatusTooltip) => TimelineStatusTooltip,
   ): void {
     this.activeTimelineStatusTooltip.update((active) =>
-      active?.tooltip.status === 'future' ? { ...active, tooltip: update(active.tooltip) } : active,
+      active ? { ...active, tooltip: update(active.tooltip) } : active,
     );
   }
 

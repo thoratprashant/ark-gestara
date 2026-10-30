@@ -2221,10 +2221,11 @@
           }
 
           @if (activeStatusTooltip.tooltip.otherPlaceholder) {
-            <label class="timeline-status-tooltip__field">
-              <span>Other</span>
+            <div class="timeline-status-tooltip__field">
+              <label for="timeline-tooltip-other-test">Other</label>
               <input
                 #otherTestInput
+                id="timeline-tooltip-other-test"
                 class="timeline-status-tooltip__input"
                 type="text"
                 [placeholder]="activeStatusTooltip.tooltip.otherPlaceholder"
@@ -2233,10 +2234,15 @@
                   $event.preventDefault()
                 "
               />
-              <span class="timeline-status-tooltip__enter-hint" aria-hidden="true"
-                >&#x21b5; Enter</span
+              <button
+                class="timeline-status-tooltip__enter-hint"
+                type="button"
+                aria-label="Add lab test"
+                (click)="addTimelineTooltipTest(otherTestInput.value, otherTestInput)"
               >
-            </label>
+                &#x21b5; Enter
+              </button>
+            </div>
           }
 
           @if (activeStatusTooltip.tooltip.notesPlaceholder) {

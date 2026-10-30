@@ -763,6 +763,95 @@ describe('PatientDashboard timeline', () => {
     expect(dueSoonTooltip.textContent).toContain('2 of 4 completed');
   });
 
+  it('adds an Other lab test for every status that displays the field', () => {
+    for (const status of ['future', 'late']) {
+      const fixture = TestBed.createComponent(PatientDashboard);
+      fixture.detectChanges();
+      const dashboard = fixture.componentInstance;
+      const chip = fixture.nativeElement.querySelector(
+        `.problem-timeline__chip[data-status="${status}"]`,
+      ) as HTMLElement;
+
+      chip.dispatchEvent(new MouseEvent('mouseenter'));
+      fixture.detectChanges();
+
+      const input = fixture.nativeElement.querySelector(
+        '#timeline-tooltip-other-test',
+      ) as HTMLInputElement;
+      const addButton = fixture.nativeElement.querySelector(
+        '.timeline-status-tooltip__enter-hint',
+      ) as HTMLButtonElement;
+
+      input.value = `${status} click test`;
+      addButton.click();
+      fixture.detectChanges();
+
+      expect(dashboard.activeTimelineStatusTooltip()?.tooltip.tests?.at(-1)?.label).toBe(
+        `${status} click test`,
+      );
+      expect(input.value).toBe('');
+
+      input.value = `${status} keyboard test`;
+      input.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Enter' }));
+      fixture.detectChanges();
+
+      expect(dashboard.activeTimelineStatusTooltip()?.tooltip.tests?.at(-1)?.label).toBe(
+        `${status} keyboard test`,
+      );
+      expect(input.value).toBe('');
+    }
+  });
+
+  it('uses the shared Lab Tests section for every status that displays tests', () => {
+    for (const status of ['ordered', 'late', 'incomplete', 'future']) {
+      const fixture = TestBed.createComponent(PatientDashboard);
+      fixture.detectChanges();
+      const chip = fixture.nativeElement.querySelector(
+        `.problem-timeline__chip[data-status="${status}"]`,
+      ) as HTMLElement;
+
+      chip.dispatchEvent(new MouseEvent('mouseenter'));
+      fixture.detectChanges();
+
+      const tooltip = fixture.nativeElement.querySelector(
+        `.timeline-status-tooltip[data-status="${status}"]`,
+      ) as HTMLElement;
+      const testsSection = tooltip.querySelector(
+        'section.timeline-status-tooltip__tests[aria-label="Lab tests"]',
+      ) as HTMLElement;
+
+      expect(testsSection).toBeTruthy();
+      expect(testsSection.querySelector('h3')?.textContent?.trim()).toBe('Lab Tests:');
+      expect(testsSection.querySelector('.timeline-status-tooltip__test-list')).toBeTruthy();
+      expect(testsSection.querySelector('.timeline-status-tooltip__test')).toBeTruthy();
+    }
+  });
+
+  it('uses the shared tooltip header for every status that displays it', () => {
+    for (const status of ['completed', 'not-reviewed', 'ordered', 'late', 'incomplete', 'future']) {
+      const fixture = TestBed.createComponent(PatientDashboard);
+      fixture.detectChanges();
+      const chip = fixture.nativeElement.querySelector(
+        `.problem-timeline__chip[data-status="${status}"]`,
+      ) as HTMLElement;
+
+      chip.dispatchEvent(new MouseEvent('mouseenter'));
+      fixture.detectChanges();
+
+      const tooltip = fixture.nativeElement.querySelector(
+        `.timeline-status-tooltip[data-status="${status}"]`,
+      ) as HTMLElement;
+      const header = tooltip.querySelector('header.timeline-status-tooltip__header') as HTMLElement;
+      const badge = header.querySelector('.timeline-status-tooltip__badge') as HTMLElement;
+
+      expect(header).toBeTruthy();
+      expect(header.querySelector('h2')?.textContent?.trim()).not.toBe('');
+      expect(header.querySelector('p')?.textContent?.trim()).not.toBe('');
+      expect(badge.textContent?.trim()).not.toBe('');
+      expect(badge.getAttribute('data-status')).toBe(status);
+    }
+  });
+
   it('expands tooltip notes according to their wrapped content', () => {
     const dashboard = new PatientDashboard();
 
