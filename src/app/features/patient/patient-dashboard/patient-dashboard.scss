@@ -759,6 +759,175 @@
   min-width: 100%;
 }
 
+.problem-review--recommendations {
+  display: block;
+  min-width: 0;
+  padding: 0.8125rem 1.5rem;
+  overflow: hidden;
+  color: #171f26;
+  background: #fbf3ef;
+  border: 1px solid #e7ddd7;
+  border-radius: 0.75rem;
+  font-family: Inter, sans-serif;
+}
+
+.problem-review--recommendations__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 1.25rem;
+  padding: 0;
+  color: #171f26;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  text-align: left;
+}
+
+.problem-review--recommendations__toggle strong {
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.25rem;
+}
+
+.problem-review--recommendations__toggle svg {
+  flex: 0 0 auto;
+  width: 0.875rem;
+  height: 0.875rem;
+  fill: none;
+  stroke: #73808c;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.75;
+  transition: transform 180ms ease;
+}
+
+.problem-review--recommendations__toggle[aria-expanded='false'] svg {
+  transform: rotate(-90deg);
+}
+
+.problem-review--recommendations__toggle:focus-visible,
+.problem-review--recommendations__actions button:focus-visible {
+  outline: 2px solid rgb(13 148 136 / 35%);
+  outline-offset: 2px;
+}
+
+.problem-review--recommendations__list {
+  display: grid;
+  margin-top: 0.1875rem;
+}
+
+.problem-review--recommendations__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-width: 0;
+  min-height: 3.0625rem;
+}
+
+.problem-review--recommendations__item p,
+.problem-review--recommendations__empty {
+  min-width: 0;
+  margin: 0;
+  color: #73808c;
+  font-size: 0.625rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  white-space: nowrap;
+}
+
+.problem-review--recommendations__item p > strong{
+  color: #F06A6A;
+  font-size: inherit;
+  font-weight: 600;
+}
+
+.problem-review--recommendations__item p > b {
+  color: #FF0000;
+  font-size: inherit;
+  font-weight: 700;
+}
+
+.problem-review--recommendations__item p > small {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.0625rem 0.625rem;
+  color: #1D4ED8;
+  background: #D9E3FF;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1rem;
+  vertical-align: middle;
+}
+
+.problem-review--recommendations__actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.problem-review--recommendations__actions button {
+  width: 6.25rem;
+  min-height: 2rem;
+  padding: 0.5rem 0.75rem;
+  color: #fff;
+  background: #07998f;
+  border: 1px solid #07998f;
+  border-radius: 0.625rem;
+  font:
+    600 0.75rem/1rem Inter,
+    sans-serif;
+  white-space: nowrap;
+}
+
+.problem-review--recommendations__actions button:hover {
+  background: #077e77;
+  border-color: #077e77;
+}
+
+.problem-review--recommendations__actions button:last-child {
+  width: 4.3125rem;
+  color: #73808c;
+  background: #fff;
+  border-color: #ddd8d4;
+  box-shadow: 0 1px 2px rgb(23 36 43 / 5%);
+}
+
+.problem-review--recommendations__actions button:last-child:hover {
+  color: #171f26;
+  background: #f8f8f7;
+}
+
+.problem-review--recommendations__empty {
+  padding: 0.5rem 0 0.25rem;
+  color: #73808c;
+}
+
+@media (max-width: 47.999rem) {
+  .problem-review--recommendations {
+    padding-inline: 1rem;
+  }
+
+  .problem-review--recommendations__item {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding: 0.75rem 0;
+  }
+
+  .problem-review--recommendations__item + .problem-review--recommendations__item {
+    border-top: 1px solid #eadfd9;
+  }
+
+  .problem-review--recommendations__item p {
+    white-space: normal;
+  }
+}
+
 .vital-card {
   display: flex;
   flex: 0 0 auto;

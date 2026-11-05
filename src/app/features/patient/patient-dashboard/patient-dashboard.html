@@ -312,7 +312,8 @@
         </div>
       </div>
 
-      <aside class="patient-summary__recommendation" aria-label="Clinical recommendations">
+      <!-- Commented below section as added a separate view for Recommended Problems -->
+      <!-- <aside class="patient-summary__recommendation" aria-label="Clinical recommendations">
         @if (summaryRecommendedProblemState() !== 'dismissed') {
           <div class="patient-summary__recommendation-row">
             @if (summaryRecommendedProblemState() === 'added') {
@@ -358,7 +359,8 @@
           <strong>Recommendation:</strong>
           <span>Recommend low-dose aspirin (81 mg/day) starting before 16 weeks gestation.</span>
         </div>
-      </aside>
+      </aside> -->
+
     </section>
 
     @if (deliveryWindowTooltipOpen()) {
@@ -1082,6 +1084,47 @@
     </section>
 
     <section
+      class="problem-review problem-review--recommendations"
+      aria-labelledby="recommended-problems-title"
+    >
+      <button
+        class="problem-review--recommendations__toggle"
+        type="button"
+        [attr.aria-expanded]="suggestedProblemsExpanded()"
+        aria-controls="recommended-problems-list"
+        (click)="suggestedProblemsExpanded.set(!suggestedProblemsExpanded())"
+      >
+        <strong id="recommended-problems-title">Recommended Problems</strong>
+        <svg viewBox="0 0 12 12" aria-hidden="true">
+          <path d="m2.75 4.25 3.25 3.25 3.25-3.25" />
+        </svg>
+      </button>
+
+      @if (suggestedProblemsExpanded()) {
+        <div id="recommended-problems-list" class="problem-review--recommendations__list">
+          @for (problem of suggestedProblems(); track problem.id) {
+            <article class="problem-review--recommendations__item">
+              <p>
+                <strong>{{ problem.name }}: </strong>
+                <span>{{ problem.detailLabel }} </span>
+                <b> {{ problem.detailValue }}</b>
+                <span> {{ problem.detailReference }}</span>
+                <small> {{ problem.icdCode }}</small>
+              </p>
+
+              <div class="problem-review--recommendations__actions">
+                <button type="button" (click)="acceptSuggestedProblem(problem)">Add Problem</button>
+                <button type="button" (click)="declineSuggestedProblem(problem)">Dismiss</button>
+              </div>
+            </article>
+          } @empty {
+            <p class="problem-review--recommendations__empty">No recommended problems.</p>
+          }
+        </div>
+      }
+    </section>
+
+    <section
       id="problem-timeline"
       class="problem-timeline"
       aria-labelledby="problem-timeline-title"
@@ -1425,7 +1468,8 @@
         </div>
 
         <section class="problem-review" aria-label="Problem recommendations and history">
-          <div class="problem-review__suggested">
+          <!-- Commented below section as added a separate view for Recommended/Suggested Problems -->
+          <!-- <div class="problem-review__suggested">
             <button
               class="problem-review__history-toggle problem-review__suggested-toggle"
               type="button"
@@ -1481,7 +1525,7 @@
                 <p class="problem-review__empty">No new suggested problems.</p>
               }
             }
-          </div>
+          </div> -->
 
           <section class="problem-review__history">
             <button
