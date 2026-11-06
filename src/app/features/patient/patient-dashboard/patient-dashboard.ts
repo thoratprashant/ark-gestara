@@ -1038,6 +1038,7 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   private vitalSigns?: ElementRef<HTMLElement>;
 
   private summaryManuallyCollapsed = false;
+  private summaryResizeObserver?: ResizeObserver;
 
   readonly summaryExpanded = signal(true);
   readonly summarySticky = signal(false);
@@ -1333,10 +1334,13 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   constructor(private readonly dialog?: MatDialog) {}
 
   ngAfterViewInit(): void {
+    this.observePatientSummaryHeight();
     this.startVitalCountAnimation();
   }
 
   ngOnDestroy(): void {
+    this.summaryResizeObserver?.disconnect();
+
     if (this.vitalCountAnimationFrame !== null) {
       window.cancelAnimationFrame(this.vitalCountAnimationFrame);
     }
@@ -3158,6 +3162,29 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
 
   private headerOffset(): number {
     return window.innerWidth < 992 ? 64 : 78;
+  }
+
+  private observePatientSummaryHeight(): void {
+    const summary = this.patientSummary?.nativeElement;
+
+    if (!summary) {
+      return;
+    }
+
+    const syncHeight = (): void => {
+      const height = summary.getBoundingClientRect().height;
+
+      if (height > 0) {
+        summary.parentElement?.style.setProperty('--patient-summary-sticky-height', `${height}px`);
+      }
+    };
+
+    syncHeight();
+
+    if (typeof ResizeObserver !== 'undefined') {
+      this.summaryResizeObserver = new ResizeObserver(syncHeight);
+      this.summaryResizeObserver.observe(summary);
+    }
   }
 
   private startVitalCountAnimation(): void {
