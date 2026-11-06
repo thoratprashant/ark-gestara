@@ -1316,6 +1316,28 @@ describe('PatientDashboard timeline', () => {
     expect(bloodPressureChart && dashboard.vitalChartViewBox(bloodPressureChart)).toBe(
       '0 0 420 120',
     );
+    const abnormalThreshold = bloodPressureChart?.thresholds?.[0];
+    const bloodPressureSeries = bloodPressureChart?.series[0];
+    expect(
+      bloodPressureChart &&
+        bloodPressureSeries &&
+        abnormalThreshold &&
+        dashboard.vitalChartThresholdPath(
+          bloodPressureChart,
+          bloodPressureSeries,
+          abnormalThreshold,
+        ),
+    ).toMatch(/^M342,/);
+    expect(
+      bloodPressureChart &&
+        bloodPressureSeries &&
+        dashboard.vitalChartPointColor(bloodPressureChart, bloodPressureSeries, 147),
+    ).toBe('#ff595f');
+    expect(
+      bloodPressureChart &&
+        bloodPressureSeries &&
+        dashboard.vitalChartPointColor(bloodPressureChart, bloodPressureSeries, 136),
+    ).toBe('#5b65ed');
 
     dashboard.scheduleVitalTooltipHide();
     vi.advanceTimersByTime(100);
@@ -1551,7 +1573,7 @@ describe('PatientDashboard timeline', () => {
     });
     expect(
       dashboard.highRiskFactors.filter((factor) => factor.selected).map((factor) => factor.label),
-    ).toEqual(['Chronic hypertension']);
+    ).toEqual([]);
     expect(dashboard.moderateRiskFactors).toHaveLength(5);
     expect(dashboard.recommendedProblemState()).toBe('pending');
 
@@ -1636,6 +1658,29 @@ describe('PatientDashboard timeline', () => {
       expect(riskFact.querySelector('strong')?.textContent?.trim()).toBe(label);
       expect(riskFact.querySelector('img')?.getAttribute('src')).toBe(icon);
     }
+  });
+
+  it('updates the pre-eclampsia status from selected risk factors', () => {
+    const dashboard = new PatientDashboard();
+    const moderateFactor = dashboard.moderateRiskFactors[0];
+    const highFactor = dashboard.highRiskFactors[0];
+
+    expect(dashboard.preEclampsiaRiskStatus()).toBe('update');
+
+    dashboard.updateRiskFactorSelection(moderateFactor, true);
+    expect(dashboard.preEclampsiaRiskStatus()).toBe('moderate');
+
+    dashboard.updateRiskFactorSelection(highFactor, true);
+    expect(dashboard.preEclampsiaRiskStatus()).toBe('high');
+
+    dashboard.updateRiskFactorSelection(highFactor, false);
+    expect(dashboard.preEclampsiaRiskStatus()).toBe('moderate');
+
+    dashboard.updateRiskFactorSelection(moderateFactor, false);
+    expect(dashboard.preEclampsiaRiskStatus()).toBe('update');
+
+    dashboard.saveRiskAssessment();
+    expect(dashboard.preEclampsiaRiskStatus()).toBe('low');
   });
 
   it('opens the delivery window tooltip below the recommended delivery summary fact', () => {

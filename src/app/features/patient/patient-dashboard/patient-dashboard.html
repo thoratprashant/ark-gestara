@@ -360,7 +360,6 @@
           <span>Recommend low-dose aspirin (81 mg/day) starting before 16 weeks gestation.</span>
         </div>
       </aside> -->
-
     </section>
 
     @if (deliveryWindowTooltipOpen()) {
@@ -438,7 +437,7 @@
             </span>
             <div>
               <strong>High Risk Detected (1 High Factor)</strong>
-              <p>Daily low-dose aspirin (81-150 mg) is recommended starting from 12-16 weeks.</p>
+              <!-- <p>Daily low-dose aspirin (81-150 mg) is recommended starting from 12-16 weeks.</p> -->
             </div>
           </section>
 
@@ -452,7 +451,7 @@
                   >+</span
                 >
                 <span>
-                  <h3 id="recommended-problem-title">Recommended problem</h3>
+                  <h3 id="recommended-problem-title">Recommended problem / medicine</h3>
                   <p>Eligible because at least 1 high risk factor is selected.</p>
                 </span>
               </header>
@@ -488,16 +487,52 @@
                   }
                 }
               </div>
+
+              <div class="risk-assessment-tooltip__recommended-problem">
+                <span>
+                  <strong>Daily low-dose aspirin</strong>
+                  <small>(81-162 mg). 12-16 weeks.</small>
+                </span>
+
+                @switch (recommendedMedicineState()) {
+                  @case ('pending') {
+                    <span class="risk-assessment-tooltip__recommendation-actions">
+                      <button type="button" (click)="dismissRecommendedMedicine()">Dismiss</button>
+                      <button type="button" (click)="addRecommendedMedicine()">Add</button>
+                    </span>
+                  }
+                  @case ('added') {
+                    <span
+                      class="risk-assessment-tooltip__recommendation-status risk-assessment-tooltip__recommendation-status--added"
+                      role="status"
+                    >
+                      <span aria-hidden="true">&#10003;</span> Added to Problem List
+                    </span>
+                  }
+                  @case ('dismissed') {
+                    <span
+                      class="risk-assessment-tooltip__recommendation-status risk-assessment-tooltip__recommendation-status--dismissed"
+                      role="status"
+                    >
+                      <span aria-hidden="true">&times;</span> Dismissed Medicine
+                    </span>
+                  }
+                }
+              </div>
             </section>
 
             <fieldset
               class="risk-assessment-tooltip__factors risk-assessment-tooltip__factors--high"
             >
-              <legend>High Risk Factors (1)</legend>
+              <legend>High Risk Factors ({{ selectedRiskFactorCount(highRiskFactors) }})</legend>
               <div>
                 @for (factor of highRiskFactors; track factor.label) {
                   <label>
-                    <input type="checkbox" [checked]="factor.selected" />
+                    <input
+                      type="checkbox"
+                      [checked]="factor.selected"
+                      (change)="updateRiskFactorSelection(factor, $any($event.target).checked)"
+                    />
                     <span class="risk-assessment-tooltip__checkbox" aria-hidden="true">
                       <img src="assets/risk-assessment/asset-3.svg" alt="" />
                     </span>
@@ -517,15 +552,21 @@
             <fieldset
               class="risk-assessment-tooltip__factors risk-assessment-tooltip__factors--moderate"
             >
-              <legend>Moderate Risk Factors (0)</legend>
+              <legend>
+                Moderate Risk Factors ({{ selectedRiskFactorCount(moderateRiskFactors) }})
+              </legend>
               <div>
-                @for (factor of moderateRiskFactors; track factor) {
+                @for (factor of moderateRiskFactors; track factor.label) {
                   <label>
-                    <input type="checkbox" />
+                    <input
+                      type="checkbox"
+                      [checked]="factor.selected"
+                      (change)="updateRiskFactorSelection(factor, $any($event.target).checked)"
+                    />
                     <span class="risk-assessment-tooltip__checkbox" aria-hidden="true">
                       <img src="assets/risk-assessment/asset-3.svg" alt="" />
                     </span>
-                    <span>{{ factor }}</span>
+                    <span>{{ factor.label }}</span>
                   </label>
                 }
               </div>
@@ -534,7 +575,7 @@
 
           <footer class="risk-assessment-tooltip__footer">
             <button type="button" (click)="hideRiskAssessment()">Cancel</button>
-            <button type="button" (click)="hideRiskAssessment()">Save Assessment</button>
+            <button type="button" (click)="saveRiskAssessment()">Save Assessment</button>
           </footer>
         </div>
       </aside>
@@ -879,13 +920,25 @@
                         [attr.stroke]="series.color"
                       ></path>
 
+                      @for (threshold of chart.thresholds ?? []; track threshold.value) {
+                        @if (threshold.highlightSeriesAbove) {
+                          <path
+                            class="vital-tooltip__series vital-tooltip__series--threshold"
+                            pathLength="100"
+                            fill="none"
+                            [attr.d]="vitalChartThresholdPath(chart, series, threshold)"
+                            [attr.stroke]="threshold.color"
+                          ></path>
+                        }
+                      }
+
                       @for (value of series.values; track $index; let pointIndex = $index) {
                         <circle
                           class="vital-tooltip__point"
                           r="4.5"
                           [attr.cx]="vitalChartX(pointIndex, series.values.length)"
                           [attr.cy]="vitalChartY(value, chart)"
-                          [attr.fill]="series.pointColor || series.color"
+                          [attr.fill]="vitalChartPointColor(chart, series, value)"
                           [style.animation-delay.ms]="250 + pointIndex * 85"
                         ></circle>
                       }
@@ -906,7 +959,13 @@
                               r="5.5"
                               [attr.cx]="vitalChartX(chartHover.pointIndex, chart.xLabels.length)"
                               [attr.cy]="vitalChartY(series.values[chartHover.pointIndex], chart)"
-                              [attr.fill]="series.pointColor || series.color"
+                              [attr.fill]="
+                                vitalChartPointColor(
+                                  chart,
+                                  series,
+                                  series.values[chartHover.pointIndex]
+                                )
+                              "
                             ></circle>
                           }
                         </g>
@@ -929,7 +988,16 @@
                           {{ vitalChartTooltipHeading(chart.xLabels[chartHover.pointIndex]) }}
                         </span>
                         @for (series of chart.series; track $index) {
-                          <span class="vital-tooltip__data-value" [style.color]="series.color">
+                          <span
+                            class="vital-tooltip__data-value"
+                            [style.color]="
+                              vitalChartPointColor(
+                                chart,
+                                series,
+                                series.values[chartHover.pointIndex]
+                              )
+                            "
+                          >
                             @if (chart.series.length > 1 && series.label) {
                               <small>{{ series.label }}</small>
                             }
@@ -2544,7 +2612,7 @@
                     <div class="result-card__title">
                       <h4>Home BP Log</h4>
                     </div>
-                    <time datetime="2026-03-14">3/14–3/27</time>
+                    <time datetime="2026-03-14">3/14/26</time>
                   </header>
                   <ul>
                     <li>Range: 128–148/82–92 mmHg (33% elevated)</li>
@@ -2583,7 +2651,7 @@
                     <div class="result-card__title">
                       <h4>Blood Glucose Log</h4>
                     </div>
-                    <time datetime="2026-03-14">3/14–3/27</time>
+                    <time datetime="2026-03-14">3/14/26</time>
                   </header>
                   <ul>
                     <li>Fasting: 82–98 mg/dL (50% elevated)</li>

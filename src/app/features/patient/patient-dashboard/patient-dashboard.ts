@@ -38,6 +38,7 @@ interface VitalChartSeries {
 
 interface VitalChartThreshold {
   color: string;
+  highlightSeriesAbove?: boolean;
   label: string;
   value: number;
 }
@@ -160,6 +161,11 @@ type PreEclampsiaRiskStatus = 'update' | 'low' | 'moderate' | 'high';
 interface PreEclampsiaRiskSummary {
   icon: string;
   label: string;
+}
+
+interface PreEclampsiaRiskFactor {
+  label: string;
+  selected: boolean;
 }
 
 const PRE_ECLAMPSIA_RISK_SUMMARIES: Record<PreEclampsiaRiskStatus, PreEclampsiaRiskSummary> = {
@@ -321,7 +327,7 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
         yTicks: [100, 120, 140, 160],
         xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
         normalRange: { min: 100, max: 140 },
-        thresholds: [{ value: 140, label: 'Abn', color: '#ff595f' }],
+        thresholds: [{ value: 140, label: 'Abn', color: '#ff595f', highlightSeriesAbove: true }],
         unit: 'mmHg',
         series: [{ values: [114, 126, 128, 124, 136, 140, 147], color: '#5b65ed' }],
       },
@@ -333,7 +339,7 @@ const VITAL_TOOLTIPS: VitalTooltip[] = [
         yTicks: [60, 70, 80, 90, 100],
         xLabels: ['8w', '12w', '16w', '20w', '24w', '26w', '28w'],
         normalRange: { min: 60, max: 90 },
-        thresholds: [{ value: 90, label: 'Abn', color: '#ff595f' }],
+        thresholds: [{ value: 90, label: 'Abn', color: '#ff595f', highlightSeriesAbove: true }],
         unit: 'mmHg',
         series: [{ values: [71, 77, 79, 81, 84, 87, 92], color: '#5b65ed' }],
       },
@@ -1080,11 +1086,12 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   readonly resultChartHover = signal<number | null>(null);
   readonly reviewedResultIds = signal<ReadonlySet<string>>(new Set());
   readonly riskAssessmentOpen = signal(false);
-  readonly preEclampsiaRiskStatus = signal<PreEclampsiaRiskStatus>('high');
+  readonly preEclampsiaRiskStatus = signal<PreEclampsiaRiskStatus>('update');
   readonly preEclampsiaRiskSummary = computed(
     () => PRE_ECLAMPSIA_RISK_SUMMARIES[this.preEclampsiaRiskStatus()],
   );
   readonly recommendedProblemState = signal<RecommendedProblemState>('pending');
+  readonly recommendedMedicineState = signal<RecommendedProblemState>('pending');
   readonly summaryRecommendedProblemState = signal<RecommendedProblemState>('pending');
   readonly riskAssessmentPosition = signal<AnchoredTooltipPosition>({
     bottom: null,
@@ -1211,20 +1218,20 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
       this.eddTooltipOpen() ||
       this.pregnancyHistoryTooltipOpen(),
   );
-  readonly highRiskFactors = [
+  readonly highRiskFactors: PreEclampsiaRiskFactor[] = [
     { label: 'Hypertensive disorder in previous pregnancy', selected: false },
     { label: 'Chronic kidney disease', selected: false },
     { label: 'Autoimmune disease (SLE, APS)', selected: false },
     { label: 'Type 1 or Type 2 diabetes', selected: false },
-    { label: 'Chronic hypertension', selected: true },
-  ] as const;
-  readonly moderateRiskFactors = [
-    'First pregnancy (nulliparity)',
-    'Obesity (BMI >30 kg/m²)',
-    'Family history of pre-eclampsia',
-    'Multiple gestation',
-    'Maternal age ≥35 years',
-  ] as const;
+    { label: 'Chronic hypertension', selected: false },
+  ];
+  readonly moderateRiskFactors: PreEclampsiaRiskFactor[] = [
+    { label: 'First pregnancy (nulliparity)', selected: false },
+    { label: 'Obesity (BMI >30 kg/m²)', selected: false },
+    { label: 'Family history of pre-eclampsia', selected: false },
+    { label: 'Multiple gestation', selected: false },
+    { label: 'Maternal age ≥35 years', selected: false },
+  ];
   readonly vitalChartHover = signal<VitalChartHover | null>(null);
   readonly vitalCounts = signal<VitalCountValues>({
     bmi: 0,
@@ -1577,6 +1584,38 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
     this.riskAssessmentOpen.set(false);
   }
 
+  updateRiskFactorSelection(factor: PreEclampsiaRiskFactor, selected: boolean): void {
+    factor.selected = selected;
+
+    if (this.highRiskFactors.some((riskFactor) => riskFactor.selected)) {
+      this.preEclampsiaRiskStatus.set('high');
+      return;
+    }
+
+    if (this.moderateRiskFactors.some((riskFactor) => riskFactor.selected)) {
+      this.preEclampsiaRiskStatus.set('moderate');
+      return;
+    }
+
+    this.preEclampsiaRiskStatus.set('update');
+  }
+
+  selectedRiskFactorCount(factors: readonly PreEclampsiaRiskFactor[]): number {
+    return factors.filter((factor) => factor.selected).length;
+  }
+
+  saveRiskAssessment(): void {
+    const hasSelectedFactor = [...this.highRiskFactors, ...this.moderateRiskFactors].some(
+      (factor) => factor.selected,
+    );
+
+    if (!hasSelectedFactor) {
+      this.preEclampsiaRiskStatus.set('low');
+    }
+
+    this.hideRiskAssessment();
+  }
+
   scheduleRiskAssessmentHide(): void {
     this.cancelRiskAssessmentHide();
     this.riskAssessmentHideTimer = window.setTimeout(() => {
@@ -1597,6 +1636,16 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
   dismissRecommendedProblem(): void {
     this.keepRiskAssessmentOpen();
     this.recommendedProblemState.set('dismissed');
+  }
+
+  addRecommendedMedicine(): void {
+    this.keepRiskAssessmentOpen();
+    this.recommendedMedicineState.set('added');
+  }
+
+  dismissRecommendedMedicine(): void {
+    this.keepRiskAssessmentOpen();
+    this.recommendedMedicineState.set('dismissed');
   }
 
   addSummaryRecommendedProblem(): void {
@@ -2524,6 +2573,63 @@ export class PatientDashboard implements AfterViewInit, OnDestroy {
         return `${command}${this.vitalChartX(index, series.values.length)},${this.vitalChartY(value, chart)}`;
       })
       .join(' ');
+  }
+
+  vitalChartThresholdPath(
+    chart: VitalChart,
+    series: VitalChartSeries,
+    threshold: VitalChartThreshold,
+  ): string {
+    const pathParts: string[] = [];
+    let pathOpen = false;
+
+    for (let index = 1; index < series.values.length; index += 1) {
+      const previousValue = series.values[index - 1];
+      const value = series.values[index];
+      const previousAboveThreshold = previousValue >= threshold.value;
+      const aboveThreshold = value >= threshold.value;
+      const previousX = this.vitalChartX(index - 1, series.values.length);
+      const x = this.vitalChartX(index, series.values.length);
+
+      if (previousAboveThreshold && aboveThreshold) {
+        if (!pathOpen) {
+          pathParts.push(`M${previousX},${this.vitalChartY(previousValue, chart)}`);
+        }
+        pathParts.push(`L${x},${this.vitalChartY(value, chart)}`);
+        pathOpen = true;
+        continue;
+      }
+
+      if (previousAboveThreshold !== aboveThreshold) {
+        const crossingRatio = (threshold.value - previousValue) / (value - previousValue);
+        const crossingX = previousX + (x - previousX) * crossingRatio;
+        const crossingPoint = `${crossingX},${this.vitalChartY(threshold.value, chart)}`;
+
+        if (aboveThreshold) {
+          pathParts.push(`M${crossingPoint}`, `L${x},${this.vitalChartY(value, chart)}`);
+          pathOpen = true;
+        } else {
+          if (!pathOpen) {
+            pathParts.push(`M${previousX},${this.vitalChartY(previousValue, chart)}`);
+          }
+          pathParts.push(`L${crossingPoint}`);
+          pathOpen = false;
+        }
+        continue;
+      }
+
+      pathOpen = false;
+    }
+
+    return pathParts.join(' ');
+  }
+
+  vitalChartPointColor(chart: VitalChart, series: VitalChartSeries, value: number): string {
+    const highlightedThreshold = chart.thresholds?.find(
+      (threshold) => threshold.highlightSeriesAbove && value >= threshold.value,
+    );
+
+    return highlightedThreshold?.color || series.pointColor || series.color;
   }
 
   resultChartX(index: number, pointCount: number): number {
